@@ -1,9 +1,17 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState, type ComponentType, type LazyExoticComponent } from 'react';
 import { chapterFromHash } from './chapters';
 import LessonPage from './lessons/projectile/LessonPage';
 
-// Each further chapter loads only when it is opened.
-const CircularChapter = lazy(() => import('./chapters/circular/CircularChapter'));
+// Each chapter loads only when it is opened. Projectile motion is the full lesson page.
+const PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
+  straight: lazy(() => import('./chapters/straight/Chapter')),
+  vectors: lazy(() => import('./chapters/vectors/Chapter')),
+  circular: lazy(() => import('./chapters/circular/CircularChapter')),
+  relative: lazy(() => import('./chapters/relative/Chapter')),
+  newton: lazy(() => import('./chapters/newton/Chapter')),
+  friction: lazy(() => import('./chapters/friction/Chapter')),
+  circdyn: lazy(() => import('./chapters/circdyn/Chapter')),
+};
 
 export default function App() {
   const [chapter, setChapter] = useState(chapterFromHash);
@@ -16,11 +24,11 @@ export default function App() {
       window.removeEventListener('popstate', on);
     };
   }, []);
-  if (chapter === 'circular')
-    return (
-      <Suspense fallback={null}>
-        <CircularChapter />
-      </Suspense>
-    );
-  return <LessonPage />;
+  const Page = PAGES[chapter];
+  if (!Page) return <LessonPage />;
+  return (
+    <Suspense fallback={null}>
+      <Page key={chapter} />
+    </Suspense>
+  );
 }

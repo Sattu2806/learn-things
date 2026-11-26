@@ -10,12 +10,26 @@ export interface ChapterInfo {
 }
 
 export const CHAPTERS: ChapterInfo[] = [
-  { id: 'projectile', unit: 'Motion in a plane', title: 'Projectile motion', ready: true },
-  { id: 'circular', unit: 'Motion in a plane', title: 'Circular motion', ready: true },
-  { id: 'relative', unit: 'Motion in a plane', title: 'Relative velocity', ready: false },
-  { id: 'motion3d', unit: 'Motion in 3D', title: 'Vectors and motion in 3D', ready: false },
-  { id: 'newton', unit: 'Forces', title: "Newton's laws of motion", ready: false },
-  { id: 'friction', unit: 'Forces', title: 'Friction', ready: false },
+  { id: 'straight', unit: 'Kinematics', title: 'Motion in a straight line', ready: true },
+  { id: 'vectors', unit: 'Kinematics', title: 'Vectors, in 2D and 3D', ready: true },
+  { id: 'projectile', unit: 'Kinematics', title: 'Projectile motion', ready: true },
+  { id: 'circular', unit: 'Kinematics', title: 'Circular motion', ready: true },
+  { id: 'relative', unit: 'Kinematics', title: 'Relative velocity', ready: true },
+  { id: 'newton', unit: 'Laws of motion', title: "Newton's laws of motion", ready: true },
+  { id: 'friction', unit: 'Laws of motion', title: 'Friction', ready: true },
+  { id: 'circdyn', unit: 'Laws of motion', title: 'Forces in circular motion', ready: true },
+  { id: 'energy', unit: 'Work, energy and power', title: 'Work, energy and power', ready: false },
+  { id: 'momentum', unit: 'Systems of particles', title: 'Momentum and collisions', ready: false },
+  { id: 'com', unit: 'Systems of particles', title: 'Centre of mass', ready: false },
+  { id: 'rotation', unit: 'Systems of particles', title: 'Rotational motion', ready: false },
+  { id: 'gravitation', unit: 'Gravitation', title: 'Gravitation', ready: false },
+  { id: 'solids', unit: 'Properties of matter', title: 'Elasticity', ready: false },
+  { id: 'fluids', unit: 'Properties of matter', title: 'Fluids', ready: false },
+  { id: 'heat', unit: 'Heat', title: 'Thermal properties of matter', ready: false },
+  { id: 'thermo', unit: 'Heat', title: 'Thermodynamics', ready: false },
+  { id: 'kinetic', unit: 'Heat', title: 'Kinetic theory of gases', ready: false },
+  { id: 'shm', unit: 'Oscillations and waves', title: 'Oscillations', ready: false },
+  { id: 'waves', unit: 'Oscillations and waves', title: 'Waves', ready: false },
 ];
 
 /** Projectile motion keeps the plain URL (and #theory, #questions); others are #/<id>. */

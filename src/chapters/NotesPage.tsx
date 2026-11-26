@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useMedia } from '../ui/useMedia';
+import { Topbar } from './Topbar';
 
 /**
  * The layout every chapter's notes share: contents on the left (lighting up
@@ -104,5 +105,15 @@ export function NotesPage({ sections, sideTitle, sideLead, children }: Props) {
         <article className="article">{children}</article>
       </section>
     </main>
+  );
+}
+
+/** A whole chapter page: the shared top bar and the notes layout. */
+export function ChapterShell({ id, ...props }: Props & { id: string }) {
+  return (
+    <div className="app">
+      <Topbar chapter={id} />
+      <NotesPage {...props} />
+    </div>
   );
 }
