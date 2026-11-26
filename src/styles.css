@@ -1235,7 +1235,7 @@ kbd {
   flex-direction: column;
   margin-left: 0.04em;
   line-height: 1;
-  vertical-align: -0.34em;
+  vertical-align: 0.42em;
 }
 
 .m-scripts .m-sup,
@@ -1730,6 +1730,10 @@ kbd {
   color: #000000;
   font-size: 16px;
   line-height: 1.55;
+}
+
+.article .answer .m {
+  color: inherit;
 }
 
 .answer-label {

@@ -50,6 +50,20 @@ per language, so one video reaches more countries.
 5. **Where it lands**: when the drop catches up with the rise, `t = 2v·sin θ / g`, and from that, `R = v²·sin 2θ / g`. 45° goes farthest.
 6. **The whole picture**: a straight line, minus a drop that grows like `t²`.
 
+## Chapters
+
+Choose a chapter from the menu at the top. Projectile motion has the film, theory and
+questions. Further chapters start with theory, worked examples and animations:
+
+- **Circular motion**: radians, angular velocity, centripetal acceleration and why it
+  points inward, speeding up on a circle, equations of rotation, vector form, and the
+  shadow that becomes simple harmonic motion. Six worked examples (a fan, the Earth,
+  the Moon, a wheel, clock hands).
+
+Coming next: relative velocity, motion in 3D, Newton's laws, friction. New chapters live
+in `src/chapters/`, share the notes layout in `NotesPage.tsx`, and are listed in
+`src/chapters/index.ts`.
+
 ## Run it
 
 ```bash
