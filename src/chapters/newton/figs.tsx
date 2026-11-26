@@ -535,9 +535,18 @@ export function PushedBlocks({ mA = 2, mB = 3, F = 10, height = 210 }: { mA?: nu
             <Ground y={gy} />
             <Block x={x + wa / 2} y={gy - h / 2} w={wa} h={h} label="A" />
             <Block x={x + wa + wb / 2} y={gy - h / 2} w={wb} h={h} label="B" />
-            <Arrow x1={x - 6 - F * kF} y1={gy - h / 2} x2={x - 4} y2={gy - h / 2} label="F" labelAt="mid" />
-            <Arrow x1={x + wa} y1={gy - h - 12} x2={x + wa - contact * kF} y2={gy - h - 12} tone="soft" label={<Sub a="N" b="BA" />} />
-            <Arrow x1={x + wa} y1={gy - h - 12} x2={x + wa + contact * kF} y2={gy - h - 12} label={<Sub a="N" b="AB" />} />
+            <Arrow x1={x - 6 - F * kF} y1={gy - h / 2} x2={x - 4} y2={gy - h / 2} />
+            <Label x={x - 5 - (F * kF) / 2} y={gy - h / 2 - 12} kind="sym">
+              F
+            </Label>
+            <Arrow x1={x + wa} y1={gy - h - 12} x2={x + wa - contact * kF} y2={gy - h - 12} tone="soft" />
+            <Arrow x1={x + wa} y1={gy - h - 12} x2={x + wa + contact * kF} y2={gy - h - 12} />
+            <Label x={x + wa - (contact * kF) / 2} y={gy - h - 28} kind="sym">
+              <Sub a="N" b="BA" />
+            </Label>
+            <Label x={x + wa + (contact * kF) / 2} y={gy - h - 28} kind="sym">
+              <Sub a="N" b="AB" />
+            </Label>
             <Label x={16} y={26} kind="val" anchor="start">
               a = F / ( mA + mB ) = {a.toFixed(1)} m/s²
             </Label>
@@ -619,8 +628,14 @@ export function Atwood({ m1 = 3, m2 = 2, height = 310, loop = 7, showArrows = tr
             <Pulley x={px} y={py} r={r} />
             <Line x1={lx} y1={py} x2={lx} y2={yl - h1 / 2} tone="bright" />
             <Line x1={rx} y1={py} x2={rx} y2={yr - h1 / 2} tone="bright" />
-            <Block x={lx} y={yl} w={bw} h={h1} label={`${m1} kg`} />
-            <Block x={rx} y={yr} w={bw} h={h1} label={`${m2} kg`} />
+            <Block x={lx} y={yl} w={bw} h={h1} />
+            <Block x={rx} y={yr} w={bw} h={h1} />
+            <Label x={lx - 32} y={yl + 4} anchor="end">
+              {`${m1} kg`}
+            </Label>
+            <Label x={rx + 32} y={yr + 4} anchor="start">
+              {`${m2} kg`}
+            </Label>
             {showArrows && (
               <g>
                 <Arrow x1={lx + 12} y1={yl} x2={lx + 12} y2={yl - T * kf} label="T" />
@@ -906,9 +921,12 @@ export function PairNotCancel() {
             <Ground y={130} />
             <Block x={x - 60} y={108} w={44} h={44} label="hand" />
             <Block x={x} y={108} w={52} h={44} label="B" />
-            <Arrow x1={x - 26} y1={80} x2={x - 26 + 46} y2={80} label="on B" labelAt="mid" />
+            <Arrow x1={x - 26} y1={80} x2={x - 26 + 46} y2={80} />
+            <Label x={x - 3} y={64} kind="label">
+              on B
+            </Label>
             <Arrow x1={x - 38} y1={136 + 0} x2={x - 38 - 46} y2={136} tone="soft" />
-            <Label x={x - 60 - 36 - 12} y={162} kind="label" anchor="end">
+            <Label x={x - 61} y={162} kind="label">
               on the hand
             </Label>
             <Label x={16} y={26} kind="label" anchor="start">

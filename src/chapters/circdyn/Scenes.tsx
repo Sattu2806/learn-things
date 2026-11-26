@@ -56,7 +56,7 @@ export function Providers() {
                   {i === 3 && <circle className="fig-path" cx={cx} cy={cy} r={R + 9} fill="none" />}
                   {i !== 2 && <circle className="fig-guide fig-dash fig-faint" cx={cx} cy={cy} r={R} fill="none" />}
                   <Ball x={bx} y={by} r={i === 2 ? 5 : 6.5} />
-                  <Arrow x1={bx} y1={by} x2={bx + ux * L} y2={by + uy * L} label={syms[i]} />
+                  <Arrow x1={bx} y1={by} x2={bx + ux * L} y2={by + uy * L} label={syms[i]} labelAt="mid" />
                   <Label x={cx} y={cy + R + 48} kind="label">
                     {nm}
                   </Label>
@@ -803,7 +803,7 @@ export function RotatingFrames() {
               <Ball x={cx + x} y={cy - y} />
               {!rel && <Arrow x1={cx + x} y1={cy - y} x2={cx + x + ux * 40} y2={cy - y - uy * 40} label="T" />}
               {frame === 'disc' && (
-                <Arrow x1={cx + x} y1={cy - y} x2={cx + x - ux * 40} y2={cy - y + uy * 40} dashed tone="soft" label="m ω² r" />
+                <Arrow x1={cx + x} y1={cy - y} x2={cx + x - ux * 40} y2={cy - y + uy * 40} dashed tone="soft" />
               )}
             </g>
           );

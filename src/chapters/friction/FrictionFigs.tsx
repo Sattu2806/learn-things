@@ -282,7 +282,7 @@ export function TiltScene({ title, mus = 0.5, muk = 0.35, maxTheta = 40, slide =
               <g>
                 {!sl && limit > fric + 0.04 && <Arrow x1={contact.x} y1={contact.y} x2={contact.x + dirUp.x * limit * L} y2={contact.y + dirUp.y * limit * L} dashed tone="soft" />}
                 {fric * L > 3 && <Arrow x1={contact.x} y1={contact.y} x2={contact.x + dirUp.x * fric * L} y2={contact.y + dirUp.y * fric * L} label="f" />}
-                <Arrow x1={c.x} y1={c.y} x2={c.x - dirUp.x * Math.sin(a) * L} y2={c.y - dirUp.y * Math.sin(a) * L} label="mg sin θ" />
+                <Arrow x1={c.x} y1={c.y} x2={c.x - dirUp.x * Math.sin(a) * L} y2={c.y - dirUp.y * Math.sin(a) * L} />
               </g>
             ) : (
               <g>
@@ -295,6 +295,7 @@ export function TiltScene({ title, mus = 0.5, muk = 0.35, maxTheta = 40, slide =
               <g>
                 <Label x={W - 16} y={48} kind="val" anchor="end">{`tan θ = ${f3(Math.tan(a))}`}</Label>
                 <Label x={W - 16} y={70} kind="val" anchor="end">{`μs = ${f2(mus)}`}</Label>
+                <Label x={W - 16} y={118} kind="val" anchor="end">{`mg sin θ = ${f2(Math.sin(a))} mg`}</Label>
                 {slide && (
                   <Label x={W - 16} y={96} kind="label" anchor="end">
                     {sl ? 'it slides!' : 'it holds'}
@@ -429,7 +430,7 @@ export function PullAngle({ title, m = 40, mu = 0.15, angle = 30, mode = 'compar
   const kN = 0.17;
   const panels = mode === 'compare' ? [{ cx: 165, dir: 'pull' as const }, { cx: 485, dir: 'push' as const }] : [{ cx: 280, dir: 'pull' as const }];
   return (
-    <Anim title={title} height={mode === 'compare' ? 265 : 275} loop={8} stillAt={5}>
+    <Anim title={title} height={mode === 'compare' ? 285 : 295} loop={8} stillAt={5}>
       {(t) => {
         const gy = 178;
         const grow = ease(phase(t, 1, 2.6));
@@ -448,11 +449,12 @@ export function PullAngle({ title, m = 40, mu = 0.15, angle = 30, mode = 'compar
               return (
                 <g key={dir}>
                   <Scroll y={gy} off={sp * 3 * t * 0.2} x1={cx - 150} x2={cx + 150} />
-                  <Block x={cx} y={cy} w={70} h={44} label={`${m} kg`} />
+                  <Block x={cx} y={cy} w={70} h={44} />
+                  <Label x={cx + 40} y={cy + 16} kind="sym" anchor="start">{`${m} kg`}</Label>
                   {dir === 'pull' ? (
                     <Arrow x1={x1} y1={cy - 6} x2={x1 + Fx} y2={cy - 6 - Fy} label="F" />
                   ) : (
-                    <Arrow x1={cx - 35 - Fx} y1={cy - 6 - Fy} x2={cx - 35} y2={cy - 6} label="F" />
+                    <Arrow x1={cx - 35 - Fx} y1={cy - 6 - Fy} x2={cx - 35} y2={cy - 6} label="F" labelAt="mid" />
                   )}
                   {mode === 'pull' && F > 4 && (
                     <g>
@@ -463,7 +465,7 @@ export function PullAngle({ title, m = 40, mu = 0.15, angle = 30, mode = 'compar
                   <Arrow x1={cx + 18} y1={gy} x2={cx + 18} y2={gy - N * kN} label="N" />
                   <Arrow x1={cx - 18} y1={cy} x2={cx - 18} y2={cy + W0 * kN} label="mg" />
                   <Arrow x1={cx - 35} y1={gy - 6} x2={cx - 35 - f * kF} y2={gy - 6} label="f" />
-                  <Label x={cx} y={mode === 'compare' ? 252 : 262} kind="val">{`N = ${f0(N)} N`}</Label>
+                  <Label x={cx} y={mode === 'compare' ? 277 : 287} kind="val">{`N = ${f0(N)} N`}</Label>
                   <Label x={cx} y={mode === 'compare' ? 24 : 24} kind="label">{dir === 'pull' ? 'pulling at 30°' : 'pushing at 30°'}</Label>
                 </g>
               );
@@ -671,13 +673,17 @@ export function StackScene({ title, m = 2, M = 4, mu = 0.3, top = 1.12, height =
         return (
           <g>
             <Scroll y={gy} off={sb * 40} />
-            <Block x={bx} y={gy - bh / 2} w={bw} h={bh} label={`${M} kg`} />
-            <Block x={tx} y={ty} w={76} h={44} label={`${m} kg`} />
+            <Block x={bx} y={gy - bh / 2} w={bw} h={bh} />
+            <Label x={bx + 95} y={gy - 8} kind="sym">{`${M} kg`}</Label>
+            <Block x={tx} y={ty} w={76} h={44} />
+            <Label x={tx} y={ty - 30} kind="sym">{`${m} kg`}</Label>
             <Arrow x1={bx + bw / 2} y1={gy - bh / 2} x2={bx + bw / 2 + F * k} y2={gy - bh / 2} label="F" />
             {fTop * k > 3 && (
               <g>
-                <Arrow x1={tx} y1={yI - 12} x2={tx + fTop * k} y2={yI - 12} label="f" />
-                <Arrow x1={tx} y1={yI + 12} x2={tx - fTop * k} y2={yI + 12} label="f" />
+                <Arrow x1={tx} y1={yI - 12} x2={tx + fTop * k} y2={yI - 12} />
+                <Label x={tx + (fTop * k) / 2} y={yI - 20} kind="sym">f</Label>
+                <Arrow x1={tx} y1={yI + 12} x2={tx - fTop * k} y2={yI + 12} />
+                <Label x={tx - (fTop * k) / 2} y={yI + 32} kind="sym">f</Label>
               </g>
             )}
             <Label x={16} y={26} kind="val" anchor="start">{`F = ${f1(F)} N`}</Label>

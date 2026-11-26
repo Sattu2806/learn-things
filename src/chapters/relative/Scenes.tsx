@@ -23,7 +23,7 @@ const Show = ({ t, a, b = a + 0.5, children }: { t: number; a: number; b?: numbe
 const Caption = ({ items }: { items: [string, number][] }) => (
   <g>
     {items.map(([text, o]) => (
-      <g key={text} opacity={o}>
+      <g key={text} opacity={Math.max(0, 2 * o - 1)}>
         <Label x={14} y={24} kind="label" anchor="start">
           {text}
         </Label>
@@ -133,7 +133,7 @@ export function TwoCars({ vA, vB, gap, k = 3, frames = ['ground', 'A'], loop = 1
             <g>
               <Arrow x1={x} y1={road - 46} x2={x + rel * k * 2.6} y2={road - 46} />
               {Math.abs(rel) > 0.4 && (
-                <Label x={x + (rel > 0 ? 1 : -1) * 4} y={road - 56} kind="val" anchor="middle">
+                <Label x={x + rel * k * 1.3} y={road - 62} kind="val" anchor="middle">
                   {label} {Math.abs(rel).toFixed(0)} m/s
                 </Label>
               )}

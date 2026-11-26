@@ -548,13 +548,13 @@ export function DotProjection({ height = 260 }: { height?: number }) {
               B
             </Label>
             <path className="fig-guide" fill="none" d={arc(o[0], o[1], 30, a0, a0 + Math.max(th, 0.01))} />
-            <Label x={420} y={o[1] - 100} kind="val" anchor="start">
+            <Label x={400} y={o[1] - 100} kind="val" anchor="start">
               {`θ = ${f1(th, 0)}°`}
             </Label>
-            <Label x={420} y={o[1] - 72} kind="val" anchor="start">
-              {`shadow of B = B cos θ = ${f1(sh)}`}
+            <Label x={400} y={o[1] - 72} kind="val" anchor="start">
+              {`B cos θ = ${f1(sh)}`}
             </Label>
-            <Label x={420} y={o[1] - 44} kind="val" anchor="start">
+            <Label x={400} y={o[1] - 44} kind="val" anchor="start">
               {`A · B = A B cos θ = ${f1(dot)}`}
             </Label>
           </g>

@@ -226,7 +226,7 @@ export default function Chapter() {
         <p>
           The <strong>displacement</strong> from a point 1 to a point 2 is the arrow joining them. It is a difference of position vectors, found by subtracting component by component:
         </p>
-        <Eq src='Δr = r _2 − r _1 = ( x _2 − x _1 ) · î + ( y _2 − y _1 ) · ĵ + ( z _2 − z _1 ) · k̂' />
+        <Eq src={['Δr = r _2 − r _1', '= ( x _2 − x _1 ) · î + ( y _2 − y _1 ) · ĵ + ( z _2 − z _1 ) · k̂']} />
         <Fig caption="Two position vectors from the origin, and the displacement from the tip of r₁ to the tip of r₂. A ball glides along Δr.">
           <Displacement3D />
         </Fig>
