@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
-import { Logo } from '../../ui/Icons';
+import { Topbar } from '../../chapters/Topbar';
 import { COURSES, loadCourse, saveCourse, type Course } from './courses';
 import { buildFilm } from './film';
 import FilmView, { type FilmApi } from './FilmView';
@@ -60,20 +60,7 @@ export default function LessonPage() {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="brand">
-          <Logo />
-          <span className="brand-name">Learn Things</span>
-        </div>
-        <nav className="crumbs" aria-label="Breadcrumb">
-          <span className="crumb hide-sm">Physics</span>
-          <span className="crumb-sep hide-sm" aria-hidden="true">
-            /
-          </span>
-          <span className="crumb is-current" aria-current="page">
-            Projectile motion
-          </span>
-        </nav>
+      <Topbar chapter="projectile">
         <label className="course-pick">
           <span className="visually-hidden">Your course</span>
           <select className="select select-sm" value={course.id} onChange={(e) => setCourse(COURSES.find((c) => c.id === e.target.value)!)} title="Your course: sets the questions, the syllabus and g">
@@ -95,7 +82,7 @@ export default function LessonPage() {
             </button>
           ))}
         </div>
-      </header>
+      </Topbar>
       <FilmView film={film} active={view === 'film'} api={filmApi} />
       <Suspense fallback={null}>
         {opened.theory && <TheoryView film={film} active={view === 'theory'} course={course} onWatch={watch} />}

@@ -2481,16 +2481,42 @@ details[open] .q-show::before {
     padding-right: 12px;
   }
 
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    row-gap: 8px;
+  }
+
+  .views {
+    order: 10;
+    flex: 1 1 100%;
+  }
+
   .views .mode-btn {
+    flex: 1;
     padding: 0 9px;
+    font-size: 13px;
+  }
+
+  .chapter-pick,
+  .course-pick {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .chapter-pick .select-sm,
+  .course-pick .select-sm {
+    width: 100%;
+    max-width: none;
+    padding: 0 24px 0 12px;
+    background-position: right 10px center;
     font-size: 12.5px;
   }
 
-  .course-pick .select-sm {
-    max-width: 96px;
-    padding: 0 22px 0 10px;
-    background-position: right 8px center;
-    font-size: 12px;
+  .course-pick {
+    margin-left: 0;
   }
 
   .film-meta-right {
