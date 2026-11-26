@@ -11,6 +11,11 @@ const PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
   newton: lazy(() => import('./chapters/newton/Chapter')),
   friction: lazy(() => import('./chapters/friction/Chapter')),
   circdyn: lazy(() => import('./chapters/circdyn/Chapter')),
+  energy: lazy(() => import('./chapters/energy/Chapter')),
+  momentum: lazy(() => import('./chapters/momentum/Chapter')),
+  com: lazy(() => import('./chapters/com/Chapter')),
+  rotation: lazy(() => import('./chapters/rotation/Chapter')),
+  gravitation: lazy(() => import('./chapters/gravitation/Chapter')),
 };
 
 export default function App() {
