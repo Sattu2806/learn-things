@@ -69,6 +69,8 @@ export class FilmPlayer {
   private raf = 0;
   private last = 0;
   private still = false;
+  /** A moment shown as the cover until the film is first played or moved. */
+  private poster: number | null = null;
   /** CSS pixels at the bottom covered by the player's controls (0 when hidden). */
   private inset = 0;
   private safe = VH;
@@ -100,7 +102,12 @@ export class FilmPlayer {
 
   // ------------------------------------------------------------ controls
 
+  setPoster(T: number | null) {
+    this.poster = T;
+  }
+
   play() {
+    this.poster = null;
     if (this.waiting) return;
     if (this.T >= this.film.duration - 1e-3) this.T = 0;
     this.playing = true;
@@ -119,6 +126,7 @@ export class FilmPlayer {
   }
 
   seek(T: number) {
+    this.poster = null;
     this.T = Math.min(this.film.duration, Math.max(0, T));
     this.waiting = null;
     this.over = {};
@@ -255,7 +263,7 @@ export class FilmPlayer {
     ctx.beginPath();
     ctx.rect(0, 0, VW, VH);
     ctx.clip();
-    const r = this.reader();
+    const r = this.poster !== null ? reader(this.film, this.poster) : this.reader();
     let cam: Cam | undefined;
     if (this.waiting) {
       // Glide the camera while the viewer changes numbers.
@@ -268,7 +276,7 @@ export class FilmPlayer {
     const safe = this.inset > 0 ? Math.min(VH, (this.H - this.inset - oy) / k) : VH;
     this.safe = this.still ? safe : this.safe + (safe - this.safe) * 0.2;
     renderFrame(ctx, r, {
-      caption: this.captions && !this.waiting ? this.film.caption(this.T) : null,
+      caption: this.captions && !this.waiting && this.poster === null ? this.film.caption(this.T) : null,
       clock,
       still: this.still,
       cam,

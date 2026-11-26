@@ -192,6 +192,11 @@ kbd {
   scrollbar-color: var(--faint) transparent;
 }
 
+/* The panel scrolls as a whole; its parts keep their full height. */
+.panel-scroll > * {
+  flex: none;
+}
+
 .title {
   margin: 0;
   font-family: var(--serif);
@@ -544,7 +549,7 @@ kbd {
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .stage-box {
@@ -638,6 +643,12 @@ kbd {
 }
 
 .stage-box.is-idle .controls {
+  opacity: 0;
+}
+
+/* Before the first play: just the cover and the big play button. */
+.stage-box.is-fresh .controls {
+  visibility: hidden;
   opacity: 0;
 }
 
@@ -1034,17 +1045,24 @@ kbd {
   }
 
   .big-play {
-    bottom: 12%;
-    padding: 6px 16px 6px 6px;
+    bottom: 9%;
+    gap: 10px;
+    padding: 5px 16px 5px 5px;
   }
 
   .big-play-icon {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .big-play-icon svg {
+    width: 20px;
+    height: 20px;
   }
 
   .big-play-text {
     font-size: 18px;
+    white-space: nowrap;
   }
 }
 
@@ -1054,7 +1072,8 @@ kbd {
     display: none;
   }
 
-  .t-end {
+  .t-end,
+  .big-play-len {
     display: none;
   }
 

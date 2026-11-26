@@ -9,6 +9,9 @@ import { flight } from './model';
 
 export const TITLE = 'Why does a thrown ball draw a parabola?';
 
+/** A moment that works as the film's cover: the title card, fully faded in. */
+export const POSTER = 2.4;
+
 /** Equations in the film's maths notation (see film/math.ts). Keys let morphs move symbols. */
 export const EQ = {
   y1: 'y#y =#eq v#v ·#d1 sin#sin θ#th ·#d2 t#tR',

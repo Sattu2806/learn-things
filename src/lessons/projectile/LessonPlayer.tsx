@@ -4,7 +4,7 @@ import { canRenderVideo, download, renderVideo } from '../../film/export';
 import { toScript, toSrt, type Beat, type Film } from '../../film/timeline';
 import { Icon, Logo } from '../../ui/Icons';
 import { Scrub } from '../../ui/Scrub';
-import { TITLE, buildFilm } from './film';
+import { POSTER, TITLE, buildFilm } from './film';
 import { flight, metres } from './model';
 import { FilmPlayer, createStore, drawFilmFrame, type Mode, type PlayerState, type Store } from './player';
 
@@ -281,6 +281,7 @@ export default function LessonPlayer() {
 
   useEffect(() => {
     const p = new FilmPlayer(canvasRef.current!, film, stateStore, timeStore);
+    p.setPoster(POSTER);
     playerRef.current = p;
     setPlayer(p);
     return () => {
@@ -450,7 +451,7 @@ export default function LessonPlayer() {
         <section className="film-col">
           <div
             ref={boxRef}
-            className={`stage-box${expanded ? ' is-expanded' : ''}${idle && st.playing && !waiting ? ' is-idle' : ''}`}
+            className={`stage-box${expanded ? ' is-expanded' : ''}${idle && st.playing && !waiting ? ' is-idle' : ''}${started ? '' : ' is-fresh'}`}
             onPointerMove={wake}
             onPointerDown={wake}
           >
@@ -493,7 +494,7 @@ export default function LessonPlayer() {
                 }}
                 aria-label={waiting ? 'Continue' : st.playing ? 'Pause' : 'Play'}
               >
-                <Icon name={st.playing ? 'pause' : 'play'} size={18} />
+                <Icon name={st.playing && !waiting ? 'pause' : 'play'} size={18} />
               </button>
               <Scrubber film={film} time={timeStore} onSeek={seek} />
               <button className="ctl ctl-text" aria-pressed={captions} onClick={() => setCaptions((c) => !c)} aria-label="Captions" title="Captions (c)">
