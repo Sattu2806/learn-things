@@ -1,48 +1,95 @@
 # Learn Things: Living Equations
 
-A black-and-white film about one equation. Instead of sliders and a launch button,
-**the equation is the controller**: every term of projectile motion is drawn in the
-scene, and every number in it can be dragged.
+A four-minute, black-and-white film about one equation, made the way 3Blue1Brown
+makes videos: one narrated idea at a time, and every symbol shown as a picture.
 
 ```
-x = v·cos θ·t
 y = v·sin θ·t − ½·g·t²
 ```
 
-- A hollow "ghost" ball rides the straight line the ball would follow with no gravity (`v·sin θ·t`).
-- The real ball hangs exactly `½gt²` below it, joined by a visible bar.
-- Tap a term and the scene isolates what it draws. Drag `v`, `θ`, `g` or the time `t`.
-- Break the equation on purpose (`t` instead of `t²`, drop the `½`, flip the sign, swap sin and cos)
-  and the motion breaks in front of you, next to the dotted correct path.
+The same script does two jobs:
 
-## The lesson
+- **In the app** it plays like a video you can step into. Lesson mode stops at four
+  "your turn" moments. There the scene goes live: change the speed, the angle or
+  gravity (try the Moon), or swap `t²` for `t`, and watch what happens. Watch mode
+  plays straight through.
+- **On YouTube** it renders, frame by frame, to a 1080p video, with subtitles and
+  a voiceover script timed to the picture.
 
-1. **Nothing pulling**: a straight line at constant speed.
-2. **Add gravity**: the ball sits ½gt² below the no-gravity line.
-3. **Why t²?**: the drops at 1, 2, 3 s go 1×, 4×, 9×. Break it and they go 1×, 2×, 3×.
-4. **When does it land?**: when the drop catches the rise, worked out line by line.
-5. **How far?**: R = v²·sin 2θ / g, with a draggable sin 2θ curve.
-6. **Spot the bug**: a ball moves wrong because one symbol is broken. Watch, then tap the culprit.
+## The film
 
-Then a sandbox where every term and every mistake can be switched on and off.
+1. **The question**: every throw draws a parabola. Why?
+2. **Switch off gravity**: a straight line, the same distance every half second, so the height is `v·sin θ·t`.
+3. **Switch it back on**: a ghost ball keeps flying straight, and the real ball falls `½gt²` below it.
+4. **Why t squared?**: a dropped ball falls 1, 4, 9, 16 units, because odd numbers stack into squares.
+5. **Where it lands**: when the drop catches up with the rise, `t = 2v·sin θ / g`, and from that, `R = v²·sin 2θ / g`. 45° goes farthest.
+6. **The whole picture**: a straight line, minus a drop that grows like `t²`.
 
 ## Run it
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm test         # the physics and the lesson logic
+npm test
 npm run build    # static site in dist/
 ```
+
+## Make the YouTube video
+
+In the app, open **Make the video** at the bottom of the left panel and press
+**Render video** (Chrome, Edge or Safari). From the command line:
+
+```bash
+npx playwright install chromium   # once
+npm run render
+```
+
+You get three files:
+
+| File | What it is |
+| --- | --- |
+| `living-equations.mp4` | 1920×1080, 30 fps, H.264 (WebM/VP9 if the browser has no H.264 encoder) |
+| `living-equations.srt` | Subtitles. Upload them to YouTube as captions. |
+| `living-equations-voiceover.txt` | The narration with timestamps, to record your voiceover against |
+
+Options: `--fps 60`, `--captions` to burn captions into the picture, `--out name.mp4`,
+and `--from 160 --to 200` to render only part of the film (seconds) while you edit.
+
+Pacing assumes narration at about 150 words a minute. The "your turn" moments become
+short "Pause and ponder" holds in the video. Every frame is computed from the timeline,
+so the video never drops frames and renders faster than real time (about 3 minutes
+for the whole film).
+
+## Edit the film
+
+The film is a script in `src/lessons/projectile/film.ts`. Each beat is one line of
+narration plus what moves while it is spoken:
+
+```ts
+f.beat('In symbols: the rise equals the drop.', (k) => {
+  k.set('eq', EQ.land1, { at: 0.3, dur: 1.4 });   // morph the equation
+  k.tween('readout', 1, { at: 1.5, dur: 0.6 });   // or animate any number
+});
+```
+
+A beat lasts as long as its narration takes to say or its animation takes to play,
+whichever is longer.
+Equations are written in a small notation (`film/math.ts`): `^2` is a superscript,
+`[ a | b ]` a fraction, and `t#tR` names a symbol so a morph can carry it to its new
+place, like Manim's `TransformMatchingTex`.
 
 ## Code map
 
 | File | What it does |
 | --- | --- |
-| `src/lessons/projectile/model.ts` | The equations term by term, including the common mistakes. Pure functions. |
-| `src/lessons/projectile/stage.ts` | The canvas: black-and-white film look, ghost ball, term bars, timeline. |
-| `src/lessons/projectile/Equation.tsx` | The interactive equation and the maths typesetting. |
-| `src/lessons/projectile/lesson.ts` | Chapters, derivations, bug rounds and progress. |
-| `src/lessons/projectile/ProjectileLesson.tsx` | The screen: story panel on the left, the film on the right. |
+| `src/film/timeline.ts` | The timeline: chapters, narrated beats, tweens and morphs. Also writes the subtitles and script. |
+| `src/film/math.ts` | Typesets equations on a canvas and morphs one into another. |
+| `src/film/export.ts` | Encodes the film to video in the browser, frame by frame (WebCodecs, via Mediabunny). |
+| `src/lessons/projectile/film.ts` | The film script. |
+| `src/lessons/projectile/render.ts` | Draws any moment of the film in a 1920×1080 frame. The app and the video use the same pixels. |
+| `src/lessons/projectile/player.ts` | Plays the film on the page, stopping and going live at "your turn" moments. |
+| `src/lessons/projectile/LessonPlayer.tsx` | The screen: chapters and narration on the left, the film on the right. |
+| `src/lessons/projectile/model.ts` | The physics, term by term. |
+| `scripts/render.mjs` | `npm run render`: drives the app in a headless browser and saves the video. |
 
 Fonts: Instrument Serif (titles and maths), Geist (text), Geist Mono (numbers).

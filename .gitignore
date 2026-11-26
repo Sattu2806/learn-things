@@ -4,3 +4,9 @@ dist
 .DS_Store
 .vite
 coverage
+
+# npm run render output
+*.mp4
+*.webm
+living-equations*.srt
+living-equations*-voiceover.txt

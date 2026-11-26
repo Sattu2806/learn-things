@@ -2,14 +2,15 @@
   "name": "learn-things",
   "private": true,
   "version": "0.1.0",
-  "description": "Animated, interactive science lessons. First lesson: projectile motion.",
+  "description": "Animated, narrated physics films you can step into, and render to video.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "render": "vite build && node scripts/render.mjs"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "@fontsource/instrument-serif": "^5.3.0",
+    "mediabunny": "1.65.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
@@ -26,6 +28,7 @@
     "@types/react": "^19.3.3",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
+    "playwright": "1.63.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.2"

@@ -1,6 +1,6 @@
-import ProjectileLesson from './lessons/projectile/ProjectileLesson';
+import LessonPlayer from './lessons/projectile/LessonPlayer';
 
-/** One lesson for now. A lesson picker goes here when there are more. */
+/** One film for now. A library of films goes here when there are more. */
 export default function App() {
-  return <ProjectileLesson />;
+  return <LessonPlayer />;
 }
