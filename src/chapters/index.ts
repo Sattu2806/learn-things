@@ -23,13 +23,13 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'com', unit: 'Systems of particles', title: 'Centre of mass', ready: true },
   { id: 'rotation', unit: 'Systems of particles', title: 'Rotational motion', ready: true },
   { id: 'gravitation', unit: 'Gravitation', title: 'Gravitation', ready: true },
-  { id: 'solids', unit: 'Properties of matter', title: 'Elasticity', ready: false },
-  { id: 'fluids', unit: 'Properties of matter', title: 'Fluids', ready: false },
-  { id: 'heat', unit: 'Heat', title: 'Thermal properties of matter', ready: false },
-  { id: 'thermo', unit: 'Heat', title: 'Thermodynamics', ready: false },
-  { id: 'kinetic', unit: 'Heat', title: 'Kinetic theory of gases', ready: false },
-  { id: 'shm', unit: 'Oscillations and waves', title: 'Oscillations', ready: false },
-  { id: 'waves', unit: 'Oscillations and waves', title: 'Waves', ready: false },
+  { id: 'solids', unit: 'Properties of matter', title: 'Elasticity', ready: true },
+  { id: 'fluids', unit: 'Properties of matter', title: 'Fluids', ready: true },
+  { id: 'heat', unit: 'Heat', title: 'Thermal properties of matter', ready: true },
+  { id: 'thermo', unit: 'Heat', title: 'Thermodynamics', ready: true },
+  { id: 'kinetic', unit: 'Heat', title: 'Kinetic theory of gases', ready: true },
+  { id: 'shm', unit: 'Oscillations and waves', title: 'Oscillations', ready: true },
+  { id: 'waves', unit: 'Oscillations and waves', title: 'Waves', ready: true },
 ];
 
 /** Projectile motion keeps the plain URL (and #theory, #questions); others are #/<id>. */
