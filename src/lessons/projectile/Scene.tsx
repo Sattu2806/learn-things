@@ -18,6 +18,10 @@ export interface SceneThrow extends PathSpec {
   components?: boolean;
   /** Hide the trail (a plane leaves none). */
   noTrail?: boolean;
+  /** Start this many seconds after the others (a rebound, a second shot). */
+  delay?: number;
+  /** Hide the ball once its path ends (another throw carries on from there). */
+  handOff?: boolean;
 }
 
 export interface SceneSpec {
@@ -102,7 +106,8 @@ export function Scene(spec: SceneSpec) {
   const H = spec.height ?? 280;
 
   const paths = useMemo(() => spec.throws.map((th) => samplePath({ ...th, incline: th.incline ?? spec.incline })), [spec.throws, spec.incline]);
-  const tMax = Math.max(...paths.map((p) => p[p.length - 1].t), 0.1);
+  const delayOf = (i: number) => spec.throws[i].delay ?? 0;
+  const tMax = Math.max(...paths.map((p, i) => p[p.length - 1].t + delayOf(i)), 0.1);
   // Real flights of 1 to 15 s all play in 2 to 4 s, then hold for a moment.
   const play = Math.min(4, Math.max(2, tMax * 0.9));
   const hold = 1.1;
@@ -248,7 +253,7 @@ export function Scene(spec: SceneSpec) {
         return (
           <g key={i}>
             <path className="fig-path is-muted fig-dash" d={d(p)} />
-            <path className={th.muted ? 'fig-path is-muted' : 'fig-path'} d={d(upTo(p, T))} />
+            {T >= delayOf(i) && <path className={th.muted ? 'fig-path is-muted' : 'fig-path'} d={d(upTo(p, T - delayOf(i)))} />}
             {th.label && (
               <text className="fig-label" x={X(p.reduce((a, b) => (b.y > a.y ? b : a), p[0]).x)} y={Y(Math.max(...p.map((s) => s.y))) - 12} textAnchor="middle">
                 {th.label}
@@ -334,7 +339,9 @@ export function Scene(spec: SceneSpec) {
       )}
       {paths.map((p, i) => {
         const th = spec.throws[i];
-        const s = sampleAt(p, T);
+        if (T < delayOf(i)) return null;
+        if (th.handOff && T > delayOf(i) + p[p.length - 1].t) return null;
+        const s = sampleAt(p, T - delayOf(i));
         const cx = X(s.x);
         const cy = Y(s.y);
         return (

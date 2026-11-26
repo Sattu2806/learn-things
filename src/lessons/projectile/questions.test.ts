@@ -18,6 +18,22 @@ const EXPECTED: Record<string, number> = {
   'two-balls': 2 * 20 * Math.sin(15 * DEG),
   'same-height-twice': 0.5 * 10 * 1 * 3,
   slowest: slowestTo(40, 30, 10).v,
+  'top-time': 0.5 * 9.8 * (3 / 2) ** 2,
+  'velocity-change': 2 * solve({ v: 25, theta: Math.asin(0.8) / DEG, g: 10 }).vy,
+  // Reflected at the wall: it falls from the height it had there, moving back at the same sideways speed.
+  'wall-bounce': (() => {
+    const vx = 25 * 0.6;
+    const vy = 25 * 0.8;
+    const tHit = 45 / vx;
+    const y = vy * tHit - 5 * tHit * tHit;
+    const vyHit = vy - 10 * tHit;
+    const tFall = (vyHit + Math.sqrt(vyHit * vyHit + 2 * 10 * y)) / 10;
+    return vx * tFall;
+  })(),
+  // B needs the same upward speed as A, and must cover 40 m sideways within A's flight.
+  'aim-at-the-toy': Math.hypot(30, 40) / Math.sqrt((2 * 40) / 10),
+  'downhill-throw': onIncline(15, 0, 10, -30).along,
+  'trolley-throw': 6 * solve({ v: 8, theta: 90, g: 10 }).T,
 };
 
 function countTokens(nodes: MathNode[]): number {
@@ -92,10 +108,60 @@ describe('question bank', () => {
     const air = samplePath({ v: 30, theta: 45, g: 9.8, drag: 0.012 });
     expect(air[air.length - 1].x).toBeLessThan(free[free.length - 1].x);
     expect(pick('air')).toMatch(/lands shorter/);
+
+    // Average velocity over a level flight is the range over the time: the sideways speed.
+    const av = solve({ v: 15, theta: 40, g: 9.8 });
+    expect(av.R / av.T).toBeCloseTo(av.vx, 9);
+    expect(pick('average-velocity')).toBe(`${(av.R / av.T).toFixed(1)} m/s, horizontal`);
+    // Dropped and thrown together land together.
+    const dropped = solve({ v: 0, theta: 0, g: 10, h: 45 });
+    const thrown = solve({ v: 12, theta: 0, g: 10, h: 45 });
+    expect(thrown.T).toBeCloseTo(dropped.T, 9);
+    expect(pick('drop-or-throw')).toBe(`They land together, after ${dropped.T.toFixed(0)} s`);
+    // Same upward speed means the same flight time; the range is vx times it.
+    const p = solve({ v: 20, theta: 90, g: 10 });
+    const q = solve({ v: 25, theta: Math.asin(0.8) / DEG, g: 10 });
+    expect(q.T).toBeCloseTo(p.T, 9);
+    expect(pick('same-upward-speed')).toBe(`Together, after ${p.T.toFixed(0)} s; ${q.R.toFixed(0)} m apart`);
+    // Range equal to height at tan θ = 4.
+    const rh = solve({ v: 20, theta: Math.atan(4) / DEG, g: 10 });
+    expect(rh.R).toBeCloseTo(rh.H, 9);
+    expect(pick('range-equals-height')).toBe('tan⁻¹ 4');
+    // Two complementary angles: heights add to u²/2g.
+    const hs = (a: number) => solve({ v: 20, theta: a, g: 10 });
+    expect(hs(30).R).toBeCloseTo(hs(60).R, 9);
+    expect(hs(30).H).toBeCloseTo(5, 9);
+    expect(hs(60).H).toBeCloseTo(15, 9);
+    expect(Math.sqrt(2 * 10 * (5 + 15))).toBeCloseTo(20, 9);
+    expect(pick('heights-sum')).toBe('20 m/s');
+    // B must match A's upward speed, then cover 40 m sideways in A's 4 s.
+    const a = solve({ v: 20, theta: 90, g: 10 });
+    expect(Math.hypot(20, 40 / a.T)).toBeCloseTo(Math.sqrt(500), 9);
+    expect(pick('meet-vertical')).toBe(`${Math.hypot(20, 40 / a.T).toFixed(1)} m/s`);
   });
 
   it('writes every equation so it parses completely', () => {
     for (const q of QUESTIONS) for (const src of maths(q)) expect(parsesFully(src), `${q.id}: ${src}`).toBe(true);
+  });
+
+  it('draws the bounce and the dart so they meet', () => {
+    const w = QUESTIONS.find((x) => x.id === 'wall-bounce')!;
+    const [before, after] = w.scene.throws;
+    const hit = samplePath(before)[160];
+    const start = samplePath(after)[0];
+    expect(start.x).toBeCloseTo(hit.x, 6);
+    expect(start.y).toBeCloseTo(hit.y, 6);
+    expect(start.vx).toBeCloseTo(-hit.vx, 6);
+    expect(start.vy).toBeCloseTo(hit.vy, 6);
+    const end = samplePath(after);
+    expect(end[end.length - 1].x).toBeCloseTo(30, 6);
+
+    const d = QUESTIONS.find((x) => x.id === 'aim-at-the-toy')!;
+    const [dart, toy] = d.scene.throws;
+    const a = samplePath(dart);
+    const b = samplePath(toy);
+    expect(a[160].x).toBeCloseTo(b[160].x, 6);
+    expect(a[160].y).toBeCloseTo(b[160].y, 6);
   });
 
   it('draws the slowest throw through its target', () => {
