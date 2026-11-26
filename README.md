@@ -22,6 +22,25 @@ worked examples, common mistakes, practice questions with answers to reveal, and
 calculator for your own numbers. Key equations link to the moment in the film that
 shows them, and the notes print cleanly in black on white.
 
+A **Questions** tab holds original practice questions in the style of school exams, NEET,
+JEE Main and JEE Advanced. Each has its own animation, an answer you can check (multiple
+choice or a number), and a step-by-step solution. Progress is saved on the device.
+
+### For students in other countries
+
+Pick your course at the top: JEE, NEET or Indian boards; AP Physics 1 or C (US);
+A-level (UK); IB Diploma; HSC (Australia); or first-year university. The first guess
+comes from the browser's language and region. The course decides:
+
+- which questions show first,
+- which theory sections are in your syllabus (others are marked "Extra"),
+- the value of g the calculator starts with (10 for JEE and NEET, 9.81 for A-level),
+- a note on your books' notation (u or v₀ for the launch speed).
+
+The film's narration is translated (Hindi and Spanish so far, in `translations.ts`)
+for captions in the player and for subtitle files. YouTube takes one caption track
+per language, so one video reaches more countries.
+
 ## The film
 
 1. **The question**: every throw draws a parabola. Why?
@@ -58,7 +77,9 @@ You get three files:
 | `living-equations.srt` | Subtitles. Upload them to YouTube as captions. |
 | `living-equations-voiceover.txt` | The narration with timestamps, to record your voiceover against |
 
-Options: `--fps 60`, `--captions` to burn captions into the picture, `--out name.mp4`,
+Subtitles and voiceover scripts are written in every language (`living-equations.hi.srt`
+and so on). Options: `--fps 60`, `--captions` to burn captions into the picture,
+`--lang hi` to burn them in Hindi, `--out name.mp4`,
 and `--from 160 --to 200` to render only part of the film (seconds) while you edit.
 
 Pacing assumes narration at about 150 words a minute. The "your turn" moments become
@@ -97,7 +118,13 @@ place, like Manim's `TransformMatchingTex`.
 | `src/lessons/projectile/LessonPage.tsx` | The page: the Film and Theory tabs. |
 | `src/lessons/projectile/FilmView.tsx` | The film screen: chapters and narration on the left, the player on the right. |
 | `src/lessons/projectile/TheoryView.tsx` | The theory, formula sheet, worked examples, practice and calculator. |
-| `src/lessons/projectile/Figures.tsx` | The theory page's diagrams, drawn from the physics. |
+| `src/lessons/projectile/TheoryMore.tsx` | Velocity, derivations, angles, heights, targets, inclines, relative motion, curvature, air. |
+| `src/lessons/projectile/QuestionsView.tsx` | The Questions tab. |
+| `src/lessons/projectile/questions.ts` | The question bank; `questions.test.ts` recomputes every answer. |
+| `src/lessons/projectile/Scene.tsx` | Animated diagrams: balls, velocity arrows, slopes, walls, targets, planes. |
+| `src/lessons/projectile/courses.ts` | Courses around the world and what each one covers. |
+| `src/lessons/projectile/translations.ts` | The narration in other languages. |
+| `src/lessons/projectile/Figures.tsx` | The theory page's still diagrams. |
 | `src/lessons/projectile/numbers.ts` | Time, height and range for any launch, including from a height. |
 | `src/ui/Math.tsx` | Sets the film's maths notation as HTML text. |
 | `src/lessons/projectile/model.ts` | The physics, term by term. |

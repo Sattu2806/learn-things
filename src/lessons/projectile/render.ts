@@ -27,6 +27,8 @@ export interface Cam {
 
 export interface RenderOptions {
   caption: { text: string; alpha: number } | null;
+  /** Translates on-screen words such as the "Pause and ponder" card. */
+  tr?: (text: string) => string;
   /** Seconds, for the film grain. Use film time when exporting so frames are repeatable. */
   clock: number;
   still?: boolean;
@@ -763,8 +765,9 @@ export function renderFrame(ctx: CanvasRenderingContext2D, r: Reader, o: RenderO
   const ponderA = r.n('ponder');
   if (ponderA > 0.01) {
     const lift = Math.max(0, 1002 + 30 + 12 - safe);
-    label(ctx, 'Pause and ponder', VW / 2, 948 - lift, `400 22px ${MONO}`, 0.6 * ponderA, 'center');
-    label(ctx, r.s<string>('prompt').to, VW / 2, 1002 - lift, `italic 400 50px ${SERIF}`, ponderA, 'center');
+    const tr = o.tr ?? ((x: string) => x);
+    label(ctx, tr('Pause and ponder'), VW / 2, 948 - lift, `400 22px ${MONO}`, 0.6 * ponderA, 'center');
+    label(ctx, tr(r.s<string>('prompt').to), VW / 2, 1002 - lift, `italic 400 50px ${SERIF}`, ponderA, 'center');
   } else if (o.caption) {
     ctx.font = `450 36px ${SANS}`;
     const lines = wrap(ctx, o.caption.text, 1460).slice(0, 2);

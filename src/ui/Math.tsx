@@ -9,7 +9,7 @@ import { mathKind, parseMath, type MathKind, type MathNode, type Script } from '
 
 function cls(kind: MathKind, text: string) {
   if (kind === 'op') {
-    if (text === '=' || text === '≈') return 'm-op m-rel';
+    if (text === '=' || text === '≈' || text === '→') return 'm-op m-rel';
     if (text === '·') return 'm-op m-dot';
     return 'm-op m-bin';
   }

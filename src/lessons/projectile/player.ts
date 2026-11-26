@@ -7,6 +7,7 @@ import { resetMathCache } from '../../film/math';
 import { pauseBetween, reader, type Beat, type Film, type Reader } from '../../film/timeline';
 import { EQ } from './film';
 import { landingTime } from './model';
+import { translator, type Lang } from './translations';
 import { VH, VW, modelOf, renderFrame, targetCamera, type Cam } from './render';
 
 export type Mode = 'lesson' | 'watch';
@@ -50,6 +51,8 @@ export class FilmPlayer {
   readonly time: Store<number>;
   mode: Mode = 'lesson';
   captions = true;
+  /** Language of the captions drawn on the film. */
+  lang: Lang = 'en';
 
   private readonly canvas: HTMLCanvasElement;
   private readonly ctx: CanvasRenderingContext2D;
@@ -277,7 +280,8 @@ export class FilmPlayer {
     const safe = this.inset > 0 ? Math.min(VH, (this.H - this.inset - oy) / k) : VH;
     this.safe = this.still ? safe : this.safe + (safe - this.safe) * 0.2;
     renderFrame(ctx, r, {
-      caption: this.captions && !this.waiting && this.poster === null ? this.film.caption(this.T) : null,
+      caption: this.captions && !this.waiting && this.poster === null ? translated(this.film.caption(this.T), this.lang) : null,
+      tr: translator(this.lang),
       clock,
       still: this.still,
       cam,
@@ -287,13 +291,17 @@ export class FilmPlayer {
   }
 }
 
+function translated(c: { text: string; alpha: number } | null, lang: Lang) {
+  return c && lang !== 'en' ? { ...c, text: translator(lang)(c.text) } : c;
+}
+
 /** Draws the film at time T onto any canvas size (used for video export). */
-export function drawFilmFrame(film: Film, ctx: CanvasRenderingContext2D, T: number, captions: boolean) {
+export function drawFilmFrame(film: Film, ctx: CanvasRenderingContext2D, T: number, captions: boolean, lang: Lang = 'en') {
   const { width, height } = ctx.canvas;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, width, height);
   const k = Math.min(width / VW, height / VH);
   ctx.setTransform(k, 0, 0, k, (width - VW * k) / 2, (height - VH * k) / 2);
-  renderFrame(ctx, reader(film, T), { caption: captions ? film.caption(T) : null, clock: T });
+  renderFrame(ctx, reader(film, T), { caption: captions ? translated(film.caption(T), lang) : null, clock: T, tr: translator(lang) });
 }

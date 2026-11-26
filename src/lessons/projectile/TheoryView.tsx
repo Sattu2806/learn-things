@@ -1,12 +1,13 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Film } from '../../film/timeline';
-import { clock } from '../../ui/clock';
 import { Icon } from '../../ui/Icons';
 import { useMedia } from '../../ui/useMedia';
 import { Eq, M } from '../../ui/Math';
 import { Scrub } from '../../ui/Scrub';
 import { FallFigure, TrajectorySketch, VectorFigure } from './Figures';
-import { MOMENTS, type Moment } from './moments';
+import { inSyllabus, type Course, type Scope } from './courses';
+import { AirSection, AngleSection, CurvatureSection, EquationsSection, HeightAngleSection, InclineSection, RelativeSection, SpeedSection, TargetSection, VelocitySection } from './TheoryMore';
+import { Answer, Example, FilmLink, Given, Note, SectionHead, Step, Watch } from './theoryParts';
 import { num, solve } from './numbers';
 
 /**
@@ -16,19 +17,31 @@ import { num, solve } from './numbers';
  */
 
 const SECTIONS = [
-  { id: 'idea', title: 'The big idea', group: 'Theory' },
-  { id: 'split', title: 'Splitting the speed', group: 'Theory' },
-  { id: 'position', title: 'Where the ball is', group: 'Theory' },
-  { id: 'square', title: 'Why t squared', group: 'Theory' },
-  { id: 'parabola', title: 'Why a parabola', group: 'Theory' },
-  { id: 'results', title: 'Time, height and range', group: 'Theory' },
-  { id: 'height', title: 'Thrown from a height', group: 'Theory' },
-  { id: 'sheet', title: 'Formula sheet', group: 'Use it' },
-  { id: 'examples', title: 'Worked examples', group: 'Use it' },
-  { id: 'mistakes', title: 'Common mistakes', group: 'Use it' },
-  { id: 'practice', title: 'Practice', group: 'Use it' },
-  { id: 'try', title: 'Try your own numbers', group: 'Use it' },
-] as const;
+  { id: 'idea', title: 'The big idea', group: 'Theory', scope: 'core' },
+  { id: 'split', title: 'Splitting the speed', group: 'Theory', scope: 'core' },
+  { id: 'position', title: 'Where the ball is', group: 'Theory', scope: 'core' },
+  { id: 'velocity', title: 'Velocity at any moment', group: 'Theory', scope: 'core' },
+  { id: 'equations', title: 'From the equations of motion', group: 'Theory', scope: 'core' },
+  { id: 'square', title: 'Why t squared', group: 'Theory', scope: 'core' },
+  { id: 'parabola', title: 'Why a parabola', group: 'Theory', scope: 'core' },
+  { id: 'results', title: 'Time, height and range', group: 'Theory', scope: 'core' },
+  { id: 'angle', title: 'Finding the angle', group: 'Theory', scope: 'core' },
+  { id: 'height', title: 'Thrown from a height', group: 'Theory', scope: 'core' },
+  { id: 'height-angle', title: 'At an angle from a height', group: 'Theory', scope: 'core' },
+  { id: 'speed', title: 'Speed at any height', group: 'Theory', scope: 'core' },
+  { id: 'target', title: 'Hitting a target', group: 'Theory', scope: 'core' },
+  { id: 'incline', title: 'Up and down a slope', group: 'Advanced', scope: 'advanced' },
+  { id: 'relative', title: 'Relative motion', group: 'Advanced', scope: 'advanced' },
+  { id: 'curvature', title: 'Radius of curvature', group: 'Advanced', scope: 'advanced' },
+  { id: 'air', title: 'Air resistance', group: 'Advanced', scope: 'extended' },
+  { id: 'sheet', title: 'Formula sheet', group: 'Use it', scope: 'core' },
+  { id: 'examples', title: 'Worked examples', group: 'Use it', scope: 'core' },
+  { id: 'mistakes', title: 'Common mistakes', group: 'Use it', scope: 'core' },
+  { id: 'practice', title: 'Practice', group: 'Use it', scope: 'core' },
+  { id: 'try', title: 'Try your own numbers', group: 'Use it', scope: 'core' },
+] as const satisfies readonly { id: string; title: string; group: string; scope: Scope }[];
+
+const no = (id: SectionId) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 type SectionId = (typeof SECTIONS)[number]['id'];
 
@@ -43,30 +56,21 @@ const EARTH = solve({ v: 20, theta: 35, g: 9.8 });
 const MOON = solve({ v: 20, theta: 35, g: 1.6 });
 const CLIFF = solve({ v: 5, theta: 0, g: 9.8, h: 20 });
 
-/** Lets any link on the page jump to a moment of the film. */
-const Watch = createContext<{ film: Film; onWatch: (t: number) => void } | null>(null);
-
-function FilmLink({ m, children = 'Watch it in the film' }: { m: Moment; children?: ReactNode }) {
-  const ctx = useContext(Watch);
-  const b = ctx?.film.beats.find((x) => x.say.startsWith(MOMENTS[m]));
-  if (!ctx || !b) return null;
-  return (
-    <button className="film-link" onClick={() => ctx.onWatch(b.start)}>
-      <Icon name="play" size={11} />
-      <span>{children}</span>
-      <span className="film-link-t">{clock(b.start)}</span>
-    </button>
-  );
-}
-
 interface Props {
   film: Film;
   active: boolean;
+  course: Course;
   /** Jump to this moment of the film and play. */
   onWatch: (t: number) => void;
 }
 
-export default function TheoryView({ film, active, onWatch }: Props) {
+export default function TheoryView({ film, active, course, onWatch }: Props) {
+  const badge = (id: SectionId) => {
+    const sec = SECTIONS.find((x) => x.id === id)!;
+    if (sec.scope === 'core') return undefined;
+    if (!inSyllabus(course, sec.scope)) return `Extra for ${course.name}`;
+    return sec.scope === 'advanced' ? 'JEE · university' : 'IB · A-level · AP C';
+  };
   const scrollRef = useRef<HTMLElement>(null);
   const [current, setCurrent] = useState<SectionId>('idea');
   const narrow = useMedia('(max-width: 900px)');
@@ -112,7 +116,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
     document.getElementById(`t-${id}`)?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   };
 
-  const groups = ['Theory', 'Use it'] as const;
+  const groups = ['Theory', 'Advanced', 'Use it'] as const;
 
   return (
     <main className="layout" id="view-theory" role="tabpanel" aria-label="Theory" hidden={!active}>
@@ -129,6 +133,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
                     <button className={s.id === current ? 'chapter is-current' : 'chapter'} aria-current={s.id === current ? 'true' : undefined} onClick={() => go(s.id)}>
                       <span className="chapter-n">{String(SECTIONS.findIndex((x) => x.id === s.id) + 1).padStart(2, '0')}</span>
                       <span className="chapter-name">{s.title}</span>
+                      {s.scope !== 'core' && !inSyllabus(course, s.scope) && <span className="toc-extra">Extra</span>}
                     </button>
                   </li>
                 ))}
@@ -163,9 +168,19 @@ export default function TheoryView({ film, active, onWatch }: Props) {
             </p>
           </header>
 
+          <aside className="course-note" aria-label="Your course">
+            <span className="t-note-label">
+              {course.region} · {course.name}
+            </span>
+            <p>
+              In your course this is <strong>{course.where}</strong>. Your books write the launch speed as <M>{course.launch === 'u' ? 'u' : 'v _0'}</M>; here it is <M>v</M> (or <M>u</M> in the derivations). {course.name} questions usually take{' '}
+              <M>{`g = ${course.g} "m/s²"`}</M>. Sections marked “Extra” go beyond your syllabus: read them for depth, or skip them.
+            </p>
+          </aside>
+
           {/* ---------------------------------------------------------- 01 */}
           <section className="t-section" id="t-idea">
-            <SectionHead n={1} title="The big idea" />
+            <SectionHead n={no('idea')} title="The big idea" />
             <p>
               A <strong>projectile</strong> is anything flying freely once it leaves your hand: a thrown ball, a kicked football, a jet of water. Nothing pushes it along any more. Only gravity pulls on it, straight down.
             </p>
@@ -186,7 +201,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 02 */}
           <section className="t-section" id="t-split">
-            <SectionHead n={2} title="Splitting the speed" />
+            <SectionHead n={no('split')} title="Splitting the speed" />
             <p>
               A ball thrown at speed <M>v</M>, at angle <M>θ</M> above the ground, moves sideways and upward at the same time. The two parts make a right-angled triangle, with <M>v</M> as its longest side:
             </p>
@@ -203,7 +218,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 03 */}
           <section className="t-section" id="t-position">
-            <SectionHead n={3} title="Where the ball is" />
+            <SectionHead n={no('position')} title="Where the ball is" />
             <p>Sideways the speed never changes, so the distance travelled is just speed times time:</p>
             <Eq src="x = v · cos θ · t" />
             <p>
@@ -227,9 +242,12 @@ export default function TheoryView({ film, active, onWatch }: Props) {
             <FilmLink m="minusDrop" />
           </section>
 
+          <VelocitySection n={no('velocity')} badge={badge('velocity')} />
+          <EquationsSection n={no('equations')} badge={badge('equations')} />
+
           {/* ---------------------------------------------------------- 04 */}
           <section className="t-section" id="t-square">
-            <SectionHead n={4} title="Why t squared" />
+            <SectionHead n={no('square')} title="Why t squared" />
             <p>
               Why does the drop grow with <M>t ^2</M>, and not with <M>t</M>? Drop a ball and flash a light every second. After one second it has fallen 1 unit, after two seconds 4 units, then 9, then 16.
             </p>
@@ -247,7 +265,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 05 */}
           <section className="t-section" id="t-parabola">
-            <SectionHead n={5} title="Why a parabola" />
+            <SectionHead n={no('parabola')} title="Why a parabola" />
             <p>
               To see the shape of the path, take the time out. From <M>x = v · cos θ · t</M>, the time is <M>t = x / ( v · cos θ )</M>. Put that into the height:
             </p>
@@ -264,7 +282,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 06 */}
           <section className="t-section" id="t-results">
-            <SectionHead n={6} title="Time, height and range" />
+            <SectionHead n={no('results')} title="Time, height and range" />
             <h3 className="t-h3">How long it flies</h3>
             <p>The ball lands when the drop has caught up with the rise:</p>
             <Eq src="v · sin θ · t = ½ · g · t ^2" />
@@ -302,9 +320,11 @@ export default function TheoryView({ film, active, onWatch }: Props) {
             </Eq>
           </section>
 
+          <AngleSection n={no('angle')} badge={badge('angle')} />
+
           {/* ---------------------------------------------------------- 07 */}
           <section className="t-section" id="t-height">
-            <SectionHead n={7} title="Thrown from a height" />
+            <SectionHead n={no('height')} title="Thrown from a height" />
             <p>
               If the ball starts at height <M>h</M> (a cliff, a table, your hand), its height simply starts at <M>h</M>:
             </p>
@@ -319,9 +339,17 @@ export default function TheoryView({ film, active, onWatch }: Props) {
             </Note>
           </section>
 
+          <HeightAngleSection n={no('height-angle')} badge={badge('height-angle')} />
+          <SpeedSection n={no('speed')} badge={badge('speed')} />
+          <TargetSection n={no('target')} badge={badge('target')} />
+          <InclineSection n={no('incline')} badge={badge('incline')} />
+          <RelativeSection n={no('relative')} badge={badge('relative')} />
+          <CurvatureSection n={no('curvature')} badge={badge('curvature')} />
+          <AirSection n={no('air')} badge={badge('air')} />
+
           {/* ---------------------------------------------------------- 08 */}
           <section className="t-section" id="t-sheet">
-            <SectionHead n={8} title="Formula sheet" />
+            <SectionHead n={no('sheet')} title="Formula sheet" />
             <div className="t-table-wrap">
               <table className="t-table">
                 <tbody>
@@ -338,6 +366,15 @@ export default function TheoryView({ film, active, onWatch }: Props) {
                       ['Longest range, at 45°', 'R _max = [ v ^2 | g ]'],
                       ['Shape of the path', 'y = x · tan θ − [ g · x ^2 | 2 · v ^2 · cos ^2 θ ]'],
                       ['Thrown sideways from a height', 't = √[ [ 2 · h | g ] ]'],
+                      ['Speed and direction at any time', 'v = √[ v _x ^2 + v _y ^2 ] ,  tan φ = [ v _y | v _x ]'],
+                      ['Speed at height y', 'v ^2 = u ^2 − 2 · g · y'],
+                      ['Time of flight from height h', 'T = [ u · sin θ + √[ u ^2 · sin ^2 θ + 2 · g · h ] | g ]'],
+                      ['Angle for a given range', 'sin 2 θ = [ R · g | u ^2 ]'],
+                      ['Two angles, same range', 'R = 4 · √[ H _1 · H _2 ] ,  T _1 · T _2 = [ 2 · R | g ]'],
+                      ['Slowest throw to (x, y)', 'u _min ^2 = g · ( y + √[ x ^2 + y ^2 ] )'],
+                      ['Time on a slope α', 'T = [ 2 · u · sin ( θ − α ) | g · cos α ]'],
+                      ['Longest throw on a slope', 'R _max = [ u ^2 | g · ( 1 ± sin α ) ]'],
+                      ['Radius of curvature', 'r = [ v ^3 | g · v _x ] ,  r _top = [ u ^2 · cos ^2 θ | g ]'],
                     ] as const
                   ).map(([name, src]) => (
                     <tr key={name}>
@@ -389,7 +426,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 09 */}
           <section className="t-section" id="t-examples">
-            <SectionHead n={9} title="Worked examples" />
+            <SectionHead n={no('examples')} title="Worked examples" />
             <p className="t-tip">
               Tip: keep the full numbers in your calculator between steps, and round only the final answer. Make sure it is set to degrees.
             </p>
@@ -573,7 +610,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 10 */}
           <section className="t-section" id="t-mistakes">
-            <SectionHead n={10} title="Common mistakes" />
+            <SectionHead n={no('mistakes')} title="Common mistakes" />
             <div className="mistakes">
               <Mistake title="Forgetting the ½" wrong="y = v · sin θ · t − g · t ^2">
                 The ball falls twice as far as it should. It lands in half the time, and half as far away.
@@ -598,7 +635,7 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 11 */}
           <section className="t-section" id="t-practice">
-            <SectionHead n={11} title="Practice" />
+            <SectionHead n={no('practice')} title="Practice" />
             <p>Try each one, then open the answer to check your working. Questions 1 to 5 are about one kick: a football kicked at 25 m/s, 30° above the ground.</p>
             <ol className="practice">
               <Question n={1} q="How long is it in the air?">
@@ -630,9 +667,9 @@ export default function TheoryView({ film, active, onWatch }: Props) {
 
           {/* ---------------------------------------------------------- 12 */}
           <section className="t-section" id="t-try">
-            <SectionHead n={12} title="Try your own numbers" />
+            <SectionHead n={no('try')} title="Try your own numbers" />
             <p>Drag the numbers sideways (or use the arrow keys) to change the throw. Use it to check your homework.</p>
-            <Calculator />
+            <Calculator g0={course.g} />
           </section>
 
           <footer className="closing">
@@ -646,67 +683,6 @@ export default function TheoryView({ film, active, onWatch }: Props) {
         </Watch.Provider>
       </section>
     </main>
-  );
-}
-
-function SectionHead({ n, title }: { n: number; title: string }) {
-  return (
-    <header className="t-head">
-      <span className="t-n">{String(n).padStart(2, '0')}</span>
-      <h2>{title}</h2>
-    </header>
-  );
-}
-
-function Note({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <aside className="t-note">
-      <span className="t-note-label">{label}</span>
-      <p>{children}</p>
-    </aside>
-  );
-}
-
-function Example({ n, title, children }: { n: number; title: string; children: ReactNode }) {
-  return (
-    <section className="example" aria-labelledby={`ex-${n}`}>
-      <header className="example-head">
-        <span className="example-n">Example {n}</span>
-        <h3 id={`ex-${n}`}>{title}</h3>
-      </header>
-      {children}
-    </section>
-  );
-}
-
-function Given({ items }: { items: string[] }) {
-  return (
-    <div className="given">
-      <span className="given-label">Given</span>
-      {items.map((src) => (
-        <span key={src} className="given-item">
-          <M>{src}</M>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function Step({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <li className="step">
-      <h4>{title}</h4>
-      {children}
-    </li>
-  );
-}
-
-function Answer({ children }: { children: ReactNode }) {
-  return (
-    <p className="answer">
-      <span className="answer-label">Answer</span>
-      <span>{children}</span>
-    </p>
   );
 }
 
@@ -739,10 +715,10 @@ function Question({ n, q, children }: { n: number; q: string; children: ReactNod
   );
 }
 
-function Calculator() {
+function Calculator({ g0 }: { g0: number }) {
   const [v, setV] = useState(20);
   const [theta, setTheta] = useState(40);
-  const [g, setG] = useState(9.8);
+  const [g, setG] = useState(g0);
   const [h, setH] = useState(0);
   const s = solve({ v, theta, g, h });
   const flies = s.T > 0;

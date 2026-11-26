@@ -251,21 +251,24 @@ function stamp(t: number, sep: string) {
 }
 
 /** Subtitles for the narration, in SubRip (.srt) format. */
-export function toSrt(film: Film): string {
+const same = (s: string) => s;
+
+/** Subtitles, optionally translated line by line. */
+export function toSrt(film: Film, tr: (line: string) => string = same): string {
   return film.beats
     .filter((b) => b.say)
-    .map((b, i) => `${i + 1}\n${stamp(b.start, ',')} --> ${stamp(b.speakEnd, ',')}\n${b.say}\n`)
+    .map((b, i) => `${i + 1}\n${stamp(b.start, ',')} --> ${stamp(b.speakEnd, ',')}\n${tr(b.say)}\n`)
     .join('\n');
 }
 
 /** A voiceover script: chapters, timings and lines to read. */
-export function toScript(film: Film, title: string): string {
+export function toScript(film: Film, title: string, tr: (line: string) => string = same): string {
   const lines = [`${title}`, `Total length ${stamp(film.duration, '.').slice(3, 8)}`, ''];
   for (const ch of film.chapters) {
     lines.push(`## ${ch.title}  [${stamp(ch.start, '.').slice(3, 8)}]`);
     for (const b of film.beats.filter((x) => x.chapter === ch.index && x.say)) {
-      lines.push(`${stamp(b.start, '.').slice(3, 8)}  ${b.say}`);
-      if (b.pause) lines.push(`        (Pause and ponder, ${b.pause.hold} s: ${b.pause.prompt})`);
+      lines.push(`${stamp(b.start, '.').slice(3, 8)}  ${tr(b.say)}`);
+      if (b.pause) lines.push(`        (${tr('Pause and ponder')}, ${b.pause.hold} s: ${tr(b.pause.prompt)})`);
     }
     lines.push('');
   }

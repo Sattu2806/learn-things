@@ -58,3 +58,36 @@ describe('worked numbers', () => {
     expect([cliff.T.toFixed(2), cliff.R.toFixed(1)]).toEqual(['3.03', '24.2']);
   });
 });
+
+describe('beyond flat ground', () => {
+  it('works on slopes', async () => {
+    const { onIncline, inclineMax, samplePath } = await import('./numbers');
+    const up = onIncline(20, 60, 10, 30);
+    expect(up.T.toFixed(2)).toBe('2.31');
+    expect(up.along.toFixed(2)).toBe('26.67');
+    expect(inclineMax(20, 10, 30).along.toFixed(2)).toBe('26.67');
+    expect(inclineMax(20, 10, -30).along.toFixed(0)).toBe('80');
+    const p = samplePath({ v: 20, theta: 60, g: 10, incline: 30 });
+    const end = p[p.length - 1];
+    expect(end.y).toBeCloseTo(end.x * Math.tan(Math.PI / 6), 6);
+  });
+
+  it('finds angles, aims and curves', async () => {
+    const { anglesFor, slowestTo, curveRadius } = await import('./numbers');
+    const [lo, hi] = anglesFor(20, 9.8, 30)!;
+    expect([lo.toFixed(1), hi.toFixed(1)]).toEqual(['23.7', '66.3']);
+    expect(anglesFor(20, 9.8, 50)).toBeNull();
+    expect(slowestTo(40, 30, 10).v.toFixed(2)).toBe('28.28');
+    expect(curveRadius({ v: 20, theta: 60, g: 10 }, Math.sqrt(3))).toBeCloseTo(10, 9);
+  });
+
+  it('lands short with air drag', async () => {
+    const { samplePath } = await import('./numbers');
+    const free = samplePath({ v: 30, theta: 45, g: 9.8 });
+    const dragged = samplePath({ v: 30, theta: 45, g: 9.8, drag: 0.01 });
+    const R = (p: typeof free) => p[p.length - 1].x;
+    expect(R(free)).toBeCloseTo((30 * 30) / 9.8, 6);
+    expect(R(dragged)).toBeLessThan(R(free) * 0.8);
+    expect(dragged[dragged.length - 1].y).toBeCloseTo(0, 6);
+  });
+});

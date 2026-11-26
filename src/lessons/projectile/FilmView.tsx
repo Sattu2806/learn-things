@@ -9,6 +9,7 @@ import { Scrub } from '../../ui/Scrub';
 import { POSTER, TITLE } from './film';
 import { flight, metres } from './model';
 import { FilmPlayer, createStore, drawFilmFrame, type Mode, type PlayerState, type Store } from './player';
+import { LANGS, translator, type Lang } from './translations';
 
 const RATES = [1, 1.25, 1.5, 0.75];
 const PRESETS: [string, number][] = [
@@ -76,7 +77,8 @@ function Chapters({ film, time, chapter, onSeek }: { film: Film; time: Store<num
   );
 }
 
-function Transcript({ film, beat, chapter, onSeek, follow }: { film: Film; beat: number; chapter: number; onSeek: (t: number) => void; follow: boolean }) {
+function Transcript({ film, beat, chapter, onSeek, follow, lang }: { film: Film; beat: number; chapter: number; onSeek: (t: number) => void; follow: boolean; lang: Lang }) {
+  const tr = translator(lang);
   const ref = useRef<HTMLOListElement>(null);
   useEffect(() => {
     if (!follow) return;
@@ -90,8 +92,8 @@ function Transcript({ film, beat, chapter, onSeek, follow }: { film: Film; beat:
         <li key={b.index}>
           <button className={b.index === beat ? 'line is-now' : b.index < beat ? 'line is-past' : 'line'} onClick={() => onSeek(b.start)}>
             <span className="line-t">{clock(b.start)}</span>
-            <span className="line-text">{b.say}</span>
-            {b.pause && <span className="line-pause">Your turn: {b.pause.prompt}</span>}
+            <span className="line-text">{tr(b.say)}</span>
+            {b.pause && <span className="line-pause">Your turn: {tr(b.pause.prompt)}</span>}
           </button>
         </li>
       ))}
@@ -157,7 +159,7 @@ function YourTurn({ player, beat }: { player: FilmPlayer; beat: Beat }) {
   );
 }
 
-function ExportPanel({ film }: { film: Film }) {
+function ExportPanel({ film, lang, onLang }: { film: Film; lang: Lang; onLang: (l: Lang) => void }) {
   const [open, setOpen] = useState(false);
   const [fps, setFps] = useState(30);
   const [burn, setBurn] = useState(false);
@@ -171,7 +173,7 @@ function ExportPanel({ film }: { film: Film }) {
     setMessage('');
     setProgress({ done: 0, total: Math.round(film.duration * fps) });
     try {
-      const res = await renderVideo(film.duration, (ctx, T) => drawFilmFrame(film, ctx, T, burn), {
+      const res = await renderVideo(film.duration, (ctx, T) => drawFilmFrame(film, ctx, T, burn, lang), {
         width: 1920,
         height: 1080,
         fps,
@@ -211,6 +213,13 @@ function ExportPanel({ film }: { film: Film }) {
               Captions in the picture
             </label>
           </div>
+          <div className="export-row" role="group" aria-label="Language of the subtitles, script and captions">
+            {LANGS.map((l) => (
+              <button key={l.id} className="preset" aria-pressed={lang === l.id} onClick={() => onLang(l.id)} lang={l.id}>
+                {l.name}
+              </button>
+            ))}
+          </div>
           {progress ? (
             <div className="progress">
               <div className="progress-bar" style={{ '--p': progress.done / progress.total } as CSSProperties} />
@@ -226,10 +235,10 @@ function ExportPanel({ film }: { film: Film }) {
               <button className="btn btn-primary" onClick={run} disabled={!supported}>
                 Render video
               </button>
-              <button className="btn btn-outline" onClick={() => download(toSrt(film), 'living-equations.srt', 'application/x-subrip')}>
+              <button className="btn btn-outline" onClick={() => download(toSrt(film, translator(lang)), `living-equations${lang === 'en' ? '' : `.${lang}`}.srt`, 'application/x-subrip')}>
                 Subtitles
               </button>
-              <button className="btn btn-outline" onClick={() => download(toScript(film, TITLE), 'living-equations-voiceover.txt')}>
+              <button className="btn btn-outline" onClick={() => download(toScript(film, TITLE, translator(lang)), `living-equations-voiceover${lang === 'en' ? '' : `.${lang}`}.txt`)}>
                 Script
               </button>
             </div>
@@ -269,6 +278,7 @@ export default function FilmView({ film, active, api }: FilmViewProps) {
   const [player, setPlayer] = useState<FilmPlayer | null>(null);
   const [mode, setMode] = useState<Mode>('lesson');
   const [captions, setCaptions] = useState(true);
+  const [lang, setLang] = useState<Lang>('en');
   const [rate, setRate] = useState(1);
   const [expanded, setExpanded] = useState(false);
   const [idle, setIdle] = useState(false);
@@ -290,6 +300,9 @@ export default function FilmView({ film, active, api }: FilmViewProps) {
   useEffect(() => {
     if (playerRef.current) playerRef.current.captions = captions;
   }, [captions, player]);
+  useEffect(() => {
+    if (playerRef.current) playerRef.current.lang = lang;
+  }, [lang, player]);
   useEffect(() => playerRef.current?.setRate(rate), [rate, player]);
   useEffect(() => {
     document.body.classList.toggle('is-locked', expanded);
@@ -386,9 +399,9 @@ export default function FilmView({ film, active, api }: FilmViewProps) {
     (window as unknown as { __lesson: unknown }).__lesson = {
       ready: true,
       duration: film.duration,
-      async renderVideo(o: { fps?: number; captions?: boolean; width?: number; height?: number; from?: number; to?: number }) {
+      async renderVideo(o: { fps?: number; captions?: boolean; lang?: Lang; width?: number; height?: number; from?: number; to?: number }) {
         const fps = o.fps ?? 30;
-        const res = await renderVideo(film.duration, (ctx, T) => drawFilmFrame(film, ctx, T, o.captions ?? false), {
+        const res = await renderVideo(film.duration, (ctx, T) => drawFilmFrame(film, ctx, T, o.captions ?? false, o.lang ?? 'en'), {
           width: o.width ?? 1920,
           height: o.height ?? 1080,
           fps,
@@ -401,8 +414,9 @@ export default function FilmView({ film, active, api }: FilmViewProps) {
         download(res.blob, `living-equations.${res.extension}`);
         return { codec: res.codec, frames: res.frames, extension: res.extension };
       },
-      srt: () => toSrt(film),
-      script: () => toScript(film, TITLE),
+      srt: (lang: Lang = 'en') => toSrt(film, translator(lang)),
+      script: (lang: Lang = 'en') => toScript(film, TITLE, translator(lang)),
+      langs: LANGS.map((l) => l.id),
       beats: film.beats.map((b) => ({ start: b.start, speakEnd: b.speakEnd, end: b.end, say: b.say, pause: !!b.pause })),
       seek: (t: number) => {
         playerRef.current?.pause();
@@ -429,10 +443,10 @@ export default function FilmView({ film, active, api }: FilmViewProps) {
               <span>{chapter?.title}</span>
               <span className="transcript-sub">Narration</span>
             </div>
-            <Transcript film={film} beat={st.beat} chapter={st.chapter} onSeek={seek} follow={!narrow} />
+            <Transcript film={film} beat={st.beat} chapter={st.chapter} onSeek={seek} follow={!narrow} lang={lang} />
           </div>
           <div className="panel-foot">
-            <ExportPanel film={film} />
+            <ExportPanel film={film} lang={lang} onLang={setLang} />
           </div>
         </aside>
 
@@ -507,6 +521,16 @@ export default function FilmView({ film, active, api }: FilmViewProps) {
                 <kbd>Space</kbd> play <kbd>←</kbd>
                 <kbd>→</kbd> skip <kbd>C</kbd> captions <kbd>F</kbd> full screen
               </span>
+              <label className="cc-lang">
+                <span className="visually-hidden">Caption language</span>
+                <select className="select select-sm" value={lang} onChange={(e) => setLang(e.target.value as Lang)} title="Caption language">
+                  {LANGS.map((l) => (
+                    <option key={l.id} value={l.id}>
+                      CC · {l.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <span className="mode mode-sm" role="radiogroup" aria-label="How to play the film">
                 {(
                   [

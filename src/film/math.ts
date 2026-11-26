@@ -120,8 +120,8 @@ export function parseMath(src: string): MathNode[] {
 
 export function mathKind(text: string): MathKind {
   if (text === 'sin' || text === 'cos' || text === 'tan') return 'fn';
-  if (/^[=+−·×≈<>/-]$/.test(text)) return 'op';
-  if (/^[()]$/.test(text)) return 'punct';
+  if (/^[=+−·×≈<>/±→-]$/.test(text)) return 'op';
+  if (/^[(),]$/.test(text)) return 'punct';
   if (/^[0-9.]+°?$|^½$/.test(text)) return 'num';
   if (/^[a-zA-Zα-ωθ]$/.test(text)) return 'var';
   return 'word';
