@@ -1,15 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { toSrt } from '../../film/timeline';
 import { buildFilm } from './film';
-import { missing, translator } from './translations';
+import { LANGS, missing, translator } from './translations';
 
 describe('translated narration', () => {
   const film = buildFilm();
   const lines = [...film.beats.filter((b) => b.say).map((b) => b.say), ...film.beats.filter((b) => b.pause).map((b) => b.pause!.prompt), 'Pause and ponder'];
 
-  it('covers every line and prompt in Hindi and Spanish', () => {
-    expect(missing(lines, 'hi')).toEqual([]);
-    expect(missing(lines, 'es')).toEqual([]);
+  it('covers every line and prompt in every language', () => {
+    for (const { id } of LANGS) {
+      if (id === 'en') continue;
+      expect(missing(lines, id), id).toEqual([]);
+    }
   });
 
   it('writes translated subtitles with the same timings', () => {

@@ -4,12 +4,16 @@
  * stays the single source; a test checks every line has a translation.
  */
 
-export type Lang = 'en' | 'hi' | 'es';
+export type Lang = 'en' | 'hi' | 'es' | 'pt' | 'fr' | 'ar' | 'id';
 
 export const LANGS: { id: Lang; name: string }[] = [
   { id: 'en', name: 'English' },
   { id: 'hi', name: 'हिन्दी' },
   { id: 'es', name: 'Español' },
+  { id: 'pt', name: 'Português' },
+  { id: 'fr', name: 'Français' },
+  { id: 'ar', name: 'العربية' },
+  { id: 'id', name: 'Bahasa Indonesia' },
 ];
 
 type Table = Record<string, string>;
@@ -112,7 +116,203 @@ const es: Table = {
   'Pause and ponder': 'Pausa y piensa',
 };
 
-const TABLES: Record<Exclude<Lang, 'en'>, Table> = { hi, es };
+const pt: Table = {
+  'Throw a ball, and it traces a curve.': 'Lance uma bola e ela desenha uma curva.',
+  'Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.':
+    'Lance-a mais rápido, ou em outro ângulo, e a curva muda. Mas é sempre o mesmo tipo de curva: uma parábola.',
+  'Why that shape? Here is the equation that describes it.': 'Por que essa forma? Aqui está a equação que a descreve.',
+  'It can look like a jumble of symbols. But every piece of it is a picture, and by the end you will see each one.':
+    'Pode parecer uma confusão de símbolos. Mas cada parte dela é uma imagem, e no final você vai enxergar todas.',
+  'Let us start somewhere simpler. Imagine switching gravity off.': 'Vamos começar por algo mais simples. Imagine desligar a gravidade.',
+  'Thrown at speed v and angle theta, the ball sets off in a straight line.': 'Lançada com velocidade v e ângulo theta, a bola parte em linha reta.',
+  'Nothing pulls on it, so it never slows down, and it never turns.': 'Nada a puxa, então ela nunca desacelera e nunca desvia.',
+  'In every half second, it covers exactly the same distance.': 'A cada meio segundo, ela percorre exatamente a mesma distância.',
+  'So its height simply grows with time: the upward part of its speed, v sine theta, multiplied by t.':
+    'Assim, sua altura simplesmente cresce com o tempo: a parte vertical da velocidade, v seno de theta, vezes t.',
+  'Now switch gravity back on, but keep a ghost of the old ball, still sailing along its straight line.':
+    'Agora ligue a gravidade de novo, mas mantenha um fantasma da bola antiga, ainda seguindo sua linha reta.',
+  'Watch closely. The real ball always stays directly below its ghost.': 'Observe bem. A bola real fica sempre exatamente abaixo do seu fantasma.',
+  'How far below? Exactly as far as a ball you simply let go of would fall in the same time.': 'Quanto abaixo? Exatamente o quanto uma bola que você simplesmente solta cairia no mesmo tempo.',
+  'A dropped ball falls one half g t squared. So that is the gap between the ball and its ghost.':
+    'Uma bola solta cai um meio g t ao quadrado. Essa é a distância entre a bola e o seu fantasma.',
+  'So the height is the straight line height, minus the drop.': 'Então a altura é a altura da linha reta, menos a queda.',
+  'Here is the drop on its own: a ball let go from rest, with a flash every second.': 'Aqui está a queda sozinha: uma bola solta do repouso, com um clarão a cada segundo.',
+  'After one second it has fallen one unit. After two seconds, four units. After three, nine. After four, sixteen.':
+    'Depois de um segundo, ela caiu uma unidade. Depois de dois segundos, quatro. Depois de três, nove. Depois de quatro, dezesseis.',
+  'So in each second it falls one, then three, then five, then seven units. It keeps speeding up, so every second it falls a little further than the last.':
+    'Assim, em cada segundo ela cai uma, depois três, depois cinco, depois sete unidades. Ela vai ficando mais rápida, então a cada segundo cai um pouco mais que no anterior.',
+  'And odd numbers always stack up into perfect squares.': 'E os números ímpares sempre se somam formando quadrados perfeitos.',
+  'That square is the t squared in the formula.': 'Esse quadrado é o t ao quadrado da fórmula.',
+  'Pause and ponder. What if the formula had a plain t here, instead of t squared?': 'Pare e reflita. E se a fórmula tivesse aqui um t simples, em vez de t ao quadrado?',
+  'Then the drop would grow by the same amount every second. Nothing would bend the path, and the ball would never come back down.':
+    'Então a queda aumentaria a mesma quantidade a cada segundo. Nada curvaria a trajetória, e a bola nunca voltaria a descer.',
+  'So when does the ball land? At the moment the drop has grown as big as the rise.': 'Então quando a bola chega ao chão? No momento em que a queda se torna tão grande quanto a subida.',
+  'In symbols: the rise equals the drop.': 'Em símbolos: a subida é igual à queda.',
+  'Cancel one t from each side,': 'Cancele um t de cada lado,',
+  'and out drops the time in the air.': 'e surge o tempo no ar.',
+  'The distance is the sideways speed, v cosine theta, times that time.': 'A distância é a velocidade horizontal, v cosseno de theta, vezes esse tempo.',
+  'Put in that time, and two sine theta cosine theta folds neatly into sine two theta.': 'Substitua esse tempo, e dois seno de theta cosseno de theta se resume em seno de dois theta.',
+  'Sine two theta is largest at forty five degrees, so that is the angle that throws farthest. And thirty and sixty land in exactly the same spot.':
+    'Seno de dois theta é máximo em quarenta e cinco graus, então esse é o ângulo que lança mais longe. E trinta e sessenta caem exatamente no mesmo ponto.',
+  'So a thrown ball is really two simple things at once.': 'Então uma bola lançada é, na verdade, duas coisas simples ao mesmo tempo.',
+  'A straight line, where it would go if nothing pulled on it. And a drop below that line that grows like t squared.':
+    'Uma linha reta, para onde ela iria se nada a puxasse. E uma queda abaixo dessa linha que cresce como t ao quadrado.',
+  'Every parabola you have ever seen is exactly that, and nothing more.': 'Toda parábola que você já viu é exatamente isso, e nada mais.',
+  'Change the speed and the angle.': 'Mude a velocidade e o ângulo.',
+  'Try the Moon or Mars by changing g.': 'Experimente a Lua ou Marte mudando g.',
+  'What changes with t instead of t squared?': 'O que muda com t em vez de t ao quadrado?',
+  'Find the angle that lands farthest.': 'Encontre o ângulo que chega mais longe.',
+  'Pause and ponder': 'Pare e reflita',
+};
+
+const fr: Table = {
+  'Throw a ball, and it traces a curve.': 'Lancez une balle, et elle trace une courbe.',
+  'Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.':
+    'Lancez-la plus vite, ou sous un autre angle, et la courbe change. Mais c’est toujours le même type de courbe : une parabole.',
+  'Why that shape? Here is the equation that describes it.': 'Pourquoi cette forme ? Voici l’équation qui la décrit.',
+  'It can look like a jumble of symbols. But every piece of it is a picture, and by the end you will see each one.':
+    'On dirait un fouillis de symboles. Mais chaque morceau est une image, et à la fin vous les verrez tous.',
+  'Let us start somewhere simpler. Imagine switching gravity off.': 'Commençons par quelque chose de plus simple. Imaginez que l’on coupe la pesanteur.',
+  'Thrown at speed v and angle theta, the ball sets off in a straight line.': 'Lancée à la vitesse v sous l’angle thêta, la balle part en ligne droite.',
+  'Nothing pulls on it, so it never slows down, and it never turns.': 'Rien ne la tire, donc elle ne ralentit jamais et ne dévie jamais.',
+  'In every half second, it covers exactly the same distance.': 'Chaque demi-seconde, elle parcourt exactement la même distance.',
+  'So its height simply grows with time: the upward part of its speed, v sine theta, multiplied by t.':
+    'Sa hauteur croît donc simplement avec le temps : la composante verticale de sa vitesse, v sinus thêta, multipliée par t.',
+  'Now switch gravity back on, but keep a ghost of the old ball, still sailing along its straight line.':
+    'Rétablissez maintenant la pesanteur, mais gardez un fantôme de l’ancienne balle, qui suit toujours sa ligne droite.',
+  'Watch closely. The real ball always stays directly below its ghost.': 'Regardez bien. La vraie balle reste toujours juste en dessous de son fantôme.',
+  'How far below? Exactly as far as a ball you simply let go of would fall in the same time.': 'À quelle distance en dessous ? Exactement autant qu’une balle que l’on lâche simplement tomberait dans le même temps.',
+  'A dropped ball falls one half g t squared. So that is the gap between the ball and its ghost.':
+    'Une balle lâchée tombe de un demi g t au carré. C’est donc l’écart entre la balle et son fantôme.',
+  'So the height is the straight line height, minus the drop.': 'La hauteur est donc la hauteur sur la droite, moins la chute.',
+  'Here is the drop on its own: a ball let go from rest, with a flash every second.': 'Voici la chute seule : une balle lâchée sans vitesse initiale, avec un éclair chaque seconde.',
+  'After one second it has fallen one unit. After two seconds, four units. After three, nine. After four, sixteen.':
+    'Après une seconde, elle est tombée d’une unité. Après deux secondes, de quatre. Après trois, de neuf. Après quatre, de seize.',
+  'So in each second it falls one, then three, then five, then seven units. It keeps speeding up, so every second it falls a little further than the last.':
+    'Ainsi, à chaque seconde elle tombe d’une, puis de trois, puis de cinq, puis de sept unités. Elle accélère sans cesse, donc chaque seconde elle tombe un peu plus que la précédente.',
+  'And odd numbers always stack up into perfect squares.': 'Et les nombres impairs s’additionnent toujours en carrés parfaits.',
+  'That square is the t squared in the formula.': 'Ce carré, c’est le t au carré de la formule.',
+  'Pause and ponder. What if the formula had a plain t here, instead of t squared?': 'Pause et réflexion. Et si la formule avait ici un simple t, au lieu de t au carré ?',
+  'Then the drop would grow by the same amount every second. Nothing would bend the path, and the ball would never come back down.':
+    'Alors la chute augmenterait de la même quantité chaque seconde. Rien ne courberait la trajectoire, et la balle ne redescendrait jamais.',
+  'So when does the ball land? At the moment the drop has grown as big as the rise.': 'Alors quand la balle retombe-t-elle ? Au moment où la chute est devenue aussi grande que la montée.',
+  'In symbols: the rise equals the drop.': 'En symboles : la montée est égale à la chute.',
+  'Cancel one t from each side,': 'Simplifiez un t de chaque côté,',
+  'and out drops the time in the air.': 'et le temps passé en l’air apparaît.',
+  'The distance is the sideways speed, v cosine theta, times that time.': 'La distance est la vitesse horizontale, v cosinus thêta, multipliée par ce temps.',
+  'Put in that time, and two sine theta cosine theta folds neatly into sine two theta.': 'Remplacez ce temps, et deux sinus thêta cosinus thêta se condense en sinus deux thêta.',
+  'Sine two theta is largest at forty five degrees, so that is the angle that throws farthest. And thirty and sixty land in exactly the same spot.':
+    'Sinus deux thêta est maximal à quarante-cinq degrés, c’est donc l’angle qui lance le plus loin. Et trente et soixante retombent exactement au même endroit.',
+  'So a thrown ball is really two simple things at once.': 'Une balle lancée, ce sont donc en réalité deux choses simples à la fois.',
+  'A straight line, where it would go if nothing pulled on it. And a drop below that line that grows like t squared.':
+    'Une ligne droite, là où elle irait si rien ne la tirait. Et une chute sous cette droite qui croît comme t au carré.',
+  'Every parabola you have ever seen is exactly that, and nothing more.': 'Toutes les paraboles que vous avez vues sont exactement cela, et rien de plus.',
+  'Change the speed and the angle.': 'Changez la vitesse et l’angle.',
+  'Try the Moon or Mars by changing g.': 'Essayez la Lune ou Mars en changeant g.',
+  'What changes with t instead of t squared?': 'Qu’est-ce qui change avec t au lieu de t au carré ?',
+  'Find the angle that lands farthest.': 'Trouvez l’angle qui porte le plus loin.',
+  'Pause and ponder': 'Pause et réflexion',
+};
+
+const ar: Table = {
+  'Throw a ball, and it traces a curve.': 'اقذف كرة، فترسم منحنى.',
+  'Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.':
+    'اقذفها بسرعة أكبر، أو بزاوية أخرى، فيتغير المنحنى. لكنه دائمًا من النوع نفسه: قطع مكافئ.',
+  'Why that shape? Here is the equation that describes it.': 'لماذا هذا الشكل؟ إليك المعادلة التي تصفه.',
+  'It can look like a jumble of symbols. But every piece of it is a picture, and by the end you will see each one.':
+    'قد تبدو كخليط من الرموز. لكن كل جزء منها صورة، وفي النهاية سترى كل واحد منها.',
+  'Let us start somewhere simpler. Imagine switching gravity off.': 'لنبدأ بشيء أبسط. تخيّل أننا أوقفنا الجاذبية.',
+  'Thrown at speed v and angle theta, the ball sets off in a straight line.': 'تُقذف الكرة بسرعة v وبزاوية ثيتا، فتنطلق في خط مستقيم.',
+  'Nothing pulls on it, so it never slows down, and it never turns.': 'لا شيء يجذبها، لذلك لا تبطئ أبدًا ولا تنحرف أبدًا.',
+  'In every half second, it covers exactly the same distance.': 'في كل نصف ثانية تقطع المسافة نفسها تمامًا.',
+  'So its height simply grows with time: the upward part of its speed, v sine theta, multiplied by t.':
+    'إذًا ارتفاعها ببساطة يزداد مع الزمن: المركبة الرأسية لسرعتها، v جيب ثيتا، مضروبة في t.',
+  'Now switch gravity back on, but keep a ghost of the old ball, still sailing along its straight line.':
+    'الآن أعد تشغيل الجاذبية، لكن أبقِ شبحًا للكرة القديمة، ما زالت تسير على خطها المستقيم.',
+  'Watch closely. The real ball always stays directly below its ghost.': 'انظر جيدًا. الكرة الحقيقية تبقى دائمًا تحت شبحها مباشرة.',
+  'How far below? Exactly as far as a ball you simply let go of would fall in the same time.': 'كم تحته؟ بالضبط بقدر ما تسقط كرة تتركها ببساطة في الزمن نفسه.',
+  'A dropped ball falls one half g t squared. So that is the gap between the ball and its ghost.':
+    'الكرة المتروكة تسقط نصف g ضرب t تربيع. وهذه هي المسافة بين الكرة وشبحها.',
+  'So the height is the straight line height, minus the drop.': 'إذًا الارتفاع هو ارتفاع الخط المستقيم، ناقص السقوط.',
+  'Here is the drop on its own: a ball let go from rest, with a flash every second.': 'إليك السقوط وحده: كرة تُترك من السكون، مع وميض كل ثانية.',
+  'After one second it has fallen one unit. After two seconds, four units. After three, nine. After four, sixteen.':
+    'بعد ثانية واحدة تكون قد سقطت وحدة واحدة. بعد ثانيتين، أربع وحدات. بعد ثلاث، تسع. بعد أربع، ست عشرة.',
+  'So in each second it falls one, then three, then five, then seven units. It keeps speeding up, so every second it falls a little further than the last.':
+    'إذًا في كل ثانية تسقط واحدة، ثم ثلاثًا، ثم خمسًا، ثم سبع وحدات. فهي تزداد سرعة باستمرار، لذلك تسقط في كل ثانية أكثر قليلًا من التي قبلها.',
+  'And odd numbers always stack up into perfect squares.': 'والأعداد الفردية تتراكم دائمًا لتشكّل مربعات كاملة.',
+  'That square is the t squared in the formula.': 'هذا المربع هو t تربيع في القانون.',
+  'Pause and ponder. What if the formula had a plain t here, instead of t squared?': 'توقف وفكّر. ماذا لو كان في القانون هنا t فقط، بدل t تربيع؟',
+  'Then the drop would grow by the same amount every second. Nothing would bend the path, and the ball would never come back down.':
+    'عندها سيزداد السقوط بالمقدار نفسه كل ثانية. لن ينحني المسار، ولن تعود الكرة إلى الأسفل أبدًا.',
+  'So when does the ball land? At the moment the drop has grown as big as the rise.': 'فمتى تصل الكرة إلى الأرض؟ في اللحظة التي يصبح فيها السقوط بقدر الصعود.',
+  'In symbols: the rise equals the drop.': 'بالرموز: الصعود يساوي السقوط.',
+  'Cancel one t from each side,': 'اختصر t واحدة من كل طرف،',
+  'and out drops the time in the air.': 'فيظهر زمن بقائها في الهواء.',
+  'The distance is the sideways speed, v cosine theta, times that time.': 'المسافة هي السرعة الأفقية، v جيب تمام ثيتا، مضروبة في ذلك الزمن.',
+  'Put in that time, and two sine theta cosine theta folds neatly into sine two theta.': 'عوّض بذلك الزمن، فيتحول اثنان جيب ثيتا جيب تمام ثيتا بسلاسة إلى جيب اثنين ثيتا.',
+  'Sine two theta is largest at forty five degrees, so that is the angle that throws farthest. And thirty and sixty land in exactly the same spot.':
+    'جيب اثنين ثيتا أكبر ما يكون عند خمس وأربعين درجة، لذلك هذه هي الزاوية التي تقذف إلى أبعد مسافة. وثلاثون وستون تسقطان في الموضع نفسه تمامًا.',
+  'So a thrown ball is really two simple things at once.': 'إذًا الكرة المقذوفة هي في الحقيقة شيئان بسيطان معًا.',
+  'A straight line, where it would go if nothing pulled on it. And a drop below that line that grows like t squared.':
+    'خط مستقيم، حيث كانت ستذهب لو لم يجذبها شيء. وسقوط تحت ذلك الخط يزداد مثل t تربيع.',
+  'Every parabola you have ever seen is exactly that, and nothing more.': 'كل قطع مكافئ رأيته في حياتك هو هذا تمامًا، لا أكثر.',
+  'Change the speed and the angle.': 'غيّر السرعة والزاوية.',
+  'Try the Moon or Mars by changing g.': 'جرّب القمر أو المريخ بتغيير g.',
+  'What changes with t instead of t squared?': 'ماذا يتغير مع t بدل t تربيع؟',
+  'Find the angle that lands farthest.': 'جد الزاوية التي تصل إلى أبعد مسافة.',
+  'Pause and ponder': 'توقف وفكّر',
+};
+
+const id: Table = {
+  'Throw a ball, and it traces a curve.': 'Lempar sebuah bola, dan bola itu membentuk lengkungan.',
+  'Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.':
+    'Lempar lebih cepat, atau dengan sudut lain, dan lengkungannya berubah. Tetapi selalu jenis lengkungan yang sama: parabola.',
+  'Why that shape? Here is the equation that describes it.': 'Mengapa bentuknya begitu? Inilah persamaan yang menggambarkannya.',
+  'It can look like a jumble of symbols. But every piece of it is a picture, and by the end you will see each one.':
+    'Kelihatannya seperti tumpukan simbol. Tetapi setiap bagiannya adalah sebuah gambar, dan di akhir kamu akan melihat semuanya.',
+  'Let us start somewhere simpler. Imagine switching gravity off.': 'Mari mulai dari yang lebih sederhana. Bayangkan gravitasi dimatikan.',
+  'Thrown at speed v and angle theta, the ball sets off in a straight line.': 'Dilempar dengan kecepatan v dan sudut theta, bola melaju lurus.',
+  'Nothing pulls on it, so it never slows down, and it never turns.': 'Tidak ada yang menariknya, jadi bola tidak pernah melambat dan tidak pernah berbelok.',
+  'In every half second, it covers exactly the same distance.': 'Setiap setengah detik, bola menempuh jarak yang persis sama.',
+  'So its height simply grows with time: the upward part of its speed, v sine theta, multiplied by t.':
+    'Jadi ketinggiannya bertambah begitu saja seiring waktu: komponen kecepatan ke atas, v sinus theta, dikali t.',
+  'Now switch gravity back on, but keep a ghost of the old ball, still sailing along its straight line.':
+    'Sekarang nyalakan kembali gravitasi, tetapi sisakan bayangan bola yang lama, yang masih meluncur di garis lurusnya.',
+  'Watch closely. The real ball always stays directly below its ghost.': 'Perhatikan baik-baik. Bola yang sebenarnya selalu berada tepat di bawah bayangannya.',
+  'How far below? Exactly as far as a ball you simply let go of would fall in the same time.': 'Seberapa jauh di bawahnya? Persis sejauh bola yang kamu lepaskan begitu saja akan jatuh dalam waktu yang sama.',
+  'A dropped ball falls one half g t squared. So that is the gap between the ball and its ghost.':
+    'Bola yang dilepas jatuh sejauh satu per dua g t kuadrat. Itulah jarak antara bola dan bayangannya.',
+  'So the height is the straight line height, minus the drop.': 'Jadi ketinggiannya adalah tinggi pada garis lurus, dikurangi jarak jatuh.',
+  'Here is the drop on its own: a ball let go from rest, with a flash every second.': 'Ini jarak jatuh saja: bola yang dilepas dari diam, dengan kilatan setiap detik.',
+  'After one second it has fallen one unit. After two seconds, four units. After three, nine. After four, sixteen.':
+    'Setelah satu detik, bola telah jatuh satu satuan. Setelah dua detik, empat satuan. Setelah tiga, sembilan. Setelah empat, enam belas.',
+  'So in each second it falls one, then three, then five, then seven units. It keeps speeding up, so every second it falls a little further than the last.':
+    'Jadi dalam tiap detik bola jatuh satu, lalu tiga, lalu lima, lalu tujuh satuan. Bola terus bertambah cepat, sehingga setiap detik ia jatuh sedikit lebih jauh daripada detik sebelumnya.',
+  'And odd numbers always stack up into perfect squares.': 'Dan bilangan ganjil selalu menumpuk menjadi kuadrat sempurna.',
+  'That square is the t squared in the formula.': 'Kuadrat itu adalah t kuadrat dalam rumus.',
+  'Pause and ponder. What if the formula had a plain t here, instead of t squared?': 'Berhenti dan renungkan. Bagaimana kalau rumusnya hanya memakai t biasa di sini, bukan t kuadrat?',
+  'Then the drop would grow by the same amount every second. Nothing would bend the path, and the ball would never come back down.':
+    'Maka jarak jatuh akan bertambah sama besar setiap detik. Tidak ada yang membengkokkan lintasan, dan bola tidak akan pernah turun lagi.',
+  'So when does the ball land? At the moment the drop has grown as big as the rise.': 'Lalu kapan bola mendarat? Saat jarak jatuh sudah sebesar kenaikan.',
+  'In symbols: the rise equals the drop.': 'Dalam simbol: kenaikan sama dengan jarak jatuh.',
+  'Cancel one t from each side,': 'Coret satu t dari tiap sisi,',
+  'and out drops the time in the air.': 'dan keluarlah waktu di udara.',
+  'The distance is the sideways speed, v cosine theta, times that time.': 'Jaraknya adalah kecepatan mendatar, v kosinus theta, dikali waktu itu.',
+  'Put in that time, and two sine theta cosine theta folds neatly into sine two theta.': 'Masukkan waktu itu, dan dua sinus theta kosinus theta menyatu rapi menjadi sinus dua theta.',
+  'Sine two theta is largest at forty five degrees, so that is the angle that throws farthest. And thirty and sixty land in exactly the same spot.':
+    'Sinus dua theta terbesar pada empat puluh lima derajat, jadi itulah sudut yang melempar paling jauh. Dan tiga puluh dan enam puluh mendarat di tempat yang persis sama.',
+  'So a thrown ball is really two simple things at once.': 'Jadi bola yang dilempar sebenarnya adalah dua hal sederhana sekaligus.',
+  'A straight line, where it would go if nothing pulled on it. And a drop below that line that grows like t squared.':
+    'Sebuah garis lurus, ke mana bola akan pergi jika tidak ada yang menariknya. Dan jarak jatuh di bawah garis itu yang bertambah seperti t kuadrat.',
+  'Every parabola you have ever seen is exactly that, and nothing more.': 'Setiap parabola yang pernah kamu lihat persis seperti itu, tidak lebih.',
+  'Change the speed and the angle.': 'Ubah kecepatan dan sudutnya.',
+  'Try the Moon or Mars by changing g.': 'Coba Bulan atau Mars dengan mengubah g.',
+  'What changes with t instead of t squared?': 'Apa yang berubah dengan t, bukan t kuadrat?',
+  'Find the angle that lands farthest.': 'Temukan sudut yang mendarat paling jauh.',
+  'Pause and ponder': 'Berhenti dan renungkan',
+};
+
+const TABLES: Record<Exclude<Lang, 'en'>, Table> = { hi, es, pt, fr, ar, id };
 
 /** The line in the chosen language (English if there is no translation). */
 export function translate(text: string, lang: Lang): string {
