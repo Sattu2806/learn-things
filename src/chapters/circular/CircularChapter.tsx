@@ -3,7 +3,7 @@ import { Topbar } from '../Topbar';
 import { NotesPage, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
-import { CircleScene } from './CircleScene';
+import { CircleScene, type CircleSpec } from './CircleScene';
 
 /** Circular motion: the kinematics of going round, with animated diagrams and worked examples. */
 
@@ -25,7 +25,7 @@ const SECTIONS: NoteSection[] = [
 
 const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
-function Mistake({ title, wrong, children }: { title: string; wrong: string; children: ReactNode }) {
+function Mistake({ title, wrong, scene, children }: { title: string; wrong: string; scene?: CircleSpec; children: ReactNode }) {
   return (
     <div className="mistake">
       <h3>{title}</h3>
@@ -33,6 +33,11 @@ function Mistake({ title, wrong, children }: { title: string; wrong: string; chi
         <span className="mistake-tag">Not</span>
         <M>{wrong}</M>
       </div>
+      {scene && (
+        <div className="mistake-fig">
+          <CircleScene {...scene} height={170} />
+        </div>
+      )}
       <p>{children}</p>
     </div>
   );
@@ -498,22 +503,22 @@ export default function CircularChapter() {
         <section className="t-section" id="t-mistakes">
           <SectionHead n={no('mistakes')} title="Common mistakes" />
           <div className="mistakes">
-            <Mistake title="Degrees in the formulas" wrong="s = r · θ ,  θ = 90">
+            <Mistake title="Degrees in the formulas" wrong="s = r · θ ,  θ = 90" scene={{ title: 'The arc length is r times the angle in radians', omega: 1.2, angle: true, arc: true }}>
               The formulas <M>s = r · θ</M> and <M>v = ω · r</M> need radians. Convert first: <M>90° = [ π | 2 ]</M> rad. Check that you have not put in a degree value.
             </Mistake>
-            <Mistake title="“No acceleration, the speed is constant”" wrong="a = 0 ,  v = 10 constant">
+            <Mistake title="“No acceleration, the speed is constant”" wrong="a = 0 ,  v = 10 constant" scene={{ title: 'Constant speed, but the velocity turns, so there is an acceleration toward the centre', omega: 1.4, velocity: true, accel: true }}>
               Acceleration is a change in the velocity vector, and direction counts. Steady speed on a circle still means an acceleration <M>v ^2 / r</M> toward the centre.
             </Mistake>
-            <Mistake title="Acceleration pointing outward" wrong={'a = [ v ^2 | r ] "outward"'}>
+            <Mistake title="Acceleration pointing outward" wrong={'a = [ v ^2 | r ] "outward"'} scene={{ title: 'The acceleration always points inward, toward the centre', omega: 1.4, accel: true, angle: true }}>
               The acceleration points toward the centre. The outward push you feel in a turning car is your body wanting to go straight on, not a real acceleration outward.
             </Mistake>
-            <Mistake title="Using rpm in v = ω · r" wrong={'v = 120 · 0.6 = 72 "m/s"'}>
+            <Mistake title="Using rpm in v = ω · r" wrong={'v = 120 · 0.6 = 72 "m/s"'} scene={{ title: 'A fan blade tip at 120 rpm moves at 7.5 metres per second, not 72', omega: 2.5, velocity: true, notes: ['120 rpm = 12.6 rad/s', 'v = 7.54 m/s'] }}>
               <M>ω</M> must be in rad/s. For 120 rpm that is <M>4 · π ≈ 12.6</M> rad/s, giving <M>v = 7.54 "m/s"</M> for a radius of 0.6 m, not 72.
             </Mistake>
-            <Mistake title="Forgetting the tangential part" wrong={'a = [ v ^2 | r ] "while speeding up"'}>
+            <Mistake title="Forgetting the tangential part" wrong={'a = [ v ^2 | r ] "while speeding up"'} scene={{ title: 'Speeding up adds a tangential part, so the total acceleration leans forward', omega: 1, alpha: 0.3, loop: 4, accel: true, parts: true }}>
               If the speed changes, there is also <M>a _t = α · r</M> along the motion. The total is <M>√[ a _t ^2 + a _c ^2 ]</M>, and the acceleration no longer points at the centre.
             </Mistake>
-            <Mistake title="Same speed for every point" wrong="v _inner = v _outer">
+            <Mistake title="Same speed for every point" wrong="v _inner = v _outer" scene={{ title: 'Two points on one radius turn together, but the outer one moves faster', omega: 1.2, velocity: true, inner: 0.5 }}>
               On a spinning body all points share the same <M>ω</M>, but <M>v = ω · r</M> is bigger farther from the axis, and so is <M>a = ω ^2 · r</M>.
             </Mistake>
           </div>

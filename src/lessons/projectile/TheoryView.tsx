@@ -5,6 +5,7 @@ import { useMedia } from '../../ui/useMedia';
 import { Eq, M } from '../../ui/Math';
 import { Scrub } from '../../ui/Scrub';
 import { FallFigure, TrajectorySketch, VectorFigure } from './Figures';
+import { Scene, type SceneSpec } from './Scene';
 import { inSyllabus, type Course, type Scope } from './courses';
 import { AirSection, AngleSection, CurvatureSection, EquationsSection, HeightAngleSection, InclineSection, RelativeSection, SpeedSection, TargetSection, VelocitySection } from './TheoryMore';
 import { Answer, Example, FilmLink, Given, Note, SectionHead, Step, Watch } from './theoryParts';
@@ -193,6 +194,10 @@ export default function TheoryView({ film, active, course, onWatch }: Props) {
                 <strong>Up and down</strong>, gravity pulls, so the ball slows as it rises, stops for an instant at the top, and speeds up as it falls, just like a ball you drop.
               </li>
             </ul>
+            <figure className="t-figure">
+              <Scene title="A thrown ball: its sideways part of the velocity stays the same while the upward part shrinks and reverses" throws={[{ v: 20, theta: 55, g: 9.8, arrow: true, components: true }]} height={270} />
+              <figcaption>The dashed sideways arrow keeps its length the whole way; the upward one shrinks, vanishes at the top, then grows pointing down.</figcaption>
+            </figure>
             <Note label="What we assume">
               No air resistance, flat ground, and a steady pull of gravity, <M>g = 9.8 "m/s²"</M> on Earth. Real balls land a little short, because the air slows them down.
             </Note>
@@ -274,6 +279,18 @@ export default function TheoryView({ film, active, course, onWatch }: Props) {
               That has the form <M>y = a · x − b · x ^2</M>: a straight line, bent down by an amount that grows with <M>x ^2</M>. Every curve of that form is a parabola. For the throw in the film it is
             </p>
             <Eq src="y = 0.8391 · x − 0.02088 · x ^2" />
+            <figure className="t-figure">
+              <Scene
+                title="The straight line y equals 0.839 x, and the parabola that falls below it by 0.0209 x squared"
+                throws={[
+                  { v: 20, theta: 40, g: 0, tEnd: 2.62, muted: true, marker: 'ghost', label: 'y = 0.839 x' },
+                  { v: 20, theta: 40, g: 9.8, label: 'y = 0.839 x − 0.0209 x²' },
+                ]}
+                link
+                height={280}
+              />
+              <figcaption>The straight line a · x, and the parabola that falls below it by b · x²: the gap is the dashed line.</figcaption>
+            </figure>
             <p>
               and it comes back to the ground, where <M>y = 0</M>, at <M>x = 0.8391 / 0.02088 ≈ 40.2 "m"</M>.
             </p>
@@ -283,6 +300,10 @@ export default function TheoryView({ film, active, course, onWatch }: Props) {
           {/* ---------------------------------------------------------- 06 */}
           <section className="t-section" id="t-results">
             <SectionHead n={no('results')} title="Time, height and range" />
+            <figure className="t-figure">
+              <Scene title="The throw in the film: time of flight, greatest height and range" throws={[{ v: 20, theta: 40, g: 9.8 }]} marks={{ height: '= 8.43 m', range: '= 40.2 m', angle: true }} height={280} />
+              <figcaption>20 m/s at 40°: 2.62 s in the air, 8.43 m high, landing 40.2 m away. The three results below.</figcaption>
+            </figure>
             <h3 className="t-h3">How long it flies</h3>
             <p>The ball lands when the drop has caught up with the rise:</p>
             <Eq src="v · sin θ · t = ½ · g · t ^2" />
@@ -605,6 +626,9 @@ export default function TheoryView({ film, active, course, onWatch }: Props) {
                 </Step>
               </ol>
               <Answer>About 10.7 m/s, or 38 km/h, close to sprinting speed.</Answer>
+              <figure className="t-figure">
+                <Scene title="A long jump at 20 degrees and 10.7 metres per second lands 7.5 metres away" throws={[{ v: 10.69, theta: 20, g: 9.8, arrow: true }]} marks={{ range: '= 7.5 m', angle: true }} height={230} />
+              </figure>
             </Example>
           </section>
 
@@ -612,22 +636,22 @@ export default function TheoryView({ film, active, course, onWatch }: Props) {
           <section className="t-section" id="t-mistakes">
             <SectionHead n={no('mistakes')} title="Common mistakes" />
             <div className="mistakes">
-              <Mistake title="Forgetting the ½" wrong="y = v · sin θ · t − g · t ^2">
+              <Mistake title="Forgetting the ½" wrong="y = v · sin θ · t − g · t ^2" scene={{ title: 'Without the half the ball falls twice as fast and lands at half the distance', throws: [{ v: 20, theta: 45, g: 9.8, muted: true, label: 'right' }, { v: 20, theta: 45, g: 19.6, label: 'without ½' }] }}>
                 The ball falls twice as far as it should. It lands in half the time, and half as far away.
               </Mistake>
-              <Mistake title="t instead of t²" wrong="y = v · sin θ · t − ½ · g · t" film={<FilmLink m="linear">See what goes wrong</FilmLink>}>
+              <Mistake title="t instead of t²" wrong="y = v · sin θ · t − ½ · g · t" film={<FilmLink m="linear">See what goes wrong</FilmLink>} scene={{ title: 'With t instead of t squared the path is a straight line that never comes down', throws: [{ v: 20, theta: 45, g: 9.8, muted: true, label: 'right' }, { v: Math.hypot(14.142, 9.242), theta: (Math.atan2(9.242, 14.142) * 180) / Math.PI, g: 0, tEnd: 2.4, label: 'with t' }] }}>
                 The drop grows by the same amount every second, so nothing bends the path. The ball flies in a straight line and, for most throws, never comes back down.
               </Mistake>
-              <Mistake title="Plus instead of minus" wrong="y = v · sin θ · t + ½ · g · t ^2">
+              <Mistake title="Plus instead of minus" wrong="y = v · sin θ · t + ½ · g · t ^2" scene={{ title: 'With a plus sign the path curves up into the sky', throws: [{ v: 20, theta: 45, g: 9.8, muted: true, label: 'right' }, { v: 20, theta: 45, g: -9.8, tEnd: 1.5, label: 'with +' }] }}>
                 Now gravity pushes up. The path curves away into the sky and never lands.
               </Mistake>
-              <Mistake title="Swapping sin and cos" wrong="v _x = v · sin θ">
+              <Mistake title="Swapping sin and cos" wrong="v _x = v · sin θ" scene={{ title: 'Swapping sin and cos throws at 90 degrees minus theta: same landing spot, wrong height', throws: [{ v: 20, theta: 30, g: 9.8, muted: true, label: 'right, 30°' }, { v: 20, theta: 60, g: 9.8, label: 'swapped' }] }}>
                 Sideways is cos, upward is sin. Swap them and you get the throw at 90° − θ: by luck the same landing spot, but the wrong height and the wrong time.
               </Mistake>
-              <Mistake title="Calculator in radians" wrong="sin 40 = 0.745">
+              <Mistake title="Calculator in radians" wrong="sin 40 = 0.745" scene={{ title: 'Using sin of 40 radians is like throwing at 48 degrees instead of 40', throws: [{ v: 20, theta: 40, g: 9.8, muted: true, label: 'right' }, { v: 20, theta: 48.2, g: 9.8, label: 'radians' }] }}>
                 That is 40 radians. In degrees, <M>sin 40° = 0.643</M>. Check that your calculator shows DEG.
               </Mistake>
-              <Mistake title="“It stops at the top”" wrong={'v = 0 "at the top"'}>
+              <Mistake title="“It stops at the top”" wrong={'v = 0 "at the top"'} scene={{ title: 'At the top the ball still moves sideways', throws: [{ v: 20, theta: 50, g: 9.8, arrow: true, components: true }] }}>
                 Only the upward speed is zero at the top. The ball is still moving sideways at <M>v · cos θ</M>, {num(FILM.vx, 1)} m/s in Example 1.
               </Mistake>
             </div>
@@ -686,7 +710,7 @@ export default function TheoryView({ film, active, course, onWatch }: Props) {
   );
 }
 
-function Mistake({ title, wrong, film, children }: { title: string; wrong: string; film?: ReactNode; children: ReactNode }) {
+function Mistake({ title, wrong, film, scene, children }: { title: string; wrong: string; film?: ReactNode; scene?: SceneSpec; children: ReactNode }) {
   return (
     <div className="mistake">
       <h3>{title}</h3>
@@ -694,6 +718,11 @@ function Mistake({ title, wrong, film, children }: { title: string; wrong: strin
         <span className="mistake-tag">Not</span>
         <M>{wrong}</M>
       </div>
+      {scene && (
+        <div className="mistake-fig">
+          <Scene {...scene} height={scene.height ?? 160} clock={false} />
+        </div>
+      )}
       <p>{children}</p>
       {film}
     </div>

@@ -33,6 +33,8 @@ export interface CircleSpec {
   wave?: boolean;
   /** Freeze two moments and draw Δv between them (a still diagram). */
   deltaV?: { from: number; to: number };
+  /** A second ball on the same radius line, at this fraction of the radius (same ω, less speed). */
+  inner?: number;
   /** Text labels in the corner, e.g. "r = 2 m". */
   notes?: string[];
   height?: number;
@@ -247,6 +249,18 @@ export function CircleScene(spec: CircleSpec) {
               </text>
             </g>
           )}
+          {spec.inner !== undefined &&
+            (() => {
+              const [ix, iy] = P(th, R * spec.inner);
+              return (
+                <g>
+                  <circle className="fig-guide fig-dash fig-faint" cx={cx} cy={cy} r={R * spec.inner} fill="none" />
+                  <line className="fig-guide" x1={cx} y1={cy} x2={px} y2={py} />
+                  {spec.velocity && arrow(ix, iy, va[0] * vLen(w) * spec.inner, va[1] * vLen(w) * spec.inner, 'fig-vec', 'vi')}
+                  <circle className="fig-ball" cx={ix} cy={iy} r={5} />
+                </g>
+              );
+            })()}
           <circle className="fig-glow" cx={px} cy={py} r={18} fill={`url(#cg${uid})`} />
           <circle className="fig-ball" cx={px} cy={py} r={6.5} />
         </g>

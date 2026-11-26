@@ -2290,6 +2290,166 @@ details[open] .q-show::before {
   font-size: clamp(17px, 1.8vw, 22px);
 }
 
+
+/* ---------- motion: blocks rise in, equations write themselves ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.6s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Lists and steps arrive one after another. */
+.t-list > li.reveal:nth-child(2),
+.steps > .step.reveal:nth-child(2) {
+  transition-delay: 0.08s;
+}
+
+.t-list > li.reveal:nth-child(3),
+.steps > .step.reveal:nth-child(3) {
+  transition-delay: 0.16s;
+}
+
+.t-list > li.reveal:nth-child(n + 4),
+.steps > .step.reveal:nth-child(n + 4) {
+  transition-delay: 0.24s;
+}
+
+/* Display equations and formula-sheet rows are written symbol by symbol. */
+.eq.reveal .m-g,
+.t-table tr.reveal .m-g,
+.eq.reveal .eq-label {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.18em);
+  filter: blur(3px);
+}
+
+.eq.reveal.is-in .m-g,
+.t-table tr.reveal.is-in .m-g,
+.eq.reveal.is-in .eq-label {
+  animation: write 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(0.15s + var(--i, 0) * 45ms);
+}
+
+.eq.reveal.is-in .eq-label {
+  animation-delay: calc(0.35s + var(--i, 0) * 45ms);
+}
+
+@keyframes write {
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* Fraction bars and root signs draw in under their symbols. */
+.eq.reveal .m-frac-bottom,
+.t-table tr.reveal .m-frac-bottom {
+  border-top-color: transparent;
+  transition: border-color 0.5s 0.25s;
+}
+
+.eq.reveal.is-in .m-frac-bottom,
+.t-table tr.reveal.is-in .m-frac-bottom {
+  border-top-color: currentColor;
+}
+
+.eq.reveal .m-radix path,
+.t-table tr.reveal .m-radix path {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+}
+
+.eq.reveal.is-in .m-radix path,
+.t-table tr.reveal.is-in .m-radix path {
+  animation: draw 0.7s 0.2s ease-out forwards;
+}
+
+.eq.reveal .m-radicand,
+.t-table tr.reveal .m-radicand {
+  border-top-color: transparent;
+  transition: border-color 0.5s 0.5s;
+}
+
+.eq.reveal.is-in .m-radicand,
+.t-table tr.reveal.is-in .m-radicand {
+  border-top-color: currentColor;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* A wrong formula is struck through as you watch. */
+.mistake-wrong .m {
+  position: relative;
+}
+
+.mistake.reveal .mistake-wrong .m::after {
+  content: '';
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 52%;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.85);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.55s 0.5s cubic-bezier(0.6, 0, 0.2, 1);
+}
+
+.mistake.reveal.is-in .mistake-wrong .m::after {
+  transform: scaleX(1);
+}
+
+/* The answer slides in with a light sweep across it. */
+.answer.reveal {
+  transform: translateX(-10px);
+}
+
+.answer.reveal.is-in {
+  transform: none;
+}
+
+.mistake-fig {
+  margin: 2px -6px 0;
+  border-radius: 10px;
+  background: #000;
+  border: 1px solid var(--line);
+}
+
+@media print {
+  .reveal,
+  .reveal .m-g,
+  .reveal .eq-label {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reveal .m-frac-bottom,
+  .reveal .m-radicand {
+    border-top-color: currentColor !important;
+  }
+
+  .reveal .m-radix path {
+    stroke-dashoffset: 0 !important;
+  }
+}
+
 @media (max-width: 1180px) {
   .layout {
     grid-template-columns: minmax(290px, 330px) minmax(0, 1fr);

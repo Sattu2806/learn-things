@@ -6,9 +6,12 @@ import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import './styles.css';
 import App from './App';
+import { startReveal } from './ui/reveal';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 );
+
+startReveal();
