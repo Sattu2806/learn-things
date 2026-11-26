@@ -6,22 +6,26 @@
  *   "y = v · sin θ · t − ½ · g · t ^2"
  *
  *   ^x        superscript on the previous token
+ *   _x        subscript on the previous token (v _x is v with a little x)
  *   [ a | b ] a fraction, a over b
+ *   √[ a ]    a square root
+ *   "m/s"     plain upright text, such as a unit
  *   tok#key   names a token, so a morph can move it to where the same key
  *             sits in the next equation (otherwise keys are text plus count)
  *
  * A morph glides every token whose key appears in both equations to its new
  * place, and fades the others out or in, like Manim's TransformMatchingTex.
+ * The same notation is set as HTML on the theory page (ui/Math.tsx).
  */
 
 export const SERIF = '"Instrument Serif", "Iowan Old Style", Georgia, serif';
 
-type Kind = 'var' | 'num' | 'fn' | 'op' | 'word';
+export type MathKind = 'var' | 'num' | 'fn' | 'op' | 'word' | 'text' | 'punct';
 
 export interface Glyph {
   key: string;
   text: string;
-  kind: Kind;
+  kind: MathKind;
   /** Left edge and baseline, relative to the equation's left end and main baseline. */
   x: number;
   y: number;
@@ -45,25 +49,43 @@ export interface MathLayout {
   bottom: number;
 }
 
-interface Tok {
+export interface Script {
   text: string;
   key?: string;
-  sup?: { text: string; key?: string };
 }
 
-type Node = { t: 'tok'; tok: Tok } | { t: 'frac'; num: Node[]; den: Node[]; key: string };
+export interface MathTok {
+  text: string;
+  key?: string;
+  kind?: MathKind;
+  sup?: Script;
+  sub?: Script;
+}
+
+export type MathNode =
+  | { t: 'tok'; tok: MathTok }
+  | { t: 'frac'; num: MathNode[]; den: MathNode[]; key: string }
+  | { t: 'sqrt'; body: MathNode[]; key: string };
 
 function splitKey(p: string): [string, string | undefined] {
   const h = p.lastIndexOf('#');
   return h > 0 ? [p.slice(0, h), p.slice(h + 1)] : [p, undefined];
 }
 
-function parse(src: string): Node[] {
-  const parts = src.trim().split(/\s+/).filter(Boolean);
+export function parseMath(src: string): MathNode[] {
+  // Quoted text may contain spaces ("at the top"), so join it back into one token.
+  const parts: string[] = [];
+  const raw = src.trim().split(/\s+/).filter(Boolean);
+  for (let j = 0; j < raw.length; j++) {
+    let p = raw[j];
+    if (p.startsWith('"')) while ((p.length < 2 || !p.endsWith('"')) && j + 1 < raw.length) p += ` ${raw[++j]}`;
+    parts.push(p);
+  }
   let i = 0;
   let fracs = 0;
-  const row = (): Node[] => {
-    const out: Node[] = [];
+  let roots = 0;
+  const row = (): MathNode[] => {
+    const out: MathNode[] = [];
     while (i < parts.length) {
       const p = parts[i];
       if (p === '|' || p === ']') break;
@@ -75,10 +97,17 @@ function parse(src: string): Node[] {
         const den = row();
         if (parts[i] === ']') i++;
         out.push({ t: 'frac', num, den, key });
-      } else if (p.startsWith('^')) {
+      } else if (p.startsWith('√[')) {
+        const key = splitKey(p)[1] ?? `sqrt${++roots}`;
+        const body = row();
+        if (parts[i] === ']') i++;
+        out.push({ t: 'sqrt', body, key });
+      } else if ((p.startsWith('^') || p.startsWith('_')) && p.length > 1) {
         const prev = out[out.length - 1];
         const [text, key] = splitKey(p.slice(1));
-        if (prev?.t === 'tok') prev.tok.sup = { text, key };
+        if (prev?.t === 'tok') prev.tok[p[0] === '^' ? 'sup' : 'sub'] = { text, key };
+      } else if (p.length > 1 && p.startsWith('"') && p.endsWith('"')) {
+        out.push({ t: 'tok', tok: { text: p.slice(1, -1), kind: 'text' } });
       } else {
         const [text, key] = splitKey(p);
         out.push({ t: 'tok', tok: { text, key } });
@@ -89,19 +118,20 @@ function parse(src: string): Node[] {
   return row();
 }
 
-function kindOf(text: string): Kind {
+export function mathKind(text: string): MathKind {
   if (text === 'sin' || text === 'cos' || text === 'tan') return 'fn';
-  if (/^[=+−·×≈<>-]$/.test(text)) return 'op';
-  if (/^[0-9.]+$|^½$/.test(text)) return 'num';
+  if (/^[=+−·×≈<>/-]$/.test(text)) return 'op';
+  if (/^[()]$/.test(text)) return 'punct';
+  if (/^[0-9.]+°?$|^½$/.test(text)) return 'num';
   if (/^[a-zA-Zα-ωθ]$/.test(text)) return 'var';
   return 'word';
 }
 
-export function mathFont(kind: Kind, size: number) {
+export function mathFont(kind: MathKind, size: number) {
   return `${kind === 'var' || kind === 'word' ? 'italic ' : ''}400 ${size}px ${SERIF}`;
 }
 
-function space(text: string, kind: Kind): [number, number] {
+function space(text: string, kind: MathKind): [number, number] {
   if (kind === 'op') {
     if (text === '·') return [0.07, 0.07];
     if (text === '=' || text === '≈') return [0.3, 0.3];
@@ -109,6 +139,7 @@ function space(text: string, kind: Kind): [number, number] {
   }
   if (kind === 'fn') return [0.02, 0.14];
   if (kind === 'word') return [0.12, 0.12];
+  if (kind === 'text') return [0.2, 0.06];
   return [0.015, 0.015];
 }
 
@@ -132,58 +163,83 @@ export function layoutMath(ctx: CanvasRenderingContext2D, src: string, size: num
   };
   const glyphs: Glyph[] = [];
   const bars: Bar[] = [];
+  type Out = { glyphs: Glyph[]; bars: Bar[] };
+  const shift = (from: Out, to: Out, dx: number, dy: number) => {
+    for (const g of from.glyphs) to.glyphs.push({ ...g, x: g.x + dx, y: g.y + dy });
+    for (const b of from.bars) to.bars.push({ ...b, x1: b.x1 + dx, x2: b.x2 + dx, y: b.y + dy });
+  };
 
-  const rowLayout = (nodes: Node[], s: number, out: { glyphs: Glyph[]; bars: Bar[] }) => {
+  const rowLayout = (nodes: MathNode[], s: number, out: Out) => {
     let x = 0;
     let top = -s * 0.72;
     let bottom = s * 0.22;
     for (const n of nodes) {
       if (n.t === 'tok') {
-        const kind = kindOf(n.tok.text);
+        const kind = n.tok.kind ?? mathKind(n.tok.text);
         const [pre, post] = space(n.tok.text, kind);
         x += pre * s;
         ctx.font = mathFont(kind, s);
         const w = ctx.measureText(n.tok.text).width;
         out.glyphs.push({ key: autoKey(n.tok.text, n.tok.key), text: n.tok.text, kind, x, y: 0, size: s, w });
         x += w;
-        if (n.tok.sup) {
+        if (n.tok.sup || n.tok.sub) {
+          // Scripts sit side by side over and under the same spot, like v with x below and 2 above.
           const ss = s * 0.6;
-          const sk = kindOf(n.tok.sup.text);
-          ctx.font = mathFont(sk, ss);
-          const sw = ctx.measureText(n.tok.sup.text).width;
           x += s * 0.03;
-          out.glyphs.push({ key: autoKey(`^${n.tok.sup.text}`, n.tok.sup.key), text: n.tok.sup.text, kind: sk, x, y: -s * 0.4, size: ss, w: sw });
+          let sw = 0;
+          for (const [script, mark, y] of [
+            [n.tok.sup, '^', -s * 0.4],
+            [n.tok.sub, '_', s * 0.2],
+          ] as const) {
+            if (!script) continue;
+            const sk = mathKind(script.text);
+            ctx.font = mathFont(sk, ss);
+            const w2 = ctx.measureText(script.text).width;
+            out.glyphs.push({ key: autoKey(`${mark}${script.text}`, script.key), text: script.text, kind: sk, x, y, size: ss, w: w2 });
+            sw = Math.max(sw, w2);
+            if (mark === '^') top = Math.min(top, y - ss * 0.72);
+            else bottom = Math.max(bottom, y + ss * 0.22);
+          }
           x += sw + s * 0.02;
-          top = Math.min(top, -s * 0.4 - ss * 0.72);
         }
         x += post * s;
-      } else {
+      } else if (n.t === 'frac') {
         const fs = s * 0.86;
         const pad = s * 0.14;
-        const num = { glyphs: [] as Glyph[], bars: [] as Bar[] };
-        const den = { glyphs: [] as Glyph[], bars: [] as Bar[] };
+        const num: Out = { glyphs: [], bars: [] };
+        const den: Out = { glyphs: [], bars: [] };
         const nm = rowLayout(n.num, fs, num);
         const dm = rowLayout(n.den, fs, den);
         const w = Math.max(nm.width, dm.width) + pad * 2;
         const axis = -s * 0.27;
         const numBase = axis - s * 0.16 - nm.bottom;
         const denBase = axis + s * 0.14 - dm.top;
-        const nx = x + (w - nm.width) / 2;
-        const dx = x + (w - dm.width) / 2;
-        for (const g of num.glyphs) out.glyphs.push({ ...g, x: g.x + nx, y: g.y + numBase });
-        for (const b of num.bars) out.bars.push({ ...b, x1: b.x1 + nx, x2: b.x2 + nx, y: b.y + numBase });
-        for (const g of den.glyphs) out.glyphs.push({ ...g, x: g.x + dx, y: g.y + denBase });
-        for (const b of den.bars) out.bars.push({ ...b, x1: b.x1 + dx, x2: b.x2 + dx, y: b.y + denBase });
+        shift(num, out, x + (w - nm.width) / 2, numBase);
+        shift(den, out, x + (w - dm.width) / 2, denBase);
         out.bars.push({ key: n.key, x1: x + s * 0.04, x2: x + w - s * 0.04, y: axis, size: s });
         x += w + s * 0.06;
         top = Math.min(top, numBase + nm.top);
         bottom = Math.max(bottom, denBase + dm.bottom);
+      } else {
+        // A radical sign, then the body under a bar that starts at the sign's top.
+        x += s * 0.04;
+        ctx.font = mathFont('op', s);
+        const rw = ctx.measureText('√').width;
+        out.glyphs.push({ key: autoKey('√', `${n.key}-sign`), text: '√', kind: 'op', x, y: 0, size: s, w: rw });
+        const body: Out = { glyphs: [], bars: [] };
+        const bm = rowLayout(n.body, s, body);
+        shift(body, out, x + rw + s * 0.04, 0);
+        const barY = bm.top - s * 0.08;
+        out.bars.push({ key: n.key, x1: x + rw * 0.82, x2: x + rw + s * 0.08 + bm.width, y: barY, size: s });
+        x += rw + s * 0.12 + bm.width;
+        top = Math.min(top, barY - s * 0.05);
+        bottom = Math.max(bottom, bm.bottom);
       }
     }
     return { width: x, top, bottom };
   };
 
-  const m = rowLayout(parse(src), size, { glyphs, bars });
+  const m = rowLayout(parseMath(src), size, { glyphs, bars });
   const layout = { glyphs, bars, width: m.width, top: m.top, bottom: m.bottom };
   cache.set(id, layout);
   return layout;

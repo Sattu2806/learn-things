@@ -213,7 +213,8 @@ export class FilmPlayer {
     const dt = Math.min(0.05, Math.max(0, (now - this.last) / 1000));
     this.last = now;
     this.step(dt);
-    this.draw(now / 1000);
+    // Nothing to draw while the film is hidden behind another view.
+    if (this.W > 2 && this.H > 2) this.draw(now / 1000);
     this.raf = requestAnimationFrame(this.frame);
   };
 

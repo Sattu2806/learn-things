@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type MutableRefObject } from 'react';
 import { flushSync } from 'react-dom';
 import { canRenderVideo, download, renderVideo } from '../../film/export';
 import { toScript, toSrt, type Beat, type Film } from '../../film/timeline';
-import { Icon, Logo } from '../../ui/Icons';
+import { clock } from '../../ui/clock';
+import { Icon } from '../../ui/Icons';
+import { useMedia } from '../../ui/useMedia';
 import { Scrub } from '../../ui/Scrub';
-import { POSTER, TITLE, buildFilm } from './film';
+import { POSTER, TITLE } from './film';
 import { flight, metres } from './model';
 import { FilmPlayer, createStore, drawFilmFrame, type Mode, type PlayerState, type Store } from './player';
 
@@ -17,24 +19,6 @@ const PRESETS: [string, number][] = [
 
 function useStore<T>(s: Store<T>) {
   return useSyncExternalStore(s.subscribe, s.get, s.get);
-}
-
-function clock(t: number) {
-  const m = Math.floor(t / 60);
-  const s = Math.floor(t % 60);
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
-
-function useMedia(query: string) {
-  const [match, setMatch] = useState(() => window.matchMedia(query).matches);
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const on = () => setMatch(mq.matches);
-    mq.addEventListener('change', on);
-    on();
-    return () => mq.removeEventListener('change', on);
-  }, [query]);
-  return match;
 }
 
 function withTransition(update: () => void) {
@@ -262,8 +246,20 @@ function ExportPanel({ film }: { film: Film }) {
   );
 }
 
-export default function LessonPlayer() {
-  const film = useMemo(buildFilm, []);
+/** What the page can ask of the film, e.g. from a link on the theory page. */
+export interface FilmApi {
+  playFrom: (t: number) => void;
+}
+
+interface FilmViewProps {
+  film: Film;
+  /** The film is the view on screen. */
+  active: boolean;
+  api: MutableRefObject<FilmApi | null>;
+}
+
+/** The film: chapters and narration on the left, the player on the right. */
+export default function FilmView({ film, active, api }: FilmViewProps) {
   const stateStore = useMemo(() => createStore<PlayerState>({ playing: false, beat: 0, chapter: 0, waiting: null, ended: false }), []);
   const timeStore = useMemo(() => createStore(0), []);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -337,13 +333,34 @@ export default function LessonPlayer() {
   };
   const toggleExpanded = (next = !expanded) => withTransition(() => setExpanded(next));
 
+  // Hidden behind another view: stop, and leave full screen.
+  const activeRef = useRef(active);
+  activeRef.current = active;
+  useEffect(() => {
+    if (active) return;
+    playerRef.current?.pause();
+    setExpanded(false);
+  }, [active]);
+  useEffect(() => {
+    api.current = {
+      playFrom: (t: number) => {
+        playerRef.current?.seek(t);
+        playerRef.current?.play();
+        setStarted(true);
+      },
+    };
+    return () => {
+      api.current = null;
+    };
+  }, [api]);
+
   // Keyboard, video-player style.
   const keys = useRef({ expanded, toggleExpanded });
   keys.current = { expanded, toggleExpanded };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const p = playerRef.current;
-      if (!p) return;
+      if (!p || !activeRef.current) return;
       if (e.key === 'Escape' && keys.current.expanded) {
         keys.current.toggleExpanded(false);
         return;
@@ -400,36 +417,7 @@ export default function LessonPlayer() {
   const turn = waiting && player ? <YourTurn player={player} beat={waiting} /> : null;
 
   return (
-    <div className="app">
-      <header className="topbar">
-        <div className="brand">
-          <Logo />
-          <span className="brand-name">Learn Things</span>
-        </div>
-        <nav className="crumbs" aria-label="Breadcrumb">
-          <span className="crumb hide-sm">Physics</span>
-          <span className="crumb-sep hide-sm" aria-hidden="true">
-            /
-          </span>
-          <span className="crumb is-current" aria-current="page">
-            Living equations
-          </span>
-        </nav>
-        <div className="mode" role="radiogroup" aria-label="How to play the film">
-          {(
-            [
-              ['lesson', 'Lesson'],
-              ['watch', 'Watch'],
-            ] as [Mode, string][]
-          ).map(([m, label]) => (
-            <button key={m} role="radio" aria-checked={mode === m} className="mode-btn" onClick={() => setMode(m)} title={m === 'lesson' ? 'Stops at four moments so you can try things' : 'Plays straight through, like the video'}>
-              {label}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      <main className="layout">
+      <main className="layout" id="view-film" role="tabpanel" aria-label="Film" hidden={!active}>
         <aside className="panel" aria-label="Chapters and narration">
           <div className="panel-scroll">
             <h1 className="title">{TITLE}</h1>
@@ -514,13 +502,26 @@ export default function LessonPlayer() {
               <span className="film-n">{String(st.chapter + 1).padStart(2, '0')}</span>
               {chapter?.title}
             </span>
-            <span className="keys" aria-label="Keyboard shortcuts">
-              <kbd>Space</kbd> play <kbd>←</kbd>
-              <kbd>→</kbd> skip <kbd>C</kbd> captions <kbd>F</kbd> full screen
+            <span className="film-meta-right">
+              <span className="keys" aria-label="Keyboard shortcuts">
+                <kbd>Space</kbd> play <kbd>←</kbd>
+                <kbd>→</kbd> skip <kbd>C</kbd> captions <kbd>F</kbd> full screen
+              </span>
+              <span className="mode mode-sm" role="radiogroup" aria-label="How to play the film">
+                {(
+                  [
+                    ['lesson', 'Lesson'],
+                    ['watch', 'Watch'],
+                  ] as [Mode, string][]
+                ).map(([m, label]) => (
+                  <button key={m} role="radio" aria-checked={mode === m} className="mode-btn" onClick={() => setMode(m)} title={m === 'lesson' ? 'Stops at four moments so you can try things' : 'Plays straight through, like the video'}>
+                    {label}
+                  </button>
+                ))}
+              </span>
             </span>
           </div>
         </section>
       </main>
-    </div>
   );
 }

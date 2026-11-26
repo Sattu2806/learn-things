@@ -16,6 +16,12 @@ The same script does two jobs:
 - **On YouTube** it renders, frame by frame, to a 1080p video, with subtitles and
   a voiceover script timed to the picture.
 
+There is also a **Theory** view (the tab at the top right) for reading and revising:
+the ideas written out, every equation built step by step, a formula sheet, five
+worked examples, common mistakes, practice questions with answers to reveal, and a
+calculator for your own numbers. Key equations link to the moment in the film that
+shows them, and the notes print cleanly in black on white.
+
 ## The film
 
 1. **The question**: every throw draws a parabola. Why?
@@ -88,7 +94,12 @@ place, like Manim's `TransformMatchingTex`.
 | `src/lessons/projectile/film.ts` | The film script. |
 | `src/lessons/projectile/render.ts` | Draws any moment of the film in a 1920×1080 frame. The app and the video use the same pixels. |
 | `src/lessons/projectile/player.ts` | Plays the film on the page, stopping and going live at "your turn" moments. |
-| `src/lessons/projectile/LessonPlayer.tsx` | The screen: chapters and narration on the left, the film on the right. |
+| `src/lessons/projectile/LessonPage.tsx` | The page: the Film and Theory tabs. |
+| `src/lessons/projectile/FilmView.tsx` | The film screen: chapters and narration on the left, the player on the right. |
+| `src/lessons/projectile/TheoryView.tsx` | The theory, formula sheet, worked examples, practice and calculator. |
+| `src/lessons/projectile/Figures.tsx` | The theory page's diagrams, drawn from the physics. |
+| `src/lessons/projectile/numbers.ts` | Time, height and range for any launch, including from a height. |
+| `src/ui/Math.tsx` | Sets the film's maths notation as HTML text. |
 | `src/lessons/projectile/model.ts` | The physics, term by term. |
 | `scripts/render.mjs` | `npm run render`: drives the app in a headless browser and saves the video. |
 

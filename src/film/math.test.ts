@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { drawMath, layoutMath, span } from './math';
+import { drawMath, layoutMath, mathKind, parseMath, span } from './math';
 
 // A stand-in canvas: every character is half the font size wide.
 const ctx = {
@@ -58,5 +58,27 @@ describe('maths layout', () => {
     drawn.length = 0;
     drawMath(rec, from, to, 1, 500, 100, { alpha: 1 });
     expect(at('=')).toBeCloseTo(100, 6);
+  });
+
+  it('reads subscripts, roots and plain text', () => {
+    const [v] = parseMath('v _x ^2');
+    expect(v).toEqual({ t: 'tok', tok: { text: 'v', key: undefined, sub: { text: 'x', key: undefined }, sup: { text: '2', key: undefined } } });
+    const [root] = parseMath('√[ [ 2 · h | g ] ]');
+    expect(root.t).toBe('sqrt');
+    if (root.t === 'sqrt') expect(root.body[0].t).toBe('frac');
+    const [, , unit] = parseMath('t = "s"');
+    expect(unit).toEqual({ t: 'tok', tok: { text: 's', kind: 'text' } });
+    expect(mathKind('40°')).toBe('num');
+    expect(mathKind('/')).toBe('op');
+  });
+
+  it('lays a root under a bar that spans its body', () => {
+    const l = layoutMath(ctx, 'x = √[ 2 · h ]', 40);
+    const sign = l.glyphs.find((g) => g.text === '√')!;
+    const h = l.glyphs.find((g) => g.text === 'h')!;
+    expect(l.bars).toHaveLength(1);
+    expect(h.x).toBeGreaterThan(sign.x);
+    expect(l.bars[0].x2).toBeGreaterThanOrEqual(h.x + h.w);
+    expect(l.bars[0].y).toBeLessThan(0);
   });
 });

@@ -30,6 +30,10 @@
   min-width: 0;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html,
 body,
 #root {
@@ -155,9 +159,27 @@ kbd {
   transition: background-color 0.18s, color 0.18s;
 }
 
-.mode-btn[aria-checked='true'] {
+.mode-btn[aria-checked='true'],
+.mode-btn[aria-selected='true'] {
   background: #ffffff;
   color: #000000;
+}
+
+.mode-sm {
+  margin-left: 0;
+  padding: 2px;
+}
+
+.mode-sm .mode-btn {
+  min-height: 28px;
+  padding: 0 12px;
+  font-size: 12.5px;
+}
+
+.film-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .layout {
@@ -974,6 +996,958 @@ kbd {
 
 /* ---------- smaller screens ---------- */
 
+
+/* ---------- theory: contents ---------- */
+
+.toc-block {
+  display: grid;
+  gap: 8px;
+}
+
+.toc-group {
+  font: 11.5px var(--mono);
+  color: var(--soft);
+}
+
+.toc .chapter {
+  grid-template-columns: auto 1fr;
+  padding: 7px 14px 8px;
+}
+
+.toc .chapter.is-current {
+  background: var(--hover);
+}
+
+.toc .chapter.is-current::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 2px;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+.print-toggle > span:first-child::after {
+  content: none;
+}
+
+/* ---------- theory: the page ---------- */
+
+.theory-main {
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--faint) transparent;
+}
+
+.theory-chips {
+  display: none;
+}
+
+.article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 48px 40px;
+}
+
+.article-head {
+  padding-bottom: 36px;
+  border-bottom: 1px solid var(--line);
+}
+
+.kicker {
+  font: 12px var(--mono);
+  color: var(--soft);
+}
+
+.article-title {
+  margin: 12px 0 16px;
+  font: 400 clamp(40px, 4.2vw, 58px) / 1.02 var(--serif);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.article .article-lead {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.t-section {
+  padding: 56px 0 10px;
+  scroll-margin-top: 12px;
+}
+
+.t-section + .t-section {
+  border-top: 1px solid var(--line);
+}
+
+.t-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.t-n {
+  font: 12px var(--mono);
+  color: var(--soft);
+}
+
+.t-head h2 {
+  margin: 0;
+  font: 400 clamp(32px, 3vw, 40px) / 1.05 var(--serif);
+  letter-spacing: -0.005em;
+}
+
+.t-h3 {
+  margin: 36px 0 10px;
+  font: 400 25px / 1.2 var(--serif);
+}
+
+.article p {
+  margin: 0 0 16px;
+  font-size: 16.5px;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.article strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.t-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.t-list li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+.t-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.85em;
+  width: 11px;
+  height: 1.5px;
+  background: var(--soft);
+}
+
+.article .t-tip {
+  padding-left: 14px;
+  border-left: 2px solid var(--line-strong);
+  font-size: 15px;
+}
+
+.t-note {
+  margin: 22px 0;
+  padding: 16px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--sunken);
+}
+
+.t-note-label {
+  display: block;
+  margin-bottom: 4px;
+  font: 12px var(--mono);
+  color: var(--soft);
+}
+
+.article .t-note p {
+  margin: 0;
+  font-size: 15.5px;
+}
+
+/* ---------- maths in the page ---------- */
+
+.m {
+  font-family: var(--serif);
+  font-size: 1.14em;
+  font-style: normal;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.m-var,
+.m-word {
+  font-style: italic;
+}
+
+.m-rel {
+  margin: 0 0.28em;
+}
+
+.m-bin {
+  margin: 0 0.2em;
+}
+
+.m-dot {
+  margin: 0 0.06em;
+}
+
+.m-fn {
+  margin-right: 0.14em;
+}
+
+.m-text {
+  margin-left: 0.22em;
+}
+
+.m-sup,
+.m-sub {
+  position: relative;
+  margin-left: 0.04em;
+  font-size: 0.62em;
+}
+
+.m-sup {
+  top: -0.62em;
+}
+
+.m-sub {
+  top: 0.26em;
+}
+
+.m-sub .m-word {
+  font-style: normal;
+}
+
+.m-scripts {
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 0.04em;
+  line-height: 1;
+  vertical-align: -0.34em;
+}
+
+.m-scripts .m-sup,
+.m-scripts .m-sub {
+  position: static;
+  margin: 0;
+  font-size: 0.62em;
+}
+
+.m-frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 0.14em;
+  font-size: 0.88em;
+  line-height: 1.12;
+  vertical-align: middle;
+}
+
+.m-frac-top {
+  padding: 0 0.2em 0.1em;
+}
+
+.m-frac-bottom {
+  align-self: stretch;
+  padding: 0.12em 0.2em 0;
+  border-top: max(1px, 0.055em) solid currentColor;
+  text-align: center;
+}
+
+.m-sqrt {
+  position: relative;
+  display: inline-block;
+  padding-left: 0.6em;
+}
+
+.m-radicand {
+  display: inline-block;
+  padding: 0.1em 0.08em 0 0.06em;
+  border-top: max(1px, 0.055em) solid currentColor;
+}
+
+.m-radix {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0.62em;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.m-atom-fn {
+  margin-right: 0.14em;
+}
+
+.m-atom-fn > .m-fn {
+  margin-right: 0;
+}
+
+.eq {
+  margin: 18px 0 22px;
+  padding: 26px 22px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #000000;
+  text-align: center;
+}
+
+.eq-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px 56px;
+  font-size: clamp(21px, 2.2vw, 29px);
+}
+
+.eq .m {
+  font-size: 1em;
+}
+
+.eq-part {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.eq-label {
+  position: relative;
+  margin-top: 0.32em;
+  padding-top: 0.6em;
+  font: italic 0.56em / 1.2 var(--serif);
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.eq-label::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6%;
+  right: 6%;
+  height: 0.4em;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-top: 0;
+  border-radius: 0 0 5px 5px;
+}
+
+.eq-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+  margin-top: 18px;
+}
+
+.eq-note {
+  font-size: 14px;
+  color: var(--soft);
+}
+
+.eq-note .m {
+  font-size: 1.15em;
+}
+
+.film-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 13px 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.18s, border-color 0.18s, color 0.18s;
+}
+
+.film-link:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: var(--sunken);
+  color: #ffffff;
+}
+
+.film-link svg {
+  flex: none;
+}
+
+.film-link-t {
+  font: 12px var(--mono);
+  color: var(--soft);
+}
+
+.t-section > .film-link,
+.example > .film-link {
+  margin-top: 4px;
+}
+
+/* ---------- diagrams ---------- */
+
+.t-figure {
+  margin: 22px 0;
+  padding: 18px 16px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #000000;
+}
+
+.t-figure figcaption {
+  margin-top: 8px;
+  font-size: 13.5px;
+  color: var(--soft);
+  text-align: center;
+}
+
+.fig {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.fig-narrow {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.fig text {
+  fill: var(--ink);
+}
+
+.fig .fig-sym {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+}
+
+.fig .fig-big {
+  font-size: 30px;
+}
+
+.fig .fig-val {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-style: normal;
+  fill: var(--ink-2);
+}
+
+.fig .fig-label {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-style: italic;
+  fill: var(--ink-2);
+}
+
+.fig .fig-sum {
+  font-family: var(--serif);
+  font-size: 21px;
+}
+
+.fig .fig-sup {
+  font-size: 13px;
+}
+
+.fig-ground {
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 1.5;
+}
+
+.fig-path {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fig-path.is-muted {
+  stroke: rgba(255, 255, 255, 0.34);
+  stroke-width: 1.7;
+}
+
+.fig-guide {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.62);
+  stroke-width: 1.5;
+}
+
+.fig-dash {
+  stroke-dasharray: 5 7;
+}
+
+.fig-guide.fig-faint {
+  stroke: rgba(255, 255, 255, 0.22);
+}
+
+.fig-bar {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.fig-vec {
+  stroke: #ffffff;
+  stroke-width: 3;
+}
+
+.fig-ball {
+  fill: #ffffff;
+}
+
+.fig-dot {
+  fill: rgba(255, 255, 255, 0.5);
+}
+
+.fig-ghost {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 2;
+}
+
+.fig-cliff {
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.5;
+}
+
+.fig-cell {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 1.5;
+}
+
+.fig-cell.is-lit {
+  fill: rgba(255, 255, 255, 0.2);
+}
+
+.fig-still {
+  display: none;
+}
+
+/* ---------- tables ---------- */
+
+.t-table-wrap {
+  margin: 16px 0 22px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.t-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.t-table th,
+.t-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.t-table tr:last-child th,
+.t-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.t-table tbody th {
+  width: 40%;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.t-table thead th {
+  font: 12px var(--mono);
+  color: var(--soft);
+  background: var(--sunken);
+}
+
+.t-table thead th .m {
+  font-size: 1.4em;
+  color: var(--ink-2);
+}
+
+.t-table td .m {
+  font-size: 1.32em;
+}
+
+.t-symbols .t-sym {
+  width: 84px;
+}
+
+.t-unit {
+  font: 13px var(--mono);
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.t-numbers td {
+  font: 14px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-numbers tr.is-best td {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* ---------- worked examples ---------- */
+
+.example {
+  margin: 28px 0;
+  padding: 26px 26px 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+}
+
+.example-head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.example-n {
+  font: 12px var(--mono);
+  color: var(--soft);
+}
+
+.example-head h3 {
+  margin: 0;
+  font: 400 28px / 1.15 var(--serif);
+}
+
+.article .ex-q {
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.given {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 18px;
+}
+
+.given-label {
+  margin-right: 4px;
+  font: 12px var(--mono);
+  color: var(--soft);
+}
+
+.given-item {
+  padding: 5px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+}
+
+.given-item .m {
+  font-size: 1.06em;
+}
+
+.steps {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  padding: 4px 0 4px 42px;
+  counter-increment: step;
+}
+
+.step::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font: 12px var(--mono);
+  color: var(--ink-2);
+}
+
+.step h4 {
+  margin: 4px 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.step .eq {
+  margin: 8px 0 12px;
+  padding: 18px 14px;
+}
+
+.step .eq-row,
+.q-answer .eq-row {
+  gap: 12px 40px;
+  font-size: clamp(18px, 1.9vw, 23px);
+}
+
+.article .step p {
+  font-size: 15.5px;
+}
+
+.article .answer {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 16px 0 6px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.answer-label {
+  flex: none;
+  font: 12px var(--mono);
+  color: #5c5c62;
+}
+
+/* ---------- mistakes ---------- */
+
+.mistakes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mistake {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--sunken);
+}
+
+.mistake h3 {
+  margin: 0;
+  font: 400 22px / 1.2 var(--serif);
+}
+
+.mistake-wrong {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 9px 12px;
+  overflow-x: auto;
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  background: #000000;
+}
+
+.mistake-wrong .m {
+  font-size: 1.12em;
+}
+
+.mistake-tag {
+  font: 11px var(--mono);
+  color: var(--soft);
+}
+
+.article .mistake p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+/* ---------- practice ---------- */
+
+.practice {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.question details {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--sunken);
+  transition: border-color 0.18s;
+}
+
+.question details[open] {
+  border-color: var(--line-strong);
+}
+
+.question summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.question summary::-webkit-details-marker {
+  display: none;
+}
+
+.q-n {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font: 12px var(--mono);
+  color: var(--ink-2);
+}
+
+.q-text {
+  flex: 1;
+  font-size: 15.5px;
+}
+
+.q-show::before {
+  content: 'Show answer';
+  font-size: 12.5px;
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+details[open] .q-show::before {
+  content: 'Hide';
+}
+
+.q-answer {
+  padding: 0 16px 14px 56px;
+}
+
+.q-answer .eq {
+  margin: 2px 0 10px;
+  padding: 16px 12px;
+}
+
+.article .q-answer p {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+/* ---------- calculator ---------- */
+
+.calc {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+}
+
+.calc-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.calc-figure {
+  margin: 16px 0;
+}
+
+.calc-out {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--line);
+}
+
+.calc-stat {
+  padding: 12px 14px;
+  background: var(--panel);
+}
+
+.calc-stat dt {
+  font-size: 12.5px;
+  color: var(--soft);
+}
+
+.calc-stat dd {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 4px 0 0;
+}
+
+.calc-sym .m {
+  font-size: 1.25em;
+  color: var(--ink-2);
+}
+
+.calc-val {
+  font: 17px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- closing ---------- */
+
+.closing {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-top: 56px;
+  padding: 48px 20px 16px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+
+.article .closing-line {
+  margin: 0;
+  font: 400 clamp(28px, 3vw, 38px) / 1.15 var(--serif);
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.article .closing-sub {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--soft);
+}
+
 @media (max-width: 1180px) {
   .layout {
     grid-template-columns: minmax(290px, 330px) minmax(0, 1fr);
@@ -1044,6 +2018,72 @@ kbd {
     height: 34px;
   }
 
+  #view-theory > .panel {
+    display: none;
+  }
+
+  .theory-main {
+    overflow: visible;
+    border-radius: 16px;
+  }
+
+  .theory-chips {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    gap: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--line);
+    border-radius: 16px 16px 0 0;
+    background: rgba(10, 10, 11, 0.92);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    scrollbar-width: none;
+  }
+
+  .theory-chips .preset {
+    flex: none;
+  }
+
+  .article {
+    padding: 28px 18px 40px;
+  }
+
+  .t-section {
+    padding-top: 40px;
+    scroll-margin-top: 64px;
+  }
+
+  .mistakes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .calc-out {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .example {
+    padding: 20px 16px 18px;
+  }
+
+  .step {
+    padding-left: 36px;
+  }
+
+  .q-answer {
+    padding-left: 16px;
+  }
+
+  .eq {
+    padding: 20px 12px;
+  }
+
+  .film-meta {
+    flex-wrap: wrap;
+  }
+
   .big-play {
     bottom: 9%;
     gap: 10px;
@@ -1088,5 +2128,176 @@ kbd {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fig-still {
+    display: inline;
+  }
+
+  .fig-moving {
+    display: none;
+  }
+}
+
+/* ---------- print: the notes, black on white ---------- */
+
+@media print {
+  @page {
+    margin: 16mm;
+  }
+
+  html,
+  body,
+  #root,
+  .app {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .topbar,
+  #view-film,
+  #view-theory > .panel,
+  .theory-chips,
+  .film-link,
+  .closing .btn,
+  .calc-controls,
+  .q-show {
+    display: none !important;
+  }
+
+  .layout {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  .theory-main {
+    overflow: visible !important;
+    border: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .article {
+    max-width: none;
+    padding: 0;
+  }
+
+  .article,
+  .article p,
+  .article strong,
+  .article h1,
+  .article h2,
+  .article h3,
+  .article h4,
+  .t-list li,
+  .m,
+  .t-table th,
+  .t-table td,
+  .q-text,
+  .calc-val {
+    color: #000000 !important;
+  }
+
+  .kicker,
+  .t-n,
+  .example-n,
+  .given-label,
+  .t-note-label,
+  .t-unit,
+  .calc-stat dt,
+  .t-figure figcaption {
+    color: #555555 !important;
+  }
+
+  .eq,
+  .t-figure,
+  .mistake-wrong,
+  .calc-stat,
+  .t-note,
+  .mistake,
+  .question details {
+    background: #ffffff !important;
+    border-color: #cccccc !important;
+  }
+
+  .article .answer,
+  .t-numbers tr.is-best td,
+  .t-table thead th {
+    background: #eeeeee !important;
+    color: #000000 !important;
+  }
+
+  .eq-label::before {
+    border-color: #555555;
+  }
+
+  .fig text,
+  .fig .fig-val,
+  .fig .fig-label {
+    fill: #000000 !important;
+  }
+
+  .fig-path,
+  .fig-bar,
+  .fig-vec,
+  .fig-ghost {
+    stroke: #000000 !important;
+  }
+
+  .fig-path.is-muted,
+  .fig-ground,
+  .fig-guide {
+    stroke: #888888 !important;
+  }
+
+  .fig-ball,
+  .fig-head {
+    fill: #000000 !important;
+  }
+
+  .fig-dot {
+    fill: #777777 !important;
+  }
+
+  .fig-glow {
+    display: none;
+  }
+
+  .fig-cell {
+    fill: #ffffff !important;
+    stroke: #000000 !important;
+  }
+
+  .fig-cell.is-lit {
+    fill: #dddddd !important;
+  }
+
+  .fig-cliff {
+    fill: #eeeeee !important;
+    stroke: #777777 !important;
+  }
+
+  .fig-still {
+    display: inline !important;
+  }
+
+  .fig-moving {
+    display: none !important;
+  }
+
+  .t-section,
+  .example,
+  .eq,
+  .t-figure,
+  .question,
+  .mistake {
+    break-inside: avoid;
+  }
+
+  .t-section + .t-section {
+    border-color: #dddddd;
   }
 }
