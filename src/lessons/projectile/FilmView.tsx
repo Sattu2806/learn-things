@@ -92,8 +92,8 @@ function Transcript({ film, beat, chapter, onSeek, follow, lang }: { film: Film;
         <li key={b.index}>
           <button className={b.index === beat ? 'line is-now' : b.index < beat ? 'line is-past' : 'line'} onClick={() => onSeek(b.start)}>
             <span className="line-t">{clock(b.start)}</span>
-            <span className="line-text">{tr(b.say)}</span>
-            {b.pause && <span className="line-pause">Your turn: {tr(b.pause.prompt)}</span>}
+            <span className="line-text" dir="auto">{tr(b.say)}</span>
+            {b.pause && <span className="line-pause" dir="auto">Your turn: {tr(b.pause.prompt)}</span>}
           </button>
         </li>
       ))}
