@@ -399,7 +399,7 @@ export function SphericalSurface({ height = 260 }: { height?: number }) {
         return (
           <g>
             <rect x={px} y={y0 - 80} width={W - px - 20} height={160} fill="#fff" opacity={0.06} />
-            <Trail points={curve(50, 1, (q) => [surf((q - 0.5) * 2 * 80), y0 + (q - 0.5) * 2 * 80] as Pt)} />
+            <Trail points={curve(50, 1, (q) => [surf((q - 0.5) * 2 * 42), y0 + (q - 0.5) * 2 * 42] as Pt)} />
             <Line x1={20} y1={y0} x2={W - 20} y2={y0} tone="soft" />
             {hits.map((y) => {
               const H: Pt = [surf(y), y0 + y];
