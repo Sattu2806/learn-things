@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -27,7 +28,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="waves" sections={SECTIONS} sideTitle="Waves" sideLead="How a disturbance travels without anything travelling with it: wavelength, speed, standing waves, sound, beats and the Doppler effect.">
+    <ChapterShell id="waves" film={buildFilm} sections={SECTIONS} sideTitle="Waves" sideLead="How a disturbance travels without anything travelling with it: wavelength, speed, standing waves, sound, beats and the Doppler effect.">
       <header className="article-head">
         <span className="kicker">Physics · Oscillations and waves</span>
         <h1 className="article-title">How does a shake travel across a rope without the rope going anywhere?</h1>

@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -51,7 +52,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="gravitation" sections={SECTIONS} sideTitle="Gravitation" sideLead="One law, from falling apples to the Moon: how gravity weakens with distance, how much energy it stores, and why satellites keep falling without landing.">
+    <ChapterShell id="gravitation" film={buildFilm} sections={SECTIONS} sideTitle="Gravitation" sideLead="One law, from falling apples to the Moon: how gravity weakens with distance, how much energy it stores, and why satellites keep falling without landing.">
       <header className="article-head">
         <span className="kicker">Physics · Gravitation</span>
         <h1 className="article-title">Why does the Moon not fall down?</h1>

@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -27,7 +28,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="com" sections={SECTIONS} sideTitle="Centre of mass" sideLead="The one point that moves as if the whole body were squeezed into it: how to find it, why it moves so simply, and when a body balances.">
+    <ChapterShell id="com" film={buildFilm} sections={SECTIONS} sideTitle="Centre of mass" sideLead="The one point that moves as if the whole body were squeezed into it: how to find it, why it moves so simply, and when a body balances.">
       <header className="article-head">
         <span className="kicker">Physics · Systems of particles</span>
         <h1 className="article-title">Why does a spinning spanner fly so smoothly?</h1>

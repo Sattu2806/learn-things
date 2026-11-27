@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -28,7 +29,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="momentum" sections={SECTIONS} sideTitle="Momentum and collisions" sideLead="Momentum, impulse and the one quantity that survives every collision: why the total never changes, and what that tells us about recoil, explosions and crashes.">
+    <ChapterShell id="momentum" film={buildFilm} sections={SECTIONS} sideTitle="Momentum and collisions" sideLead="Momentum, impulse and the one quantity that survives every collision: why the total never changes, and what that tells us about recoil, explosions and crashes.">
       <header className="article-head">
         <span className="kicker">Physics · Laws of motion</span>
         <h1 className="article-title">What is always the same before and after a crash?</h1>

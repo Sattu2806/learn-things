@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -47,7 +48,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="vectors" sections={SECTIONS} sideTitle="Vectors" sideLead="Arrows that carry a size and a direction: how to add them, split them into parts, multiply them two ways, and follow them through space.">
+    <ChapterShell id="vectors" film={buildFilm} sections={SECTIONS} sideTitle="Vectors" sideLead="Arrows that carry a size and a direction: how to add them, split them into parts, multiply them two ways, and follow them through space.">
       <header className="article-head">
         <span className="kicker">Physics · Mathematics for motion</span>
         <h1 className="article-title">How do you add a walk to the north to a walk to the east?</h1>

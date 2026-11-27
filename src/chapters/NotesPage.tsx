@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { FilmTab } from './film/FilmTab';
+import type { ChapterFilm } from './film/engine';
 import { useMedia } from '../ui/useMedia';
 import { Topbar } from './Topbar';
 
@@ -108,12 +110,50 @@ export function NotesPage({ sections, sideTitle, sideLead, children }: Props) {
   );
 }
 
-/** A whole chapter page: the shared top bar and the notes layout. */
-export function ChapterShell({ id, ...props }: Props & { id: string }) {
+type View = 'film' | 'notes';
+
+function viewFromHash(): View {
+  return /^#\/[a-z0-9-]+\/notes/.test(window.location.hash) ? 'notes' : 'film';
+}
+
+/** A whole chapter page: the shared top bar, the chapter's film, and the notes. */
+export function ChapterShell({ id, film: make, ...props }: Props & { id: string; film?: () => ChapterFilm }) {
+  const cf = useMemo(() => make?.(), [make]);
+  const [view, setView] = useState<View>(cf ? viewFromHash : () => 'notes');
+  useEffect(() => {
+    const on = () => setView(viewFromHash());
+    window.addEventListener('popstate', on);
+    window.addEventListener('hashchange', on);
+    return () => {
+      window.removeEventListener('popstate', on);
+      window.removeEventListener('hashchange', on);
+    };
+  }, []);
+  const go = (v: View) => {
+    if (v === view) return;
+    window.history.pushState(null, '', v === 'notes' ? `#/${id}/notes` : `#/${id}`);
+    setView(v);
+  };
   return (
     <div className="app">
-      <Topbar chapter={id} />
-      <NotesPage {...props} />
+      <Topbar chapter={id}>
+        {cf && (
+          <div className="mode views" role="tablist" aria-label="View">
+            {(
+              [
+                ['film', 'Film'],
+                ['notes', 'Notes'],
+              ] as [View, string][]
+            ).map(([v, label]) => (
+              <button key={v} role="tab" aria-selected={view === v} className="mode-btn" onClick={() => go(v)}>
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </Topbar>
+      {cf && <FilmTab cf={cf} id={id} active={view === 'film'} />}
+      {(!cf || view === 'notes') && <NotesPage {...props} />}
     </div>
   );
 }

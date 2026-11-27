@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -28,7 +29,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="friction" sections={SECTIONS} sideTitle="Friction" sideLead="The force that holds things still, lets us walk, and slows everything down: static and kinetic friction, slopes, angles and stacked blocks.">
+    <ChapterShell id="friction" film={buildFilm} sections={SECTIONS} sideTitle="Friction" sideLead="The force that holds things still, lets us walk, and slows everything down: static and kinetic friction, slopes, angles and stacked blocks.">
       <header className="article-head">
         <span className="kicker">Physics · Laws of motion</span>
         <h1 className="article-title">Why does a heavy box not move until you push hard enough?</h1>

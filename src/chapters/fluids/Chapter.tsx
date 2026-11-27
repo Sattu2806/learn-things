@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -66,7 +67,7 @@ const SYMBOLS: (readonly [string, string, string])[] = [
 
 export default function Chapter() {
   return (
-    <ChapterShell id="fluids" sections={SECTIONS} sideTitle="Fluids" sideLead="Liquids and gases at rest and on the move: pressure, floating, flow, drag, and the skin on the surface of water.">
+    <ChapterShell id="fluids" film={buildFilm} sections={SECTIONS} sideTitle="Fluids" sideLead="Liquids and gases at rest and on the move: pressure, floating, flow, drag, and the skin on the surface of water.">
       <header className="article-head">
         <span className="kicker">Physics · Properties of matter</span>
         <h1 className="article-title">Why does a ship float and a wing lift?</h1>

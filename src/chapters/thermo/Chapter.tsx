@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -27,7 +28,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="thermo" sections={SECTIONS} sideTitle="Thermodynamics" sideLead="Heat, work and energy of a gas: the first law, engines and fridges, and why heat only flows downhill by itself.">
+    <ChapterShell id="thermo" film={buildFilm} sections={SECTIONS} sideTitle="Thermodynamics" sideLead="Heat, work and energy of a gas: the first law, engines and fridges, and why heat only flows downhill by itself.">
       <header className="article-head">
         <span className="kicker">Physics · Heat and thermodynamics</span>
         <h1 className="article-title">Why can heat become work, but never completely?</h1>

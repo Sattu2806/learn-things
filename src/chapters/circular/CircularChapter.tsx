@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Topbar } from '../Topbar';
-import { NotesPage, type NoteSection } from '../NotesPage';
+import { ChapterShell, type NoteSection } from '../NotesPage';
+import { buildFilm } from './film';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
 import { CircleScene, type CircleSpec } from './CircleScene';
@@ -45,9 +45,7 @@ function Mistake({ title, wrong, scene, children }: { title: string; wrong: stri
 
 export default function CircularChapter() {
   return (
-    <div className="app">
-      <Topbar chapter="circular" />
-      <NotesPage sections={SECTIONS} sideTitle="Circular motion" sideLead="Going round in circles: angles, angular velocity, and why anything moving in a circle is always accelerating toward the centre.">
+    <ChapterShell id="circular" film={buildFilm} sections={SECTIONS} sideTitle="Circular motion" sideLead="Going round in circles: angles, angular velocity, and why anything moving in a circle is always accelerating toward the centre.">
         <header className="article-head">
           <span className="kicker">Physics · Motion in a plane</span>
           <h1 className="article-title">Why is something going round always accelerating?</h1>
@@ -530,7 +528,6 @@ export default function CircularChapter() {
             Next: <M>{'a = v ^2 / r'}</M> needs a force to cause it. That is where the forces chapters begin.
           </p>
         </footer>
-      </NotesPage>
-    </div>
+    </ChapterShell>
   );
 }

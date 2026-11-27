@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -27,7 +28,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="kinetic" sections={SECTIONS} sideTitle="Kinetic theory of gases" sideLead="Pressure, temperature and heat capacity explained by countless tiny molecules bouncing around.">
+    <ChapterShell id="kinetic" film={buildFilm} sections={SECTIONS} sideTitle="Kinetic theory of gases" sideLead="Pressure, temperature and heat capacity explained by countless tiny molecules bouncing around.">
       <header className="article-head">
         <span className="kicker">Physics · Heat and gases</span>
         <h1 className="article-title">What is pressure, really, and what is temperature?</h1>
