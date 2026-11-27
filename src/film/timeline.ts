@@ -101,7 +101,11 @@ export class Film {
     this.chapters.push({ index: this.chapters.length, title, start: this.duration, end: this.duration });
   }
 
+  /** Measured lengths of spoken lines (seconds), e.g. from a recorded voice; otherwise estimated. */
+  speech: Record<string, number> = {};
+
   speakTime(say: string): number {
+    if (this.speech[say] !== undefined) return this.speech[say];
     const words = say.split(/\s+/).filter(Boolean).length;
     return words / WORDS_PER_SECOND;
   }

@@ -2,6 +2,8 @@ import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { Topbar } from '../../chapters/Topbar';
 import { COURSES, loadCourse, saveCourse, type Course } from './courses';
 import { buildFilm } from './film';
+// Measured lengths of the YouTube voiceover lines (Kokoro am_onyx), so the video is paced to the real voice.
+import voiceTimings from './voice-timings.json';
 import FilmView, { type FilmApi } from './FilmView';
 
 // The notes and questions load on first visit, so the film starts as fast as before.
@@ -24,7 +26,7 @@ function fromHash(): View {
 /** One lesson, two ways in: the film, and the theory written out. */
 export default function LessonPage() {
   // ?cut=youtube builds the continuous video version (used by npm run render -- --cut youtube).
-  const film = useMemo(() => buildFilm(new URLSearchParams(window.location.search).get('cut') === 'youtube' ? 'youtube' : 'lesson'), []);
+  const film = useMemo(() => (new URLSearchParams(window.location.search).get('cut') === 'youtube' ? buildFilm('youtube', voiceTimings) : buildFilm()), []);
   const [view, setView] = useState<View>(fromHash);
   const [opened, setOpened] = useState<Record<View, boolean>>({ film: true, theory: view === 'theory', questions: view === 'questions' });
   const [course, setCourseState] = useState<Course>(loadCourse);

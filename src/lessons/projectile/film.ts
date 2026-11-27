@@ -146,9 +146,11 @@ function ask(pause: { prompt: string; controls: string[]; hold: number }) {
   return yt ? {} : { pause };
 }
 
-export function buildFilm(cut: Cut = 'lesson'): Film {
+export function buildFilm(cut: Cut = 'lesson', speech: Record<string, number> = {}): Film {
   yt = cut === 'youtube';
   const f = new Film(DEFAULTS, STATE_DEFAULTS);
+  // With a recorded voice, each line lasts exactly as long as it is spoken.
+  f.speech = speech;
 
   // ------------------------------------------------------------ 1. The question
   f.chapter('The question');
