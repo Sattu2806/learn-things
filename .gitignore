@@ -10,3 +10,4 @@ coverage
 *.webm
 living-equations*.srt
 living-equations*-voiceover.txt
+output/
