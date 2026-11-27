@@ -785,14 +785,14 @@ export function CarnotScene() {
               {s.base}
             </Label>
             <g opacity={s.base === 'hot' ? 1 : 0}>
-              <Arrow x1={105} y1={248} x2={105} y2={230} />
-              <Label x={130} y={242} kind="sym">
+              <Arrow x1={75} y1={248} x2={75} y2={230} />
+              <Label x={95} y={242} kind="sym">
                 Q
               </Label>
             </g>
             <g opacity={s.base === 'cold' ? 1 : 0}>
-              <Arrow x1={105} y1={230} x2={105} y2={248} />
-              <Label x={130} y={242} kind="sym">
+              <Arrow x1={75} y1={230} x2={75} y2={248} />
+              <Label x={95} y={242} kind="sym">
                 Q
               </Label>
             </g>
