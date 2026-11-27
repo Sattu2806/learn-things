@@ -14,16 +14,24 @@ function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
 }
 
 const frac = (x: number) => x - Math.floor(x);
-const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
-const sup = (n: number) =>
-  String(n)
-    .replace('-', '⁻')
-    .replace(/\d/g, (d) => SUP[Number(d)]);
+/** Real subscripts and superscripts inside SVG text. */
+const Sup = ({ children }: { children: ReactNode }) => (
+  <tspan baselineShift="super" fontSize="72%">
+    {children}
+  </tspan>
+);
 
-const fmt = (x: number) => {
+const fmt = (x: number): ReactNode => {
   const e = Math.floor(Math.log10(x));
-  return `${(x / 10 ** e).toFixed(1)} × 10${sup(e)}`;
+  return (
+    <>
+      {(x / 10 ** e).toFixed(1)} × 10<Sup>{String(e).replace('-', '−')}</Sup>
+    </>
+  );
 };
+
+/** Text with a background-coloured outline so lines and curves behind it do not cut through the letters. */
+const HALO = { paintOrder: 'stroke', stroke: '#000', strokeWidth: 7, strokeLinejoin: 'round' } as const;
 
 /** A short wave packet centred at (cx, cy), n cycles of wavelength lam, running along angle a. */
 function packet(cx: number, cy: number, a: number, lam: number, amp: number, len: number, shift = 0): Pt[] {
@@ -321,9 +329,13 @@ export function NucleusScale() {
             <Ball x={cx} y={cy} r={rN} glow={rN > 5} />
             <Label x={cx} y={cy + Math.min(rN + 22, 80)} kind="label">{rN > 8 ? 'nucleus' : ''}</Label>
             {rA < 160 && <Label x={cx} y={cy - rA - 10} kind="label">atom</Label>}
-            <Label x={W - 14} y={24} kind="val" anchor="end">{`view width ${fmt(Wv)} m`}</Label>
+            <text className="fig-val" x={W - 14} y={24} textAnchor="end" style={HALO}>
+              view width {fmt(Wv)} m
+            </text>
             <Line x1={cx - 150} y1={226} x2={cx + 150} y2={226} tone="soft" />
-            <Label x={cx} y={218} kind="label">{`bar: ${fmt(Wv * 0.5)} m`}</Label>
+            <text className="fig-label" x={cx} y={216} textAnchor="middle" style={HALO}>
+              bar: {fmt(Wv * 0.5)} m
+            </text>
           </g>
         );
       }}
@@ -376,16 +388,17 @@ const BALMER = [410.2, 434.1, 486.1, 656.3];
 
 export function SpectraTypes() {
   return (
-    <Anim title="Three spectra: a hot solid gives a continuous band, a hot gas gives bright lines at certain colours only, and the same gas in front of a hot source takes those same colours out, leaving dark lines" height={250} loop={9}>
+    <Anim title="Three spectra: a hot solid gives a continuous band, a hot gas gives bright lines at certain colours only, and the same gas in front of a hot source takes those same colours out, leaving dark lines" height={280} loop={9}>
       {(t) => {
         const x0 = 90, x1 = 600;
         const xl = (l: number) => x0 + ((l - 380) / (720 - 380)) * (x1 - x0);
         const rows: [number, string, number][] = [
-          [28, 'hot solid: continuous', 0],
-          [100, 'hot gas: emission lines', 1],
-          [172, 'cool gas: absorption lines', 2],
+          [34, 'hot solid: continuous', 0],
+          [112, 'hot gas: emission lines', 1],
+          [190, 'cool gas: absorption lines', 2],
         ];
         const cur = lerp(390, 710, phase(t, 0.5, 8.5));
+        const near = BALMER.find((l) => Math.abs(cur - l) < 8);
         return (
           <g>
             {rows.map(([y, name, kind]) => (
@@ -396,15 +409,16 @@ export function SpectraTypes() {
                 {BALMER.map((l, i) => (
                   <rect key={l} x={xl(l) - 2} y={y + 1} width={4} height={42} fill={kind === 1 ? '#fff' : '#000'} opacity={kind === 1 ? 0.75 + 0.25 * Math.sin(TAU * (t * 0.8 + i * 0.3)) : 1} />
                 ))}
-                <Label x={x0} y={y + 62} kind="label" anchor="start">{name}</Label>
               </g>
             ))}
-            <Line x1={xl(cur)} y1={14} x2={xl(cur)} y2={224} tone="bright" />
-            <Label x={xl(cur)} y={242} kind="val">{`${cur.toFixed(0)} nm`}</Label>
-            {BALMER.map((l) => (
-              <Label key={l} x={xl(l)} y={12} kind="val">{Math.abs(cur - l) < 14 ? `${l.toFixed(1)}` : ''}</Label>
+            <Line x1={xl(cur)} y1={22} x2={xl(cur)} y2={254} tone="bright" />
+            {rows.map(([y, name]) => (
+              <text key={name} className="fig-label" x={x0} y={y + 64} textAnchor="start" style={HALO}>
+                {name}
+              </text>
             ))}
-            <Label x={W - 14} y={242} kind="label" anchor="end">wavelength, 380 to 720 nm</Label>
+            <Label x={xl(cur)} y={274} kind="val">{`${near ? near.toFixed(1) : cur.toFixed(0)} nm`}</Label>
+            <Label x={W - 14} y={14} kind="label" anchor="end">wavelength, 380 to 720 nm</Label>
           </g>
         );
       }}
@@ -428,6 +442,14 @@ export function Levels({ trans, nmax = 6, mode = 'emit', title, slot = 2.8 }: { 
         const [a, b] = trans[idx];
         const hi = mode === 'emit' ? a : b;
         const lo = mode === 'emit' ? b : a;
+        // label rows: spread the crowded upper rungs at least 15 px apart
+        const shown = ns.filter((n) => n <= 3 || n === hi || n === lo);
+        const ly: Record<number, number> = {};
+        let lastY = yE(0) + 4;
+        [...shown].reverse().forEach((n) => {
+          lastY = Math.max(yE(En(n)) + 4, lastY + 15);
+          ly[n] = lastY;
+        });
         const dE = En(hi) - En(lo);
         const lam = 1240 / dE;
         const xs = (i: number) => 80 + (L > 1 ? (i * 130) / (L - 1) : 65);
@@ -446,8 +468,8 @@ export function Levels({ trans, nmax = 6, mode = 'emit', title, slot = 2.8 }: { 
             {ns.map((n) => (
               <g key={n}>
                 <Line x1={50} y1={yE(En(n))} x2={250} y2={yE(En(n))} tone="bright" />
-                {(n <= 3 || n === hi || n === lo) && <Label x={42} y={yE(En(n)) + 4} kind="val" anchor="end">{`n = ${n}`}</Label>}
-                {(n <= 3 || n === hi || n === lo) && <Label x={258} y={yE(En(n)) + 4} kind="val" anchor="start">{`${En(n).toFixed(2)}`}</Label>}
+                {ly[n] !== undefined && <Label x={42} y={ly[n]} kind="val" anchor="end">{`n = ${n}`}</Label>}
+                {ly[n] !== undefined && <Label x={258} y={ly[n]} kind="val" anchor="start">{En(n).toFixed(2).replace('-', '−')}</Label>}
               </g>
             ))}
             <Line x1={50} y1={yE(0)} x2={250} y2={yE(0)} tone="soft" dashed />
@@ -474,18 +496,19 @@ export function Levels({ trans, nmax = 6, mode = 'emit', title, slot = 2.8 }: { 
 
 export function SeriesSpectrum() {
   return (
-    <Anim title="Lines of the Lyman, Balmer and Paschen series drawn on a scale of one over the wavelength; each series crowds up toward its own limit, and the three occupy different regions: ultraviolet, visible and infrared" height={250} loop={12}>
+    <Anim title="Lines of the Lyman, Balmer and Paschen series drawn on a scale of one over the wavelength; each series crowds up toward its own limit, and the three occupy different regions: ultraviolet, visible and infrared" height={290} loop={12}>
       {(t) => {
-        const x0 = 40, x1 = 600;
-        const xv = (w: number) => x0 + w * (x1 - x0) * 1.0;
+        const x0 = 40, x1 = 570;
+        const xv = (w: number) => x0 + w * (x1 - x0);
         const series: [string, number, number, string][] = [
-          ['Lyman (to n = 1): ultraviolet', 1, 190, 'UV'],
-          ['Balmer (to n = 2): visible', 2, 120, 'visible'],
-          ['Paschen (to n = 3): infrared', 3, 50, 'IR'],
+          ['Lyman (to n = 1): ultraviolet', 1, 230, 'UV'],
+          ['Balmer (to n = 2): visible', 2, 148, 'visible'],
+          ['Paschen (to n = 3): infrared', 3, 66, 'IR'],
         ];
         return (
           <g>
-            <Axes x={x0} y={232} w={x1 - x0 + 8} h={0} xLabel="1 / λ" />
+            <Axes x={x0} y={268} w={x1 - x0 + 30} h={0} />
+            <Label x={W - 6} y={288} kind="sym" anchor="end">1/λ</Label>
             {series.map(([name, nf, y], si) => {
               const lim = 1 / (nf * nf);
               const lines: ReactNode[] = [];
@@ -494,18 +517,25 @@ export function SeriesSpectrum() {
                 const on = ease(phase(t, 0.5 + si * 2.2 + (ni - nf) * 0.2, 1 + si * 2.2 + (ni - nf) * 0.2));
                 lines.push(<rect key={ni} className="fig-bar" x={xv(w) - 1.2} y={y - 26 * on} width={2.4} height={52 * on} fill="#fff" opacity={0.5 + 0.5 * Math.sin(TAU * (t * 0.6 + ni * 0.1)) ** 2} />);
               }
+              const limOn = 0.6 + 0.4 * Math.sin(TAU * (t * 0.4 + si * 0.3)) ** 2;
               return (
                 <g key={name}>
                   <Line x1={x0} y1={y} x2={x1} y2={y} tone="soft" dashed />
                   {lines}
-                  <Line x1={xv(lim)} y1={y - 34} x2={xv(lim)} y2={y + 34} tone="bright" dashed />
-                  <Label x={x0} y={y - 32} kind="label" anchor="start">{name}</Label>
-                  <Label x={xv(lim) + 6} y={y + 46} kind="val" anchor="start">series limit</Label>
+                  <Line x1={xv(lim)} y1={y - 30} x2={xv(lim)} y2={y + 30} tone="bright" dashed />
+                  <Label x={x0} y={y - 36} kind="label" anchor="start">{name}</Label>
+                  <g opacity={limOn}>
+                    {nf === 1 ? (
+                      <Label x={xv(lim) - 8} y={y - 36} kind="val" anchor="end">series limit</Label>
+                    ) : (
+                      <Label x={xv(lim) + 8} y={y - 6} kind="val" anchor="start">series limit</Label>
+                    )}
+                  </g>
                 </g>
               );
             })}
             {[0, 0.25, 0.5, 0.75, 1].map((w) => (
-              <Label key={w} x={xv(w)} y={248} kind="val">{`${w} R`}</Label>
+              <Label key={w} x={xv(w)} y={288} kind="val">{`${w} R`}</Label>
             ))}
           </g>
         );

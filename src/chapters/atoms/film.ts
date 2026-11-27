@@ -195,14 +195,21 @@ export const buildFilm = () =>
           { at: 9, src: 'h · ν = E _i − E _f' },
         ],
         draw: (g, t) => {
-          const yE = (E: number) => 340 + (-E / 13.6) * 520;
+          const yE = (E: number) => 290 + (-E / 13.6) * 480;
+          // label rows: keep the crowded top rungs readable by spreading their labels at least 34 px apart
+          const ly: Record<number, number> = {};
+          let last = yE(0) + 10;
+          [4, 3, 2, 1].forEach((n) => {
+            last = Math.max(yE(En(n)) + 10, last + 34);
+            ly[n] = last;
+          });
           const trans: [number, number][] = [[3, 2], [2, 1], [4, 2], [3, 1]];
           [1, 2, 3, 4, 5, 6].forEach((n) => {
             const a = ph(t, 0.3 + n * 0.25, 1 + n * 0.25);
             g.line(560, yE(En(n)), 1060, yE(En(n)), { alpha: a });
             if (n <= 4) {
-              g.text(`n = ${n}`, 530, yE(En(n)) + 10, { size: 28, font: 'mono', alpha: 0.8 * a, align: 'right' });
-              g.text(`${En(n).toFixed(2)} eV`, 1090, yE(En(n)) + 10, { size: 28, font: 'mono', alpha: 0.7 * a, align: 'left' });
+              g.text(`n = ${n}`, 530, ly[n], { size: 28, font: 'mono', alpha: 0.8 * a, align: 'right' });
+              g.text(`${En(n).toFixed(2).replace('-', '−')} eV`, 1090, ly[n], { size: 28, font: 'mono', alpha: 0.7 * a, align: 'left' });
             }
           });
           g.line(560, yE(0), 1060, yE(0), { alpha: 0.4, dash: [8, 8] });

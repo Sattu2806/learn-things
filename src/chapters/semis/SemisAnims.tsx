@@ -1,9 +1,41 @@
+import type { ReactNode } from 'react';
 import { Anim, Arrow, Axes, Ball, Label, Line, Readout, Trail, ease, lerp, phase, W } from '../kit/Anim';
 
 /** Animated diagrams for semiconductor electronics. */
 
 const TAU = 2 * Math.PI;
 type Pt = [number, number];
+
+/** Real subscripts and superscripts inside SVG text. */
+const Sub = ({ children }: { children: ReactNode }) => (
+  <tspan baselineShift="-18%" fontSize="75%">
+    {children}
+  </tspan>
+);
+const Sup = ({ children }: { children: ReactNode }) => (
+  <tspan baselineShift="super" fontSize="72%">
+    {children}
+  </tspan>
+);
+const Eg = (
+  <>
+    E<Sub>g</Sub>
+  </>
+);
+/** A number as a rounded mantissa times a power of ten, e.g. 1.6 × 10¹⁶. */
+const sci = (x: number): ReactNode => {
+  let e = Math.floor(Math.log10(x));
+  let m = Math.round((x / 10 ** e) * 10) / 10;
+  if (m >= 10) {
+    m /= 10;
+    e += 1;
+  }
+  return (
+    <>
+      {m.toFixed(1)} × 10<Sup>{e}</Sup>
+    </>
+  );
+};
 
 function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
   const out: Pt[] = [];
@@ -63,7 +95,9 @@ export function ResistivityScale() {
           {[-8, -4, 0, 4, 8, 12, 16].map((e) => (
             <g key={e}>
               <Line x1={X(e)} y1={146} x2={X(e)} y2={154} tone="soft" />
-              <Label x={X(e)} y={170} kind="val">{`10${e < 0 ? '⁻' : ''}${String(Math.abs(e)).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)])}`}</Label>
+              <Label x={X(e)} y={170} kind="val">
+                10<Sup>{String(e).replace('-', '−')}</Sup>
+              </Label>
             </g>
           ))}
           {rows.map(([name, a, b], i) => {
@@ -73,7 +107,11 @@ export function ResistivityScale() {
               <g key={name}>
                 <rect className="fig-ball" x={X(a)} y={y} width={(X(b) - X(a)) * p} height={20} opacity={0.3} />
                 <rect className="fig-ghost" x={X(a)} y={y} width={(X(b) - X(a)) * p} height={20} fill="none" />
-                <Label x={X(a) + (X(b) - X(a)) * p + 6} y={y + 14} kind="label" anchor="start">{p > 0.9 ? name : ''}</Label>
+                {X(b) > 480 ? (
+                  <Label x={X(a) - 6} y={y + 14} kind="label" anchor="end">{p > 0.9 ? name : ''}</Label>
+                ) : (
+                  <Label x={X(a) + (X(b) - X(a)) * p + 6} y={y + 14} kind="label" anchor="start">{p > 0.9 ? name : ''}</Label>
+                )}
               </g>
             );
           })}
@@ -89,18 +127,18 @@ export function ResistivityScale() {
 /** Band pictures for a conductor, a semiconductor and an insulator, each with electrons doing what they do. */
 export function Bands({ title = 'Energy band pictures of a conductor where the bands overlap, a semiconductor with a small gap that a few electrons jump, and an insulator with a wide gap that none can cross' }: { title?: string }) {
   const cols = [
-    { name: 'conductor', gap: -14, cx: 110 },
-    { name: 'semiconductor', gap: 34, cx: 320 },
+    { name: 'conductor', gap: -14, cx: 180 },
+    { name: 'semiconductor', gap: 34, cx: 355 },
     { name: 'insulator', gap: 90, cx: 530 },
   ];
   return (
-    <Anim title={title} height={260} loop={6}>
+    <Anim title={title} height={272} loop={6}>
       {(t) => (
         <g>
           {cols.map((c, i) => {
             const vbTop = 160;
             const cbBottom = vbTop - c.gap;
-            const w = 140;
+            const w = 120;
             const x0 = c.cx - w / 2;
             return (
               <g key={c.name}>
@@ -111,17 +149,19 @@ export function Bands({ title = 'Energy band pictures of a conductor where the b
                 <Label x={c.cx} y={236} kind="label">{c.name}</Label>
                 {c.gap > 0 && (
                   <g>
-                    <Line x1={x0 + w + 10} y1={cbBottom} x2={x0 + w + 10} y2={vbTop} tone="soft" />
-                    <Label x={x0 + w + 16} y={(cbBottom + vbTop) / 2 + 5} kind="val" anchor="start">{c.name === 'insulator' ? '5.4 eV' : '1.1 eV'}</Label>
+                    <Arrow x1={x0 + 14} y1={cbBottom + 2} x2={x0 + 14} y2={vbTop - 2} tone="soft" />
+                    <Label x={c.cx} y={258} kind="val">
+                      {Eg} = {c.name === 'insulator' ? '5.4' : '1.1'} eV
+                    </Label>
                   </g>
                 )}
                 {/* electrons in the valence band */}
                 {Array.from({ length: 7 }, (_, k) => (
-                  <E key={k} x={x0 + 14 + k * 19} y={vbTop + 24 + 6 * Math.sin(TAU * t * 0.5 + k)} r={3.5} />
+                  <E key={k} x={x0 + 12 + k * 16} y={vbTop + 24 + 6 * Math.sin(TAU * t * 0.5 + k)} r={3.5} />
                 ))}
                 {i === 0 &&
                   Array.from({ length: 6 }, (_, k) => (
-                    <E key={`c${k}`} x={x0 + 10 + ((k * 24 + 40 * t) % 120)} y={cbBottom - 38 + 22 * Math.sin(k * 2 + t * 2)} r={3.5} />
+                    <E key={`c${k}`} x={x0 + 6 + ((k * 20 + 40 * t) % 108)} y={cbBottom - 38 + 22 * Math.sin(k * 2 + t * 2)} r={3.5} />
                   ))}
                 {i === 1 &&
                   Array.from({ length: 3 }, (_, k) => {
@@ -145,8 +185,10 @@ export function Bands({ title = 'Energy band pictures of a conductor where the b
               </g>
             );
           })}
-          <Label x={34} y={34} kind="label" anchor="start">conduction band</Label>
-          <Label x={34} y={188} kind="label" anchor="start">valence band</Label>
+          <Label x={10} y={92} kind="label" anchor="start">conduction</Label>
+          <Label x={10} y={114} kind="label" anchor="start">band</Label>
+          <Label x={10} y={190} kind="label" anchor="start">valence</Label>
+          <Label x={10} y={212} kind="label" anchor="start">band</Label>
         </g>
       )}
     </Anim>
@@ -172,14 +214,14 @@ export function TempResistivity() {
             <Trail points={curve(60, 1, (s) => [X(s), semi(s)] as Pt)} tone="soft" />
             <Ball x={X(T)} y={metal(T)} r={5} />
             <Ball x={X(T)} y={semi(T)} r={5} />
-            <Label x={X(1) + 8} y={metal(1) - 6} kind="label" anchor="end">metal</Label>
-            <Label x={X(0.35)} y={semi(0.35) - 12} kind="label" anchor="start">semiconductor</Label>
+            <Label x={X(1) + 8} y={metal(1) + 28} kind="label" anchor="end">metal</Label>
+            <Label x={X(0.12) + 14} y={semi(0.12) - 6} kind="label" anchor="start">semiconductor</Label>
             <Label x={X(T)} y={y0 + 18} kind="val">T</Label>
-            <rect className="fig-ghost" x={440} y={24} width={160} height={56} fill="none" />
+            <rect className="fig-ghost" x={440} y={30} width={160} height={56} fill="none" />
             {Array.from({ length: nc }, (_, k) => (
-              <E key={k} x={448 + ((k * 37 + 20 * t * (0.4 + T)) % 144)} y={34 + ((k * 13) % 36) + 4 * Math.sin(t * 3 + k)} r={2.8} />
+              <E key={k} x={448 + ((k * 37 + 20 * t * (0.4 + T)) % 144)} y={40 + ((k * 13) % 36) + 4 * Math.sin(t * 3 + k)} r={2.8} />
             ))}
-            <Label x={520} y={96} kind="label">{`free carriers in the semiconductor: ${nc}`}</Label>
+            <Label x={600} y={20} kind="label" anchor="end">{`carriers in the semiconductor: ${nc}`}</Label>
           </g>
         );
       }}
@@ -354,16 +396,20 @@ export function CarrierBalance() {
             <rect className="fig-ghost" x={260} y={y0 - H(p)} width={90} height={H(p)} fill="none" />
             <Label x={125} y={y0 + 20} kind="label">electrons n</Label>
             <Label x={305} y={y0 + 20} kind="label">holes p</Label>
-            <Label x={125} y={y0 - H(n) - 8} kind="val">{`10^${Math.log10(n).toFixed(1)}`}</Label>
-            <Label x={305} y={y0 - H(p) - 8} kind="val">{`10^${Math.log10(p).toFixed(1)}`}</Label>
+            <Label x={125} y={y0 - H(n) - 8} kind="val">{sci(n)}</Label>
+            <Label x={305} y={y0 - H(p) - 8} kind="val">{sci(p)}</Label>
             <Label x={235} y={28} kind="label">carrier density per m³ (log scale)</Label>
             <Line x1={80} y1={y0 - H(ni)} x2={350} y2={y0 - H(ni)} tone="soft" dashed />
-            <Label x={355} y={y0 - H(ni) + 4} kind="val" anchor="start">n_i</Label>
+            <Label x={356} y={y0 - H(ni) + 4} kind="val" anchor="start">
+              n<Sub>i</Sub>
+            </Label>
             <rect className="fig-ghost" x={450} y={70} width={170} height={110} fill="none" />
             <Label x={535} y={96} kind="label">donors added</Label>
-            <Label x={535} y={118} kind="val">{`N_D = 10^${Math.log10(ND).toFixed(1)}`}</Label>
+            <Label x={535} y={118} kind="val">
+              N<Sub>D</Sub> = {sci(ND)}
+            </Label>
             <Label x={535} y={146} kind="label">product n · p</Label>
-            <Label x={535} y={168} kind="val">{`= 10^${Math.log10(n * p).toFixed(1)}`}</Label>
+            <Label x={535} y={168} kind="val">= {sci(n * p)}</Label>
           </g>
         );
       }}
@@ -453,7 +499,7 @@ export function Biased({ mode, title }: { mode: 'forward' | 'reverse'; title: st
   const cx = 320, y0 = 36, y1 = 140;
   const w = fwd ? 10 : 58;
   return (
-    <Anim title={title} height={250} loop={8}>
+    <Anim title={title} height={276} loop={8}>
       {(t) => {
         const barrier = fwd ? 0.28 : 1.3;
         return (
@@ -490,9 +536,10 @@ export function Biased({ mode, title }: { mode: 'forward' | 'reverse'; title: st
             <Label x={cx - 24} y={y1 + 18} kind="sym" anchor="end">{fwd ? '+' : '−'}</Label>
             <Label x={cx + 24} y={y1 + 18} kind="sym" anchor="start">{fwd ? '−' : '+'}</Label>
             {/* the barrier graph */}
-            <Axes x={cx - 150} y={236} w={300} h={42} xLabel="x" yLabel="" />
-            <Trail points={curve(60, 1, (s) => [cx - 140 + s * 280, 236 - 9 - 24 * barrier * ease(phase(s, 0.5 - w / 280 * 1.4, 0.5 + w / 280 * 1.4))] as Pt)} />
-            <Label x={cx - 156} y={206} kind="label" anchor="start">{fwd ? 'barrier lowered: carriers climb it' : 'barrier raised: carriers cannot'}</Label>
+            <Axes x={cx - 150} y={240} w={300} h={44} />
+            <Label x={cx + 156} y={246} kind="sym" anchor="start">x</Label>
+            <Trail points={curve(60, 1, (s) => [cx - 140 + s * 280, 240 - 9 - 24 * barrier * ease(phase(s, 0.5 - w / 280 * 1.4, 0.5 + w / 280 * 1.4))] as Pt)} />
+            <Label x={cx} y={268} kind="label">{fwd ? 'barrier lowered: carriers climb it' : 'barrier raised: carriers cannot'}</Label>
             <Readout y={20}>{fwd ? 'depletion region narrow: current flows' : 'depletion region wide: almost no current'}</Readout>
           </g>
         );
@@ -536,12 +583,16 @@ export function IVCurve({ zener = false, title }: { zener?: boolean; title: stri
             {zener && (
               <g>
                 <Line x1={x0 - 5.1 * 42} y1={y0 + 14} x2={x0 - 5.1 * 42} y2={y0 - 6} tone="soft" />
-                <Label x={x0 - 5.1 * 42} y={y0 - 14} kind="val">−V_z</Label>
-                <Label x={x0 - 5.1 * 42 - 8} y={y0 + 84} kind="label" anchor="end">breakdown: V stays near −V_z</Label>
+                <Label x={x0 - 5.1 * 42} y={y0 - 14} kind="val">
+                  −V<Sub>z</Sub>
+                </Label>
+                <Label x={46} y={y0 + 98} kind="label" anchor="start">
+                  breakdown: V stays near −V<Sub>z</Sub>
+                </Label>
               </g>
             )}
             <Ball x={x0 + sx(v)} y={y0 + sy(iv)} r={5.5} />
-            <Readout>{`V = ${v.toFixed(2)} V`}</Readout>
+            <Readout>{`V = ${v.toFixed(2).replace('-', '−')} V`}</Readout>
           </g>
         );
       }}
@@ -658,13 +709,15 @@ export function ZenerReg() {
   return (
     <Anim title="The input voltage wanders up and down but the output across the Zener diode stays almost flat; the extra current is simply taken by the Zener" height={250} loop={10}>
       {(t) => {
-        const vin = (tt: number) => 10 + 2 * Math.sin(TAU * tt * 0.2) + 0.6 * Math.sin(TAU * tt * 0.55);
-        const gx = 330, gy = 120, gw = 280;
-        const X = (s: number) => gx + (s / 10) * gw;
+        const vin = (tt: number) => 10 + 2 * Math.sin(TAU * tt * 0.1) + 0.6 * Math.sin(TAU * tt * 0.6);
+        const gx = 330, gw = 280, gb = 200;
+        // the traces always show the last ten seconds (the input repeats every ten), so they are never empty
+        const Yv = (volts: number) => gb - volts * 12;
         const v = vin(t);
         const Is = (v - 5) / 250;
-        const IL = 10;
-        const Iz = Is * 1000 - IL;
+        const Itot = Is * 1000;
+        const IL = Math.min(10, Itot);
+        const Iz = Math.max(0, Itot - IL);
         return (
           <g>
             {/* circuit: Vin, Rs, Zener across the load */}
@@ -680,7 +733,7 @@ export function ZenerReg() {
             <Line x1={220} y1={122} x2={220} y2={160} tone="bright" />
             <Line x1={30} y1={160} x2={220} y2={160} tone="bright" />
             <Line x1={30} y1={40} x2={30} y2={160} tone="bright" />
-            <Label x={24} y={104} kind="val" anchor="end">{`${v.toFixed(1)} V`}</Label>
+            <Label x={38} y={104} kind="val" anchor="start">{`${v.toFixed(1)} V`}</Label>
             <Label x={174} y={72} kind="label" anchor="start">Zener</Label>
             <Label x={238} y={104} kind="label" anchor="start">RL</Label>
             {Array.from({ length: 4 }, (_, k) => {
@@ -688,16 +741,18 @@ export function ZenerReg() {
               return <Ball key={k} x={p[0]} y={p[1]} r={Math.max(1.5, 2 + Iz / 8)} glow={false} />;
             })}
             {/* traces */}
-            <Axes x={gx} y={gy + 80} w={gw + 20} h={150} xLabel="t" yLabel="V" />
-            <Trail points={curve(120, Math.min(10, t), (s) => [X(s), gy + 80 - ((vin(s) - 4) / 10) * 140] as Pt)} tone="soft" />
-            <Trail points={curve(120, Math.min(10, t), (s) => [X(s), gy + 80 - ((5 + 0.03 * Math.sin(s) - 4) / 10) * 140] as Pt)} />
-            <Label x={gx + gw - 10} y={gy + 80 - ((vin(9.5) - 4) / 10) * 140 - 10} kind="label" anchor="end">V in</Label>
-            <Label x={gx + gw - 10} y={gy + 80 - ((5 - 4) / 10) * 140 + 18} kind="label" anchor="end">V out ≈ 5.0 V</Label>
+            <Axes x={gx} y={gb} w={gw + 20} h={165} xLabel="t" yLabel="V" />
+            <Trail points={curve(120, 10, (s0) => [gx + (s0 / 10) * gw, Yv(vin(t - 10 + s0))] as Pt)} tone="soft" />
+            <Trail points={curve(120, 10, (s0) => [gx + (s0 / 10) * gw, Yv(5 + 0.03 * Math.sin(t - 10 + s0))] as Pt)} />
+            <Label x={gx + 20} y={Yv(13.4)} kind="label" anchor="start">V in</Label>
+            <Label x={gx + 20} y={Yv(5) + 28} kind="label" anchor="start">V out ≈ 5.0 V</Label>
             {/* current split */}
             <rect className="fig-ghost" x={40} y={196} width={160} height={14} fill="none" />
-            <rect className="fig-ball" x={40} y={196} width={160 * (IL / (Is * 1000))} height={14} opacity={0.35} />
-            <rect className="fig-ball" x={40 + 160 * (IL / (Is * 1000))} y={196} width={160 * (Iz / (Is * 1000))} height={14} opacity={0.6} />
-            <Label x={40} y={228} kind="val" anchor="start">{`I_L = 10 mA   I_z = ${Iz.toFixed(1)} mA`}</Label>
+            <rect className="fig-ball" x={40} y={196} width={160 * (IL / Itot)} height={14} opacity={0.35} />
+            <rect className="fig-ball" x={40 + 160 * (IL / Itot)} y={196} width={160 * (Iz / Itot)} height={14} opacity={0.6} />
+            <Label x={40} y={228} kind="val" anchor="start">
+              I<Sub>L</Sub> = {IL.toFixed(0)} mA{'\u2003'}I<Sub>z</Sub> = {Iz.toFixed(1)} mA
+            </Label>
             <Label x={40} y={190} kind="label" anchor="start">source current split</Label>
           </g>
         );
@@ -764,8 +819,8 @@ export function LedAnim() {
               );
             })}
             <Line x1={612} y1={74} x2={612} y2={150} tone="soft" />
-            <Label x={606} y={118} kind="val" anchor="end">E_g</Label>
-            <Label x={500} y={232} kind="val">photon energy h f ≈ E_g</Label>
+            <Label x={606} y={118} kind="val" anchor="end">{Eg}</Label>
+            <Label x={500} y={232} kind="val">photon energy h f ≈ {Eg}</Label>
             {/* battery */}
             <Line x1={30} y1={110} x2={14} y2={110} tone="bright" />
             <Line x1={cx + 160} y1={110} x2={cx + 176} y2={110} tone="bright" />
@@ -778,28 +833,28 @@ export function LedAnim() {
 
 /** Photon wavelength set by the band gap. */
 export function GapColour() {
-  const items: [string, number][] = [
-    ['red LED, E_g 1.9 eV', 1.9],
-    ['green LED, E_g 2.3 eV', 2.3],
-    ['blue LED, E_g 2.8 eV', 2.8],
+  const items: [string, ReactNode, number][] = [
+    ['red', <>red LED, {Eg} 1.9 eV</>, 1.9],
+    ['green', <>green LED, {Eg} 2.3 eV</>, 2.3],
+    ['blue', <>blue LED, {Eg} 2.8 eV</>, 2.8],
   ];
   return (
     <Anim title="Three photon waves with the wavelengths set by a large, medium and small band gap: the wider the gap, the shorter the wavelength and the bluer the light" height={220} loop={6}>
       {(t) => (
         <g>
-          {items.map(([name, eg], i) => {
+          {items.map(([key, name, eg], i) => {
             const lam = 1240 / eg;
             const px = lam / 8;
             const y = 50 + i * 60;
             return (
-              <g key={name}>
-                <Trail points={curve(240, 400, (s) => [150 + s, y + 14 * Math.sin((TAU * (s - 60 * t)) / px)] as Pt)} />
+              <g key={key}>
+                <Trail points={curve(240, 380, (s) => [190 + s, y + 14 * Math.sin((TAU * (s - 60 * t)) / px)] as Pt)} />
                 <Label x={14} y={y + 5} kind="label" anchor="start">{name}</Label>
                 <Label x={W - 14} y={y + 5} kind="val" anchor="end">{`${Math.round(lam)} nm`}</Label>
               </g>
             );
           })}
-          <Label x={320} y={208} kind="label">λ = 1240 / E_g (eV) nm</Label>
+          <Label x={320} y={208} kind="label">λ (nm) = 1240 / {Eg} (eV)</Label>
         </g>
       )}
     </Anim>

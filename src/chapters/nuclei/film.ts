@@ -191,7 +191,7 @@ export const buildFilm = () =>
             g.arrow(cx - sep / 2 - 100, cy, cx - sep / 2 - 60, cy, { alpha: 0.6 });
             g.arrow(cx + sep / 2 + 100, cy, cx + sep / 2 + 60, cy, { alpha: 0.6 });
             // Coulomb hill.
-            g.text('the electric push grows as they approach', cx, 860, { size: 30, alpha: 0.6 });
+            g.text('the electric push grows as they approach', cx, 760, { size: 30, alpha: 0.6 });
           } else {
             nucleus(g, cx - 20, cy, 4, 60, t);
             const q = ph(t, 5.3, 8);

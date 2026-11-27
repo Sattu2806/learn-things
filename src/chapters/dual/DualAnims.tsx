@@ -7,6 +7,18 @@ const TAU = 2 * Math.PI;
 const DEG = Math.PI / 180;
 type Pt = [number, number];
 
+/** Real subscripts and superscripts inside SVG text. */
+const Sub = ({ children }: { children: ReactNode }) => (
+  <tspan baselineShift="-18%" fontSize="75%">
+    {children}
+  </tspan>
+);
+const Sup = ({ children }: { children: ReactNode }) => (
+  <tspan baselineShift="super" fontSize="72%">
+    {children}
+  </tspan>
+);
+
 function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
   const out: Pt[] = [];
   for (let i = 0; i <= n; i++) out.push(f((i / n) * span));
@@ -300,8 +312,8 @@ export function Retarding() {
                 </g>
               );
             })}
-            <Label x={x0 + L / 2} y={236} kind="val">{`eV = ${V.toFixed(2)} K_max${V === 1 ? '  (stopping potential)' : ''}`}</Label>
-            <Label x={x0 - 12} y={22} kind="label" anchor="end">K / K_max</Label>
+            <Label x={x0 + L / 2} y={236} kind="val"><>eV = {V.toFixed(2)} K<Sub>max</Sub>{V === 1 ? '  (stopping potential)' : ''}</></Label>
+            <Label x={x0 - 22} y={22} kind="label" anchor="end">K / K<Sub>max</Sub></Label>
           </g>
         );
       }}
@@ -353,8 +365,8 @@ export function IVCurves({ mode = 'intensity' }: { mode?: 'intensity' | 'frequen
               );
             })}
             {draw > 0.95 && <Ball x={clamp(px, ox - 260, ox + 80)} y={oy - gh * I(clamp(px, ox - 260, ox + 80), curves[1][0], curves[1][1])} r={4.5} />}
-            <Label x={ox - 150} y={30} kind="label">retarding</Label>
-            <Label x={ox + 140} y={30} kind="label">accelerating</Label>
+            <Label x={ox - 150} y={16} kind="label">retarding</Label>
+            <Label x={ox + 140} y={16} kind="label">accelerating</Label>
             <Line x1={ox} y1={36} x2={ox} y2={oy} tone="soft" dashed />
             <Label x={W - 14} y={238} kind="label" anchor="end">{mode === 'intensity' ? 'same V₀, different saturation' : 'same saturation, different V₀'}</Label>
           </g>
@@ -463,16 +475,16 @@ export function PhotonEnergy() {
         const bx = 520, base = 200, sc = 30;
         return (
           <g>
-            <Trail points={curve(240, 440, (s) => [30 + s, 100 + 38 * Math.sin((TAU * s) / px - TAU * t * 1.2)])} />
-            <Line x1={30} y1={100} x2={470} y2={100} tone="soft" dashed />
-            <Label x={30} y={32} kind="val" anchor="start">{`λ = ${lam.toFixed(0)} nm`}</Label>
-            <Label x={30} y={52} kind="val" anchor="start">{`E = 1240 / λ = ${E.toFixed(2)} eV`}</Label>
-            <Label x={30} y={72} kind="val" anchor="start">{`p = E / c = ${(E * 5.34).toFixed(1)} × 10⁻²⁸ kg m/s`}</Label>
+            <Trail points={curve(240, 440, (s) => [30 + s, 132 + 34 * Math.sin((TAU * s) / px - TAU * t * 1.2)])} />
+            <Line x1={30} y1={132} x2={470} y2={132} tone="soft" dashed />
+            <Label x={30} y={22} kind="val" anchor="start">{`λ = ${lam.toFixed(0)} nm`}</Label>
+            <Label x={30} y={42} kind="val" anchor="start">{`E = 1240 / λ = ${E.toFixed(2)} eV`}</Label>
+            <Label x={30} y={62} kind="val" anchor="start"><>p = E / c = {(E * 5.34).toFixed(1)} × 10<Sup>−28</Sup> kg m/s</></Label>
             <Line x1={bx - 20} y1={base} x2={bx + 60} y2={base} tone="soft" />
             <rect className="fig-bar" x={bx} y={base - E * sc} width={36} height={E * sc} fill="#fff" opacity={0.85} />
             <Label x={bx + 18} y={base + 20} kind="label">energy</Label>
-            <Arrow x1={30} y1={190} x2={30 + px} y2={190} tone="soft" />
-            <Label x={30 + px + 16} y={194} kind="sym" anchor="start">λ</Label>
+            <Arrow x1={30} y1={196} x2={30 + px} y2={196} tone="soft" />
+            <Label x={30 + px + 16} y={200} kind="sym" anchor="start">λ</Label>
           </g>
         );
       }}
@@ -676,14 +688,16 @@ export function Scale() {
             {[-35, -30, -25, -20, -15, -10, -5].map((e) => (
               <g key={e}>
                 <Line x1={xm(e)} y1={134} x2={xm(e)} y2={146} tone="soft" />
-                <Label x={xm(e)} y={166} kind="val">{`10${String(e).replace('-', '⁻').replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)])}`}</Label>
+                <text className="fig-val" x={xm(e)} y={166} textAnchor="middle" style={{ fill: 'var(--ink)' }}>
+                  10<Sup>{String(e).replace('-', '−')}</Sup>
+                </text>
               </g>
             ))}
             {items.map(([e, name], i) => {
               const up = i % 2 === 0;
               const on = e <= sweep;
               return (
-                <g key={name} style={{ opacity: on ? 1 : 0.15 }}>
+                <g key={name} style={{ opacity: on ? 1 : 0.55 }}>
                   <Line x1={xm(e)} y1={140} x2={xm(e)} y2={up ? 96 : 190} tone="soft" dashed />
                   <Ball x={xm(e)} y={140} r={on ? 5 : 3.5} glow={false} />
                   <Label x={xm(e)} y={up ? 88 : 208} kind="label">{name}</Label>
@@ -691,7 +705,7 @@ export function Scale() {
               );
             })}
             <Line x1={xm(sweep)} y1={118} x2={xm(sweep)} y2={162} tone="bright" />
-            <Label x={W - 14} y={24} kind="label" anchor="end">wavelength in metres, each step is 10⁵ times bigger</Label>
+            <Label x={W - 14} y={24} kind="label" anchor="end">wavelength in metres, each step is 10<Sup>5</Sup> times bigger</Label>
             <Label x={20} y={232} kind="label" anchor="start">only matter near the right-hand end shows wave behaviour</Label>
           </g>
         );

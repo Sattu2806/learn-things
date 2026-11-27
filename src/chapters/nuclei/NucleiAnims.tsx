@@ -6,6 +6,15 @@ import { Anim, Arrow, Axes, Ball, Label, Line, Readout, Trail, ease, lerp, phase
 const TAU = 2 * Math.PI;
 type Pt = [number, number];
 
+/** Real subscripts and superscripts inside SVG text. */
+const Sup = ({ children }: { children: ReactNode }) => (
+  <tspan baselineShift="super" fontSize="72%">
+    {children}
+  </tspan>
+);
+/** Text with a background-coloured outline so lines behind it do not cut through the letters. */
+const HALO = { paintOrder: 'stroke', stroke: '#000', strokeWidth: 6, strokeLinejoin: 'round' } as const;
+
 function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
   const out: Pt[] = [];
   for (let i = 0; i <= n; i++) out.push(f((i / n) * span));
@@ -61,7 +70,7 @@ export function Composition() {
     { name: 'oxygen-16', Z: 8, N: 8 },
   ];
   return (
-    <Anim title="Four nuclei drawn as clusters of solid protons and hollow neutrons, each jiggling, with the numbers of protons, neutrons and nucleons below" height={220} loop={8}>
+    <Anim title="Four nuclei drawn as clusters of solid protons and hollow neutrons, each jiggling, with the numbers of protons, neutrons and nucleons below" height={236} loop={8}>
       {(t) => (
         <g>
           {items.map((it, i) => {
@@ -82,7 +91,8 @@ export function Composition() {
                   return <Nucleon key={k} x={cx + r * Math.cos(a) + jx} y={cy + r * Math.sin(a) + jy} r={6.5} p={p} />;
                 })}
                 <Label x={cx} y={178} kind="label">{it.name}</Label>
-                <Label x={cx} y={198} kind="val">{`Z = ${it.Z}, N = ${it.N}, A = ${it.Z + it.N}`}</Label>
+                <Label x={cx} y={198} kind="val">{`Z = ${it.Z}   N = ${it.N}`}</Label>
+                <Label x={cx} y={216} kind="val">{`A = ${it.Z + it.N}`}</Label>
               </g>
             );
           })}
@@ -118,13 +128,15 @@ export function NucleusSize({ title = 'A slice through nuclei of growing nucleon
               return <Nucleon key={k} x={cx + r * Math.cos(a) + jx} y={cy + r * Math.sin(a) + jy} r={5.5} p={k % 2 === 0} />;
             })}
             <Arrow x1={cx} y1={cy} x2={cx + R + 8} y2={cy} tone="soft" />
-            <Label x={cx + (R + 8) / 2} y={cy - 8} kind="sym">R</Label>
+            <Label x={cx + R + 20} y={cy + 6} kind="sym" anchor="start">R</Label>
             <Axes x={360} y={205} w={250} h={165} xLabel="A" yLabel="R" />
             <Trail points={curve(60, 216, (A2) => [360 + (A2 / 216) * 235, 205 - (1.2 * A2 ** (1 / 3) / 7.2) * 145] as Pt)} tone="soft" />
             <Line x1={360 + (A / 216) * 235} y1={205} x2={360 + (A / 216) * 235} y2={205 - (R0 / 7.2) * 145} tone="soft" dashed />
             <Ball x={360 + (A / 216) * 235} y={205 - (R0 / 7.2) * 145} r={5} />
-            <Label x={370} y={34} kind="val" anchor="start">{`A = ${Math.round(A)}`}</Label>
-            <Label x={370} y={54} kind="val" anchor="start">{`R = 1.2 · A^(1/3) = ${R0.toFixed(1)} fm`}</Label>
+            <Label x={376} y={18} kind="val" anchor="start">{`A = ${Math.round(A)}`}</Label>
+            <Label x={376} y={38} kind="val" anchor="start">
+              R = 1.2 · A<Sup>1/3</Sup> = {R0.toFixed(1)} fm
+            </Label>
           </g>
         );
       }}
@@ -246,20 +258,34 @@ export function BECurve({ title = 'The binding energy per nucleon plotted agains
         const pulse = 0.5 + 0.5 * Math.sin(TAU * t * 0.8);
         return (
           <g>
-            <Axes x={x0} y={y0} w={wx + 16} h={hy + 20} xLabel="A" yLabel="BE/A (MeV)" />
+            <Axes x={x0} y={y0} w={wx + 16} h={hy + 20} xLabel="A" />
+            <Label x={x0 + 14} y={24} kind="label" anchor="start">BE/A (MeV)</Label>
             <Line x1={x0} y1={Y(8)} x2={x0 + wx} y2={Y(8)} tone="soft" dashed />
             <Label x={x0 - 6} y={Y(8) + 5} kind="val" anchor="end">8</Label>
             <Trail points={pts} />
             {[[4, 'He-4'], [56, 'Fe-56'], [235, 'U-235']].map(([a, n]) => (
-              <g key={n as string} opacity={A >= (a as number) - 1 ? 1 : 0.25}>
+              <g key={n as string} opacity={A >= (a as number) - 1 ? 1 : 0.65}>
                 <circle className="fig-ghost" cx={X(a as number)} cy={Y(bePerNucleon(a as number))} r={5} />
-                <Label x={X(a as number) + (a === 235 ? -6 : 0)} y={Y(bePerNucleon(a as number)) - 12} kind="label">{n as string}</Label>
+                {a === 4 && <Line x1={X(4)} y1={Y(bePerNucleon(4)) - 7} x2={X(4)} y2={Y(8) - 24} tone="soft" dashed />}
+                <text className="fig-label" x={X(a as number) + (a === 4 ? 4 : 0)} y={a === 4 ? Y(8) - 28 : a === 235 ? Y(bePerNucleon(235)) + 26 : Y(bePerNucleon(a as number)) - 12} textAnchor={a === 4 ? 'start' : 'middle'} style={{ ...HALO, fill: 'var(--ink)' }}>
+                  {n as string}
+                </text>
               </g>
             ))}
             <Ball x={X(A)} y={Y(bePerNucleon(A))} r={6} />
-            {focus !== 'fission' && <Arrow x1={X(14)} y1={Y(4.2)} x2={X(14) + 44 + 8 * pulse} y2={Y(4.2) - 26} tone="soft" label="fusion" labelAt="mid" />}
-            {focus !== 'fusion' && <Arrow x1={X(228)} y1={Y(5.2)} x2={X(228) - 56 - 8 * pulse} y2={Y(5.2) - 20} tone="soft" label="fission" labelAt="mid" />}
-            <Readout y={34}>{`A = ${Math.round(A)}   BE/A = ${bePerNucleon(A).toFixed(2)} MeV`}</Readout>
+            {focus !== 'fission' && (
+              <g>
+                <Arrow x1={X(10)} y1={Y(3)} x2={X(10) + 44 + 8 * pulse} y2={Y(3) - 26} tone="soft" />
+                <Label x={X(10) + 12} y={Y(3) + 24} kind="label" anchor="start">fusion</Label>
+              </g>
+            )}
+            {focus !== 'fusion' && (
+              <g>
+                <Arrow x1={X(228)} y1={Y(5.2)} x2={X(228) - 56 - 8 * pulse} y2={Y(5.2) - 20} tone="soft" />
+                <Label x={X(228) - 30} y={Y(5.2) + 24} kind="label">fission</Label>
+              </g>
+            )}
+            <Readout y={34}>{`A = ${Math.round(A)}\u2003BE/A = ${bePerNucleon(A).toFixed(2)} MeV`}</Readout>
           </g>
         );
       }}
@@ -553,7 +579,7 @@ export function ChainTree({ title = 'Each fission frees neutrons that cause more
 
 export function Reactor() {
   return (
-    <Anim title="A reactor core: fuel rods, control rods sliding in and out to set the power, a moderator that slows neutrons, and coolant carrying the heat away" height={270} loop={10}>
+    <Anim title="A reactor core: fuel rods, control rods sliding in and out to set the power, a moderator that slows neutrons, and coolant carrying the heat away" height={284} loop={10}>
       {(t) => {
         const ins = 0.5 + 0.5 * Math.sin(TAU * (t / 10) - 1.2);
         const rodDrop = 140 * ins;
@@ -561,7 +587,7 @@ export function Reactor() {
         return (
           <g>
             <rect className="fig-ghost" x={60} y={40} width={330} height={190} fill="none" />
-            <Label x={225} y={30} kind="label">moderator + coolant</Label>
+            <Label x={225} y={254} kind="label">moderator + coolant</Label>
             {[0, 1, 2, 3].map((i) => (
               <rect key={i} className="fig-ball" x={95 + i * 78} y={70} width={14} height={150} opacity={0.25 + 0.45 * power} />
             ))}
@@ -588,8 +614,9 @@ export function Reactor() {
             <Label x={510} y={140} kind="label" anchor="start">to the turbine</Label>
             <Arrow x1={500} y1={90} x2={560} y2={90} tone="soft" />
             <Arrow x1={560} y1={190} x2={500} y2={190} tone="soft" />
-            <Label x={500} y={260} kind="val" anchor="start">{`rods ${Math.round(ins * 100)}% in: power ${Math.round(power * 100)}%`}</Label>
-            <Label x={225} y={258} kind="label">fuel rods (solid), control rods (hatched)</Label>
+            <Label x={515} y={236} kind="val">{`rods ${Math.round(ins * 100)}% in`}</Label>
+            <Label x={515} y={256} kind="val">{`power ${Math.round(power * 100)}%`}</Label>
+            <Label x={225} y={276} kind="label">fuel rods (solid), control rods (hatched)</Label>
           </g>
         );
       }}
