@@ -30,6 +30,8 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'kinetic', unit: 'Heat', title: 'Kinetic theory of gases', ready: true },
   { id: 'shm', unit: 'Oscillations and waves', title: 'Oscillations', ready: true },
   { id: 'waves', unit: 'Oscillations and waves', title: 'Waves', ready: true },
+  { id: 'nuclei', unit: 'Modern physics', title: 'Nuclei', ready: true },
+  { id: 'semis', unit: 'Electronics', title: 'Semiconductor electronics', ready: true },
   { id: 'shorts', unit: 'Shorts', title: 'Short: area of a circle', ready: true },
 ];
 
