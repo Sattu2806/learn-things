@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -53,7 +54,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="solids" sections={SECTIONS} sideTitle="Elasticity" sideLead="Why solids stretch and spring back, how to measure how stiff they are, and why a bridge or a crane cable does not break.">
+    <ChapterShell id="solids" film={buildFilm} sections={SECTIONS} sideTitle="Elasticity" sideLead="Why solids stretch and spring back, how to measure how stiff they are, and why a bridge or a crane cable does not break.">
       <header className="article-head">
         <span className="kicker">Physics · Properties of matter</span>
         <h1 className="article-title">Why does a steel wire spring back?</h1>

@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell } from '../NotesPage';
 import type { NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
@@ -54,7 +55,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="rotation" sections={SECTIONS} sideTitle="Rotational motion" sideLead="Turning effects, spinning bodies and rolling wheels: torque, moment of inertia and angular momentum, the rotating twins of force, mass and momentum.">
+    <ChapterShell id="rotation" film={buildFilm} sections={SECTIONS} sideTitle="Rotational motion" sideLead="Turning effects, spinning bodies and rolling wheels: torque, moment of inertia and angular momentum, the rotating twins of force, mass and momentum.">
       <header className="article-head">
         <span className="kicker">Physics · Rigid bodies</span>
         <h1 className="article-title">Why does a sphere beat a ring down a slope?</h1>

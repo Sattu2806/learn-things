@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -28,7 +29,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="newton" sections={SECTIONS} sideTitle="Newton’s laws" sideLead="Three laws that explain how forces change motion: inertia, F = m·a, action and reaction, and how to use them on blocks, strings, slopes and lifts.">
+    <ChapterShell id="newton" film={buildFilm} sections={SECTIONS} sideTitle="Newton’s laws" sideLead="Three laws that explain how forces change motion: inertia, F = m·a, action and reaction, and how to use them on blocks, strings, slopes and lifts.">
       <header className="article-head">
         <span className="kicker">Physics · Forces and motion</span>
         <h1 className="article-title">Why does anything change its motion?</h1>

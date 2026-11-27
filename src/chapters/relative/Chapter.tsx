@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Fig } from '../kit/Anim';
 import { Mistake, Mistakes } from '../kit/Mistake';
@@ -29,6 +30,7 @@ export default function Chapter() {
   return (
     <ChapterShell
       id="relative"
+      film={buildFilm}
       sections={SECTIONS}
       sideTitle="Relative velocity"
       sideLead="Motion depends on who is watching: how to switch between observers, and how boats, rain, aeroplanes and ships all come down to one subtraction of vectors."

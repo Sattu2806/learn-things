@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -27,7 +28,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="circdyn" sections={SECTIONS} sideTitle="Forces in circular motion" sideLead="What actually pulls things round a circle: strings, friction, banking, gravity and walls, and why nothing needs a special centripetal force.">
+    <ChapterShell id="circdyn" film={buildFilm} sections={SECTIONS} sideTitle="Forces in circular motion" sideLead="What actually pulls things round a circle: strings, friction, banking, gravity and walls, and why nothing needs a special centripetal force.">
       <header className="article-head">
         <span className="kicker">Physics · Dynamics</span>
         <h1 className="article-title">What is the force that keeps things going round?</h1>

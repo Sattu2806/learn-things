@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -27,7 +28,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="shm" sections={SECTIONS} sideTitle="Oscillations" sideLead="Things that swing back and forth: springs, pendulums, and why a gentle push at the right rhythm can build up a huge motion.">
+    <ChapterShell id="shm" film={buildFilm} sections={SECTIONS} sideTitle="Oscillations" sideLead="Things that swing back and forth: springs, pendulums, and why a gentle push at the right rhythm can build up a huge motion.">
       <header className="article-head">
         <span className="kicker">Physics · Oscillations</span>
         <h1 className="article-title">Why do springs and swings keep perfect time?</h1>

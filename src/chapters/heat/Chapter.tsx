@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -55,7 +56,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="heat" sections={SECTIONS} sideTitle="Thermal properties" sideLead="Temperature, heat, expansion, melting and boiling, and the three ways heat travels.">
+    <ChapterShell id="heat" film={buildFilm} sections={SECTIONS} sideTitle="Thermal properties" sideLead="Temperature, heat, expansion, melting and boiling, and the three ways heat travels.">
       <header className="article-head">
         <span className="kicker">Physics · Heat</span>
         <h1 className="article-title">Why does a hot cup go cold, and where does the heat go?</h1>

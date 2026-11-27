@@ -53,7 +53,14 @@ per language, so one video reaches more countries.
 ## Chapters
 
 Choose a chapter from the menu at the top. Projectile motion has the film, theory and
-questions. Further chapters start with theory, worked examples and animations:
+questions. Every other chapter now has a **Film** tab too: a short narrated film (one to
+two minutes, five or so scenes, the key equations building at the top), with chapters,
+a clickable transcript, captions, and the same 1080p video, subtitle and voiceover-script
+export. The **Notes** tab (`#/<chapter>/notes`) holds the theory, worked examples and
+animations. Each film lives in `src/chapters/<id>/film.ts`, built on the shared engine in
+`src/chapters/film/` (`node scripts/shoot-film.cjs <id> <dir>` screenshots one for checking).
+
+The notes cover:
 
 - **Circular motion**: radians, angular velocity, centripetal acceleration and why it
   points inward, speeding up on a circle, equations of rotation, vector form, and the

@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -54,7 +55,7 @@ const no = (id: string) => SECTIONS.findIndex((s) => s.id === id) + 1;
 
 export default function Chapter() {
   return (
-    <ChapterShell id="energy" sections={SECTIONS} sideTitle="Work, energy and power" sideLead="How a force moves energy from place to place, why the total is always kept, and how fast it can be done.">
+    <ChapterShell id="energy" film={buildFilm} sections={SECTIONS} sideTitle="Work, energy and power" sideLead="How a force moves energy from place to place, why the total is always kept, and how fast it can be done.">
       <header className="article-head">
         <span className="kicker">Physics · Mechanics</span>
         <h1 className="article-title">Where does the energy go?</h1>

@@ -1,3 +1,4 @@
+import { buildFilm } from './film';
 import { ChapterShell, type NoteSection } from '../NotesPage';
 import { Eq, M } from '../../ui/Math';
 import { Answer, Example, Given, Note, SectionHead, Step } from '../../lessons/projectile/theoryParts';
@@ -34,6 +35,7 @@ export default function Chapter() {
   return (
     <ChapterShell
       id="straight"
+      film={buildFilm}
       sections={SECTIONS}
       sideTitle="Motion in a straight line"
       sideLead="Position, velocity and acceleration along a line: how to read their graphs, the three equations that solve most problems, free fall, and how far a car needs to stop."
