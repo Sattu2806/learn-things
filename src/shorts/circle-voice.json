@@ -1,0 +1,50 @@
+[
+ [
+  "Why is the area of a circle pi r squared?",
+  3.7
+ ],
+ [
+  "Here is a proof you can see.",
+  2.8
+ ],
+ [
+  "Cut the circle into slices, like a pizza.",
+  3.425
+ ],
+ [
+  "Now unroll them, one pointing up, the next pointing down.",
+  4.15
+ ],
+ [
+  "It looks bumpy. So use more slices.",
+  3.2
+ ],
+ [
+  "And more.",
+  1.025
+ ],
+ [
+  "The bumps flatten out, until it is a rectangle.",
+  3.525
+ ],
+ [
+  "How tall is it? Each slice is as long as the radius. So the height is r.",
+  5.0
+ ],
+ [
+  "How wide? Half the crust is on top, half on the bottom.",
+  3.8
+ ],
+ [
+  "So the width is half the circumference. Half of two pi r, which is pi r.",
+  5.025
+ ],
+ [
+  "Area equals width times height. Pi r, times r.",
+  4.05
+ ],
+ [
+  "Pi r squared. No formula to memorise. Just a pizza.",
+  4.275
+ ]
+]

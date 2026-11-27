@@ -30,6 +30,7 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'kinetic', unit: 'Heat', title: 'Kinetic theory of gases', ready: true },
   { id: 'shm', unit: 'Oscillations and waves', title: 'Oscillations', ready: true },
   { id: 'waves', unit: 'Oscillations and waves', title: 'Waves', ready: true },
+  { id: 'shorts', unit: 'Shorts', title: 'Short: area of a circle', ready: true },
 ];
 
 /** Projectile motion keeps the plain URL (and #theory, #questions); others are #/<id>. */

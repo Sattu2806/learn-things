@@ -2896,3 +2896,8 @@ details[open] .q-show::before {
     border-color: #dddddd;
   }
 }
+
+/* Shorts: a vertical 9:16 video, centred */
+.short-page { display: flex; justify-content: center; align-items: center; padding: 16px; }
+.short-canvas { height: calc(100vh - 96px); aspect-ratio: 9 / 16; max-width: 100%; background: #000; animation: fade-in 0.6s ease both; }
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
