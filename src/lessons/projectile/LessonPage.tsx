@@ -23,7 +23,8 @@ function fromHash(): View {
 
 /** One lesson, two ways in: the film, and the theory written out. */
 export default function LessonPage() {
-  const film = useMemo(buildFilm, []);
+  // ?cut=youtube builds the continuous video version (used by npm run render -- --cut youtube).
+  const film = useMemo(() => buildFilm(new URLSearchParams(window.location.search).get('cut') === 'youtube' ? 'youtube' : 'lesson'), []);
   const [view, setView] = useState<View>(fromHash);
   const [opened, setOpened] = useState<Record<View, boolean>>({ film: true, theory: view === 'theory', questions: view === 'questions' });
   const [course, setCourseState] = useState<Course>(loadCourse);

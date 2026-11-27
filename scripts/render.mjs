@@ -23,6 +23,7 @@ const value = (name, fallback) => {
 const fps = Number(value('fps', '30'));
 const captions = has('captions');
 const lang = value('lang', 'en');
+const cut = value('cut', 'lesson');
 const from = value('from', undefined);
 const to = value('to', undefined);
 let out = value('out', 'living-equations.mp4');
@@ -39,7 +40,7 @@ try {
     if (text.startsWith('frame ')) process.stdout.write(`\rRendering ${text.slice(6)} frames   `);
   });
   page.on('pageerror', (e) => console.error('\nPage error:', e.message));
-  await page.goto(url);
+  await page.goto(cut === 'youtube' ? `${url}?cut=youtube` : url);
   await page.waitForFunction(() => window.__lesson?.ready === true);
   const [download, info] = await Promise.all([
     page.waitForEvent('download', { timeout: 0 }),

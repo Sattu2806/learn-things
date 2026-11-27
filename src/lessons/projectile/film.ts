@@ -120,6 +120,7 @@ function reset(k: BeatKit, at: number) {
 }
 
 function titleCard(k: BeatKit, num: number, text: string) {
+  if (yt) return;
   k.set('titleCard', { num, text });
   k.tween('title', 1, { dur: 0.6 });
   k.tween('title', 0, { at: 1.7, dur: 0.7 });
@@ -132,29 +133,60 @@ function sweepHighlight(k: BeatKit, keys: string[], at: number) {
   });
 }
 
-export function buildFilm(): Film {
+/**
+ * 'lesson' is the in-app film: chapter cards, and "your turn" stops.
+ * 'youtube' is one continuous story for video: a cold open with a question,
+ * spoken bridges instead of chapter cards, and no pauses.
+ */
+export type Cut = 'lesson' | 'youtube';
+let yt = false;
+
+/** A "your turn" stop in the lesson; nothing in the YouTube cut. */
+function ask(pause: { prompt: string; controls: string[]; hold: number }) {
+  return yt ? {} : { pause };
+}
+
+export function buildFilm(cut: Cut = 'lesson'): Film {
+  yt = cut === 'youtube';
   const f = new Film(DEFAULTS, STATE_DEFAULTS);
 
   // ------------------------------------------------------------ 1. The question
   f.chapter('The question');
-  f.beat(
-    '',
-    (k) => {
-      k.tween('intro', 1, { at: 0.3, dur: 1.1 });
-      k.tween('intro', 0, { at: 3.2, dur: 0.8 });
-    },
-    { min: 4 },
-  );
-  f.beat('Throw a ball, and it traces a curve.', (k) => {
+  if (!yt)
+    f.beat(
+      '',
+      (k) => {
+        k.tween('intro', 1, { at: 0.3, dur: 1.1 });
+        k.tween('intro', 0, { at: 3.2, dur: 0.8 });
+      },
+      { min: 4 },
+    );
+  f.beat(yt ? 'Throw a ball, any ball, and watch the path it takes.' : 'Throw a ball, and it traces a curve.', (k) => {
     k.tween('ground', 1, { dur: 1 });
     k.tween('ball', 1, { dur: 0.5 });
     k.jump('trail', 1);
     throwBall(k, 0.5);
   });
-  f.beat('Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.', (k) => {
-    k.tween('family', 1, { at: 0.4, dur: 1.8 });
-  });
-  f.beat('Why that shape? Here is the equation that describes it.', (k) => {
+  f.beat(
+    yt
+      ? 'Faster, slower, steeper, flatter. The curve changes every time, and yet it is always the same kind of curve: a parabola. Not roughly. Exactly.'
+      : 'Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.',
+    (k) => {
+      k.tween('family', 1, { at: 0.4, dur: 1.8 });
+    },
+  );
+  if (yt)
+    f.beat(
+      'Why should a thrown ball draw a parabola, and not some other curve? By the end of this video, you will see the answer for yourself.',
+      (k) => {
+        // The title asks the question over an empty stage.
+        for (const p of ['family', 'trail', 'ball']) k.tween(p, 0, { dur: 0.6 });
+        k.tween('intro', 1, { at: 0.5, dur: 1.1 });
+        k.tween('intro', 0, { at: 6.2, dur: 0.8 });
+      },
+      { min: 7.2 },
+    );
+  f.beat(yt ? 'Here is the equation that describes every one of those curves.' : 'Why that shape? Here is the equation that describes it.', (k) => {
     k.set('eq', EQ.y);
     k.tween('eq', 1, { at: 0.8, dur: 1.4 });
   });
@@ -169,7 +201,7 @@ export function buildFilm(): Film {
   // ------------------------------------------------------------ 2. Gravity off
   f.chapter('Switch off gravity');
   f.beat(
-    '',
+    yt ? 'To understand that curve, we first have to take it apart.' : '',
     (k) => {
       titleCard(k, 2, 'Switch off gravity');
       k.jump('gravity', 0);
@@ -209,13 +241,13 @@ export function buildFilm(): Film {
       k.tween('copy', 1, { at: 2.6, dur: 1.5 });
       k.tween('eq', 1, { at: 3.7, dur: 0.6 });
     },
-    { pause: { prompt: 'Change the speed and the angle.', controls: ['v', 'theta'], hold: 2.5 } },
+    ask({ prompt: 'Change the speed and the angle.', controls: ['v', 'theta'], hold: 2.5 }),
   );
 
   // ------------------------------------------------------------ 3. Gravity on
   f.chapter('Switch it back on');
   f.beat(
-    '',
+    yt ? 'Now for the clever part.' : '',
     (k) => {
       titleCard(k, 3, 'Switch it back on');
       k.tween('comps', 0, { dur: 0.5 });
@@ -260,13 +292,13 @@ export function buildFilm(): Film {
       throwBall(k, 0.8);
       k.tween('braces', 0, { at: 3.4, dur: 0.6 });
     },
-    { pause: { prompt: 'Try the Moon or Mars by changing g.', controls: ['g', 'v'], hold: 2.5 } },
+    ask({ prompt: 'Try the Moon or Mars by changing g.', controls: ['g', 'v'], hold: 2.5 }),
   );
 
   // ------------------------------------------------------------ 4. Why t squared
   f.chapter('Why t squared?');
   f.beat(
-    '',
+    yt ? 'But why squared? Why not just t?' : '',
     (k) => {
       titleCard(k, 4, 'Why t squared?');
       for (const p of ['drop', 'ghost', 'line', 'trail', 'ball']) k.tween(p, 0, { dur: 0.6 });
@@ -304,7 +336,7 @@ export function buildFilm(): Film {
       k.tween('hl:sq', 1, { at: 2.4, dur: 0.4 });
       k.tween('hl:sq', 0, { at: 3.8, dur: 0.5 });
     },
-    { pause: { prompt: 'What changes with t instead of t squared?', controls: ['square'], hold: 3 } },
+    ask({ prompt: 'What changes with t instead of t squared?', controls: ['square'], hold: 3 }),
   );
   f.beat('Then the drop would grow by the same amount every second. Nothing would bend the path, and the ball would never come back down.', (k) => {
     for (const p of ['column', 'squares', 'sums', 'units', 'gaps']) k.tween(p, 0, { dur: 0.8 });
@@ -321,7 +353,7 @@ export function buildFilm(): Film {
   // ------------------------------------------------------------ 5. Where it lands
   f.chapter('Where it lands');
   f.beat(
-    '',
+    yt ? 'This picture does more than explain the shape. It tells us exactly where the ball comes down.' : '',
     (k) => {
       titleCard(k, 5, 'Where it lands');
       k.set('eq', EQ.y, { at: 0.2, dur: 0.9 });
@@ -374,13 +406,13 @@ export function buildFilm(): Film {
       k.tween('theta', 75, { at: 2.8, dur: 3.2 });
       k.tween('theta', 45, { at: 6.2, dur: 1.4 });
     },
-    { pause: { prompt: 'Find the angle that lands farthest.', controls: ['theta'], hold: 2.5 } },
+    ask({ prompt: 'Find the angle that lands farthest.', controls: ['theta'], hold: 2.5 }),
   );
 
   // ------------------------------------------------------------ 6. The whole picture
   f.chapter('The whole picture');
   f.beat(
-    '',
+    yt ? 'So let us put the whole picture together.' : '',
     (k) => {
       titleCard(k, 6, 'The whole picture');
       k.tween('family', 0, { dur: 0.6 });
