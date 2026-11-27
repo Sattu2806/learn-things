@@ -186,8 +186,8 @@ export function DriftTube() {
             <Line x1={plane} y1={cy + h / 2 + 26} x2={plane + slab} y2={cy + h / 2 + 26} tone="soft" />
             <Label x={plane + slab / 2} y={cy + h / 2 + 46} kind="val">{`length = vd × Δt`}</Label>
             <Arrow x1={plane + slab + 30} y1={cy - h / 2 - 28} x2={plane + slab - 20} y2={cy - h / 2 - 28} tone="soft" width={2} />
-            <Label x={W - 14} y={30} kind="val" anchor="end">{`Δt = ${dt.toFixed(1)}`}</Label>
-            <Label x={W - 14} y={52} kind="val" anchor="end">{`electrons in slab: ${Math.round(inside)}`}</Label>
+            <Label x={40} y={185} kind="val" anchor="start">{`Δt = ${dt.toFixed(1)}`}</Label>
+            <Label x={40} y={207} kind="val" anchor="start">{`electrons in slab: ${Math.round(inside)}`}</Label>
             <Readout>{'charge in slab = n · A · vd · Δt · e'}</Readout>
           </g>
         );
@@ -303,7 +303,7 @@ export function ResistorShape() {
           A = 1 / L;
         }
         const w = 110 * L, h = 70 * A;
-        const x0 = 60, cy = 100;
+        const x0 = 104, cy = 100;
         const R = L / A;
         const items: ReactNode[] = [];
         const nx = Math.round(w / 30);
@@ -323,8 +323,8 @@ export function ResistorShape() {
             <Label x={x0 - 28} y={cy + 4} kind="val" anchor="end">{`A = ${A.toFixed(2)}`}</Label>
             <rect className="fig-cell is-lit" x={440} y={190 - 28 * R} width={60} height={28 * R} />
             <Label x={470} y={218} kind="sym">R</Label>
-            <Label x={560} y={150} kind="val" anchor="middle">{`R = ${R.toFixed(2)} R₀`}</Label>
-            <Label x={560} y={172} kind="label" anchor="middle">{stage}</Label>
+            <Label x={W - 14} y={56} kind="val" anchor="end">{`R = ${R.toFixed(2)} R₀`}</Label>
+            <Label x={W - 14} y={30} kind="label" anchor="end">{stage}</Label>
           </g>
         );
       }}
@@ -398,7 +398,7 @@ export function Circuit({ kind, height = 250 }: { kind: 'series' | 'parallel'; h
               <Flow a={[x1, yB]} b={[x0, yB]} ph={ph} />
               <Label x={x0 + 36} y={134} kind="val" anchor="start">12 V</Label>
               <Label x={300} y={yB - 14} kind="val">{`I = V / (R₁ + R₂) = ${I.toFixed(2)} A`}</Label>
-              <Label x={W - 14} y={30} kind="val" anchor="end">{`V₁ = ${(I * R1).toFixed(0)} V,  V₂ = ${(I * R2).toFixed(0)} V`}</Label>
+              <Label x={300} y={yB + 30} kind="val">{`V₁ = ${(I * R1).toFixed(0)} V,  V₂ = ${(I * R2).toFixed(0)} V`}</Label>
               <Readout>same current in both</Readout>
             </g>
           );
@@ -427,8 +427,7 @@ export function Circuit({ kind, height = 250 }: { kind: 'series' | 'parallel'; h
             <Flow a={[xa, yT]} b={[xa, yB]} ph={p1} gap={14} />
             <Flow a={[xb, yT]} b={[xb, yB]} ph={p2} gap={14} />
             <Label x={x0 + 36} y={134} kind="val" anchor="start">12 V</Label>
-            <Label x={W - 14} y={30} kind="val" anchor="end">{`I₁ = ${I1.toFixed(0)} A,  I₂ = ${I2.toFixed(0)} A`}</Label>
-            <Label x={300} y={yB + 28} kind="val">{`I = I₁ + I₂ = ${(I1 + I2).toFixed(0)} A`}</Label>
+            <Label x={300} y={yB + 30} kind="val">{`I₁ = ${I1.toFixed(0)} A,  I₂ = ${I2.toFixed(0)} A,  I = ${(I1 + I2).toFixed(0)} A`}</Label>
             <Readout>same voltage on both</Readout>
           </g>
         );
@@ -558,13 +557,13 @@ export function CellsCombo({ kind }: { kind: 'series' | 'parallel' }) {
                 <circle className="fig-guide fig-faint" cx={c.x} cy={c.y} r={22 + 4 * pulse} />
               </g>
             ))}
-            <Label x={175} y={190} kind="label">{series ? 'in series' : 'in parallel'}</Label>
+            <Label x={175} y={190} kind="label">{series ? 'in series (each cell 1.5 V, 0.5 Ω)' : 'in parallel (each cell 1.5 V, 0.5 Ω)'}</Label>
             <rect className="fig-cell is-lit" x={400} y={170 - 28 * E * p} width={44} height={28 * E * p} />
             <rect className="fig-cell" x={480} y={170 - 80 * r * p} width={44} height={80 * r * p} />
             <Label x={422} y={190} kind="sym">ε</Label>
             <Label x={502} y={190} kind="sym">r</Label>
-            <Label x={422} y={34} kind="val">{`${(E * p).toFixed(2)} V`}</Label>
-            <Label x={502} y={34} kind="val">{`${(r * p).toFixed(2)} Ω`}</Label>
+            <Label x={422} y={162 - 28 * E * p} kind="val">{`${(E * p).toFixed(2)} V`}</Label>
+            <Label x={502} y={162 - 80 * r * p} kind="val">{`${(r * p).toFixed(2)} Ω`}</Label>
             <Readout>{series ? 'ε = ε₁ + ε₂,  r = r₁ + r₂' : 'ε = ε₁,  1/r = 1/r₁ + 1/r₂'}</Readout>
           </g>
         );
@@ -624,7 +623,8 @@ export function LoopRule() {
             <Axes x={gx} y={gy} w={gw + 10} h={gh + 16} xLabel="path" yLabel="V" />
             <Trail points={curve(160, f, (q) => gp(q))} />
             <Ball x={gp(f)[0]} y={gp(f)[1]} r={5} />
-            <Label x={gx + gw / 2} y={248} kind="val">{`V = ${V(f).toFixed(1)} V   (rise 12, drops 4 + 8)`}</Label>
+            <Label x={160} y={128} kind="val">rise 12 = 4 + 8</Label>
+            <Readout>{`V = ${V(f).toFixed(1)} V`}</Readout>
           </g>
         );
       }}
@@ -654,7 +654,7 @@ export function Junction() {
             <Arrow x1={470} y1={70} x2={520} y2={55} width={3} label={<tspan>I₂</tspan>} />
             <Arrow x1={470} y1={160} x2={520} y2={175} width={3} label={<tspan>I₃</tspan>} />
             <Label x={110} y={190} kind="val" anchor="start">I₁ = 5 A in</Label>
-            <Label x={470} y={22} kind="val" anchor="start">I₂ = 3 A out</Label>
+            <Label x={485} y={108} kind="val" anchor="start">I₂ = 3 A out</Label>
             <Label x={470} y={214} kind="val" anchor="start">I₃ = 2 A out</Label>
             <Readout>5 = 3 + 2</Readout>
           </g>
@@ -712,9 +712,12 @@ export function Wheatstone() {
             <Label x={C[0] + 14} y={C[1] + 6} kind="sym" anchor="start">C</Label>
             <Label x={B[0]} y={B[1] - 12} kind="sym">B</Label>
             <Label x={D[0]} y={D[1] + 26} kind="sym">D</Label>
-            <Label x={W - 14} y={26} kind="val" anchor="end">{`P = 10, Q = 20, R = 30, S = ${S.toFixed(0)} Ω`}</Label>
-            <Label x={W - 14} y={48} kind="val" anchor="end">{bal ? 'balanced: P/Q = R/S' : `P/Q = 0.50,  R/S = ${(R / S).toFixed(2)}`}</Label>
-            <Readout>{`V_B − V_D = ${dV.toFixed(2)} V`}</Readout>
+            <Label x={14} y={30} kind="val" anchor="start">P = 10, Q = 20, R = 30 Ω</Label>
+            <Label x={W - 14} y={44} kind="val" anchor="end">{`S = ${S.toFixed(0)} Ω`}</Label>
+            <Label x={W - 14} y={64} kind="val" anchor="end">{bal ? 'balanced: P/Q = R/S' : `P/Q = 0.50,  R/S = ${(R / S).toFixed(2)}`}</Label>
+            <Readout>
+              V<tspan baselineShift="sub" fontSize="10">B</tspan> − V<tspan baselineShift="sub" fontSize="10">D</tspan>{` = ${dV.toFixed(2)} V`}
+            </Readout>
           </g>
         );
       }}

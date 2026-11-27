@@ -138,8 +138,8 @@ export function ForceAngle() {
             <Label x={ox + 52} y={oy - 10} kind="sym">θ</Label>
             <Line x1={vx} y1={vy} x2={vx} y2={oy} tone="soft" dashed />
             <Line x1={ox} y1={oy + 12} x2={vx} y2={oy + 12} tone="soft" />
-            <Label x={ox + (vx - ox) / 2} y={oy + 30} kind="label">v cos θ (along B)</Label>
-            <Label x={vx + 8} y={oy - (oy - vy) / 2} kind="label" anchor="start">v sin θ</Label>
+            <Label x={ox + (vx - ox) / 2} y={oy + 34} kind="label">v cos θ</Label>
+            <Label x={vx + (Math.cos(th) >= 0 ? 10 : -10)} y={oy - (oy - vy) / 2} kind="label" anchor={Math.cos(th) >= 0 ? 'start' : 'end'}>v sin θ</Label>
             <Axes x={gx} y={gy} w={gw} h={gh + 18} xLabel="θ" yLabel="F" />
             <Trail points={curve(60, th, (u) => [gx + (u / Math.PI) * (gw - 20), gy - gh * Math.sin(u)])} />
             <Line x1={gx + k * (gw - 20)} y1={gy} x2={gx + k * (gw - 20)} y2={gy - gh * Math.sin(th)} tone="soft" dashed />
@@ -325,9 +325,9 @@ export function Selector() {
 
 export function Cyclotron() {
   return (
-    <Anim title="A charge spirals outward inside two hollow D-shaped halves; each time it crosses the gap the electric field points the way it is going and gives it a kick, so it speeds up and the circles grow" height={260} loop={9}>
+    <Anim title="A charge spirals outward inside two hollow D-shaped halves; each time it crosses the gap the electric field points the way it is going and gives it a kick, so it speeds up and the circles grow" height={300} loop={9}>
       {(t) => {
-        const cx = 320, cy = 130, R = 112, g = 11, r0 = 34;
+        const cx = 320, cy = 148, R = 112, g = 11, r0 = 34;
         const th = Math.min(8 * Math.PI, (TAU * Math.max(0, t - 0.3)) / 1.1);
         const rr = (a: number) => r0 * Math.sqrt(1 + a / Math.PI);
         const P = (a: number): Pt => [cx + rr(a) * Math.cos(a + Math.PI / 2), cy - rr(a) * Math.sin(a + Math.PI / 2)];
@@ -345,10 +345,10 @@ export function Cyclotron() {
             <Trail points={curve(260, th, P)} />
             <Ball x={bx} y={by} r={6.5} />
             <circle className="fig-glow" cx={cx} cy={cy} r={20 * near} fill="none" stroke="#fff" strokeOpacity={near - 0.3} />
-            <Label x={110} y={92} kind="label">ions in</Label>
-            <Label x={530} y={92} kind="label">beam out</Label>
+            <Label x={110} y={110} kind="label">ions in</Label>
+            <Label x={530} y={110} kind="label">beam out</Label>
             <Readout x={W - 14} y={20}>{`${Math.max(0, Math.floor((th + Math.PI / 2) / Math.PI))} kicks`}</Readout>
-            <Label x={cx} y={250} kind="sym">f = q B / 2 π m, the same every turn</Label>
+            <Label x={cx} y={cy + R + 32} kind="sym">f = qB / 2πm, the same every turn</Label>
           </g>
         );
       }}
@@ -404,7 +404,7 @@ export function BiotSavart() {
         const xe = 50 + u * 540;
         const r = Math.hypot(xe - px, d);
         const f = (x: number) => d ** 3 / Math.hypot(x - px, d) ** 3;
-        const gy = 285, gh = 78;
+        const gy = 268, gh = 78;
         const pts = (to: number) => curve(80, to - 50, (s) => [50 + s, gy - gh * f(50 + s)]);
         return (
           <g>
@@ -421,7 +421,7 @@ export function BiotSavart() {
             <Ball x={xe} y={gy - gh * f(xe)} r={5} />
             <Line x1={xe} y1={gy} x2={xe} y2={gy - gh * f(xe)} tone="soft" dashed />
             <Readout x={W - 14} y={20}>{`dB = ${(f(xe) * 100).toFixed(0)}% of the biggest`}</Readout>
-            <Label x={px - 6} y={112} kind="label" anchor="end">{`sin θ = ${(d / r).toFixed(2)}`}</Label>
+            <Label x={W - 14} y={44} kind="label" anchor="end">{`sin θ = ${(d / r).toFixed(2)}`}</Label>
           </g>
         );
       }}
@@ -468,11 +468,11 @@ export function LoopField() {
   return (
     <Anim title="A circular loop of current seen edge-on; a point slides along the axis, and the graph below shows the field is biggest at the centre of the loop and falls away on both sides" height={270} loop={8}>
       {(t) => {
-        const cx = 320, cy = 66, R = 50;
+        const cx = 320, cy = 80, R = 46;
         const u = ease(phase(t, 0.4, 7));
         const x = 50 + u * 540;
         const B = (xx: number) => 1 / (1 + ((xx - cx) / R) ** 2) ** 1.5;
-        const gy = 255, gh = 82;
+        const gy = 245, gh = 78;
         return (
           <g>
             <Line x1={40} y1={cy} x2={600} y2={cy} tone="soft" dashed />
@@ -486,7 +486,7 @@ export function LoopField() {
               return <Arrow key={i} x1={ax - 12 * B(ax) - 4} y1={cy + 18} x2={ax + 12 * B(ax) + 4} y2={cy + 18} tone="soft" />;
             })}
             <Ball x={x} y={cy} r={5} />
-            <Label x={cx + 24} y={cy - R - 10} kind="label">current loop, radius R</Label>
+            <Label x={cx - 20} y={cy - R - 8} kind="label" anchor="end">current loop, radius R</Label>
             <Axes x={50} y={gy} w={560} h={gh + 16} xLabel="x" yLabel="B" />
             <Trail points={curve(100, 540, (s) => [50 + s, gy - gh * B(50 + s)])} tone="soft" />
             <Trail points={curve(100, x - 50, (s) => [50 + s, gy - gh * B(50 + s)])} />
@@ -715,13 +715,13 @@ export function Galvanometer() {
             })}
             <Line x1={cx} y1={cy} x2={tip[0]} y2={tip[1]} tone="bright" />
             <Ball x={cx} y={cy} r={6} />
-            <Label x={cx - 100} y={cy - 64} kind="label">0</Label>
-            <Label x={cx + 100} y={cy - 64} kind="label">full scale</Label>
-            <Arrow x1={470} y1={100} x2={470 + 120 * I} y2={100} label="" />
-            <Label x={470} y={84} kind="label" anchor="start">magnetic torque N I A B</Label>
-            <Arrow x1={470} y1={170} x2={470 + 120 * phi} y2={170} tone="soft" />
-            <Label x={470} y={154} kind="label" anchor="start">spring torque k φ</Label>
-            <Label x={470} y={220} kind="label" anchor="start">{Math.abs(I - phi) < 0.03 ? 'equal: the pointer rests' : 'unequal: the pointer is moving'}</Label>
+            <Label x={cx - 112} y={cy - 20} kind="label">0</Label>
+            <Label x={cx + 112} y={cy - 20} kind="label">full scale</Label>
+            <Arrow x1={390} y1={100} x2={390 + 120 * I} y2={100} label="" />
+            <Label x={390} y={84} kind="label" anchor="start">magnetic torque N I A B</Label>
+            <Arrow x1={390} y1={170} x2={390 + 120 * phi} y2={170} tone="soft" />
+            <Label x={390} y={154} kind="label" anchor="start">spring torque k φ</Label>
+            <Label x={390} y={220} kind="label" anchor="start">{Math.abs(I - phi) < 0.03 ? 'equal: the pointer rests' : 'unequal: the pointer is moving'}</Label>
             <Readout x={W - 14} y={20}>{`I = ${(I * 2).toFixed(1)} mA`}</Readout>
           </g>
         );
@@ -754,8 +754,8 @@ export function Meters() {
             <Line x1={190} y1={70} x2={190} y2={100} />
             <Line x1={190} y1={100} x2={450} y2={100} />
             <Line x1={450} y1={100} x2={450} y2={70} />
-            <Block x={320} y={40} w={60} h={22} label="G" filled />
-            <Block x={320} y={100} w={60} h={22} label="S" />
+            <Block x={320} y={40} w={60} h={32} label="G" filled />
+            <Block x={320} y={100} w={60} h={32} label="S" />
             <Label x={320} y={20} kind="label">galvanometer takes a trickle</Label>
             <Label x={320} y={136} kind="label">shunt takes the rest</Label>
             {wire(main1, 6, 0.28)}
@@ -763,12 +763,13 @@ export function Meters() {
             {wire([[190, 70], [190, 40], [450, 40], [450, 70]], 1, 0.12)}
             {wire(sBranch, 7, 0.28)}
             <Line x1={40} y1={gy} x2={600} y2={gy} />
-            <Block x={190} y={gy} w={70} h={24} label="G" filled />
-            <Block x={420} y={gy} w={150} h={24} label="R large" />
+            <Block x={190} y={gy} w={70} h={32} label="G" filled />
+            <Block x={420} y={gy} w={150} h={32} label="R" />
+            <Label x={420} y={gy + 36} kind="label">large resistance</Label>
             {wire(vWire, 6, 0.2)}
-            <Label x={190} y={gy - 24} kind="label">0.1 V</Label>
-            <Label x={420} y={gy - 24} kind="label">9.9 V</Label>
-            <Label x={320} y={290} kind="label">voltmeter: nearly all the voltage drops across R</Label>
+            <Label x={190} y={gy - 26} kind="label">0.1 V</Label>
+            <Label x={420} y={gy - 26} kind="label">9.9 V</Label>
+            <Label x={320} y={300} kind="label">voltmeter: nearly all the voltage drops across R</Label>
             <Label x={320} y={168} kind="label">ammeter: G with a small S in parallel</Label>
             <line className="fig-guide fig-faint" x1={40} y1={185} x2={600} y2={185} />
             
@@ -789,13 +790,17 @@ export function RightHand() {
         return (
           <g>
             <Arrow x1={cx - 140} y1={cy} x2={cx - 140 + 130 * a} y2={cy} label="v" />
-            <Label x={cx - 140} y={cy + 26} kind="label" anchor="start">1  velocity of the + charge</Label>
+            <g style={{ opacity: a }}>
+              <Label x={cx - 140} y={cy + 26} kind="label" anchor="start">velocity of the + charge</Label>
+            </g>
             <g style={{ opacity: b }}>
               <Into x={cx} y={cy} s={9} />
-              <Label x={cx} y={cy + 44} kind="label">2  field B, into the page</Label>
+              <Label x={cx} y={cy + 44} kind="label">field B, into the page</Label>
             </g>
             <Arrow x1={cx + 140} y1={cy + 50} x2={cx + 140} y2={cy + 50 - 90 * c} label="F" />
-            <Label x={cx + 140} y={cy + 74} kind="label">3  force: up</Label>
+            <g style={{ opacity: c }}>
+              <Label x={cx + 140} y={cy + 74} kind="label">force: up</Label>
+            </g>
             <Label x={cx} y={30} kind="sym">F = q v × B</Label>
           </g>
         );

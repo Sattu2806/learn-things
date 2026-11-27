@@ -14,6 +14,8 @@ function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
 }
 
 /** A little key: short line sample and a name. */
+const Sub = ({ children }: { children: string }) => <tspan baselineShift="sub" fontSize="0.7em">{children}</tspan>;
+
 function Key({ x, y, name, tone = 'bright', dashed }: { x: number; y: number; name: ReactNode; tone?: 'bright' | 'soft'; dashed?: boolean }) {
   return (
     <g>
@@ -93,15 +95,15 @@ export function Rms({ height = 250, title = 'The current squared is always posit
             <Trace t={t} x={gx + 6} y={y0} w={gw - 20} A={A} om={om} f={Math.sin} tone="soft" dashed ball={false} />
             <Trace t={t} x={gx + 6} y={y0} w={gw - 20} A={A} om={om} f={(p) => Math.sin(p) ** 2} />
             <Line x1={gx} y1={y0 - A / 2} x2={gx + gw} y2={y0 - A / 2} tone="soft" dashed />
-            <Label x={gx + gw - 4} y={y0 - A / 2 - 8} kind="label" anchor="end">average of i² = I₀² / 2</Label>
+            <Label x={W - 12} y={height * 0.3 + 92} kind="label" anchor="end">dashed: average of i² = I₀²/2</Label>
             <Key x={gx + 6} y={height - 10} name="i" tone="soft" dashed />
             <Key x={gx + 60} y={height - 10} name="i²" />
-            <circle className="fig-guide" cx={500} cy={height * 0.3} r={26} fill="none" />
-            <circle cx={500} cy={height * 0.3} r={22} fill="#fff" opacity={0.08 + 0.85 * lamp} />
-            <Label x={500} y={height * 0.3 + 46} kind="label">alternating</Label>
-            <circle className="fig-guide" cx={575} cy={height * 0.3} r={26} fill="none" />
-            <circle cx={575} cy={height * 0.3} r={22} fill="#fff" opacity={0.08 + 0.85 * 0.5} />
-            <Label x={575} y={height * 0.3 + 46} kind="label">steady, I(rms)</Label>
+            <circle className="fig-guide" cx={478} cy={height * 0.3} r={26} fill="none" />
+            <circle cx={478} cy={height * 0.3} r={22} fill="#fff" opacity={0.08 + 0.85 * lamp} />
+            <Label x={478} y={height * 0.3 + 46} kind="label">alternating</Label>
+            <circle className="fig-guide" cx={582} cy={height * 0.3} r={26} fill="none" />
+            <circle cx={582} cy={height * 0.3} r={22} fill="#fff" opacity={0.08 + 0.85 * 0.5} />
+            <Label x={582} y={height * 0.3 + 46} kind="label">steady I(rms)</Label>
             <Readout x={W - 12} y={height - 10}>{`i² = ${lamp.toFixed(2)} I₀²`}</Readout>
           </g>
         );
@@ -254,8 +256,8 @@ export function ReactanceF({ height = 250 }: { height?: number }) {
             <Line x1={fx(f)} y1={oy} x2={fx(f)} y2={Math.min(fy(xl), fy(xc))} tone="soft" dashed />
             <Ball x={fx(f)} y={fy(xl)} r={5} />
             <Ball x={fx(f)} y={fy(xc)} r={5} />
-            <Key x={ox + 20} y={22} name="X_L = ωL" />
-            <Key x={ox + 150} y={22} name="X_C = 1 / ωC" tone="soft" dashed />
+            <Key x={ox + 20} y={22} name={<>X<Sub>L</Sub> = ωL</>} />
+            <Key x={ox + 150} y={22} name={<>X<Sub>C</Sub> = 1 / ωC</>} tone="soft" dashed />
             <Readout x={W - 12} y={22}>{xl > xc ? 'inductive' : 'capacitive'}</Readout>
           </g>
         );
@@ -266,7 +268,7 @@ export function ReactanceF({ height = 250 }: { height?: number }) {
 
 // ------------------------------------------------------------------ series LCR
 
-/** The rotating phasor diagram of the series circuit, with v and i drawn out. Values: V_R = 60, V_L = 180, V_C = 100. */
+/** The rotating phasor diagram of the series circuit, with v and i drawn out. Values: VR = 60, VL = 180, VC = 100. */
 export function LcrPhasor({ height = 270 }: { height?: number }) {
   return (
     <Anim title="In the series circuit the resistor voltage is along the current, the inductor voltage is a quarter turn ahead and the capacitor voltage a quarter turn behind; the whole picture turns and the total voltage leads the current" height={height} loop={8}>
@@ -282,9 +284,9 @@ export function LcrPhasor({ height = 270 }: { height?: number }) {
         const A = 50;
         return (
           <g>
-            <Arrow x1={o[0]} y1={o[1]} x2={r[0]} y2={r[1]} tone="soft" label="V_R" />
-            <Arrow x1={o[0]} y1={o[1]} x2={l[0]} y2={l[1]} tone="soft" label="V_L" />
-            <Arrow x1={o[0]} y1={o[1]} x2={c[0]} y2={c[1]} tone="soft" label="V_C" />
+            <Arrow x1={o[0]} y1={o[1]} x2={r[0]} y2={r[1]} tone="soft" label={<>V<Sub>R</Sub></>} />
+            <Arrow x1={o[0]} y1={o[1]} x2={l[0]} y2={l[1]} tone="soft" label={<>V<Sub>L</Sub></>} />
+            <Arrow x1={o[0]} y1={o[1]} x2={c[0]} y2={c[1]} tone="soft" label={<>V<Sub>C</Sub></>} />
             <Line x1={r[0]} y1={r[1]} x2={mid[0]} y2={mid[1]} tone="soft" dashed />
             <Line x1={mid[0]} y1={mid[1]} x2={vv[0]} y2={vv[1]} tone="soft" dashed />
             <Arrow x1={o[0]} y1={o[1]} x2={vv[0]} y2={vv[1]} label="V" />
@@ -319,7 +321,7 @@ export function ImpedanceTriangle({ height = 250 }: { height?: number }) {
             <Arrow x1={ox + R} y1={oy} x2={ox + R} y2={oy - X} tone="soft" />
             <Arrow x1={ox} y1={oy} x2={ox + R} y2={oy - X} />
             <Label x={ox + R / 2} y={oy + 22} kind="sym">R</Label>
-            <Label x={ox + R + 14} y={oy - X / 2 + 6} kind="sym" anchor="start">X = X_L − X_C</Label>
+            <Label x={ox + R + 14} y={oy - X / 2 + 6} kind="sym" anchor="start">X = X<Sub>L</Sub> − X<Sub>C</Sub></Label>
             <Label x={ox + R / 2 - 10} y={oy - X / 2 - 8} kind="sym">Z</Label>
             <path className="fig-guide" d={`M${ox + 44} ${oy}A44 44 0 0 ${X > 0 ? 0 : 1} ${ox + 44 * Math.cos(phi)} ${oy - 44 * Math.sin(phi)}`} fill="none" />
             <Label x={ox + 60} y={oy - (X > 0 ? 6 : -16)} kind="sym" anchor="start">φ</Label>
@@ -654,11 +656,11 @@ export function GridLoss({ height = 250 }: { height?: number }) {
               <g key={row.name}>
                 <rect className="kit-block" x={20} y={row.y - 20} width={40} height={40} rx={3} />
                 <Label x={40} y={row.y + 6} kind="sym">G</Label>
-                <rect className="kit-block" x={580} y={row.y - 20} width={40} height={40} rx={3} />
-                <Label x={600} y={row.y + 6} kind="sym">home</Label>
+                <rect className="kit-block" x={574} y={row.y - 20} width={52} height={40} rx={3} />
+                <Label x={600} y={row.y + 5} kind="label">home</Label>
                 <Line x1={60} y1={row.y} x2={x1} y2={row.y} tone="bright" />
                 <Line x1={x1} y1={row.y} x2={x2} y2={row.y} tone="bright" />
-                <Line x1={x2} y1={row.y} x2={580} y2={row.y} tone="bright" />
+                <Line x1={x2} y1={row.y} x2={574} y2={row.y} tone="bright" />
                 {Array.from({ length: row.n }, (_, k) => {
                   const s = (k / row.n + t / (row.heat > 0.5 ? 1.5 : 3)) % 1;
                   return <Ball key={k} x={x1 + s * (x2 - x1)} y={row.y} r={row.r} glow={false} />;

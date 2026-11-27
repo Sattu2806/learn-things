@@ -57,9 +57,9 @@ export function WorkPaths() {
             <Label x={bx} y={by - 16} kind="sym">B</Label>
             <Ball x={sx} y={sy} r={6} />
             <Ball x={wx} y={wy} r={6} />
-            <Label x={W - 14} y={30} kind="val" anchor="end">{`straight: W = ${W1.toFixed(0)}%`}</Label>
-            <Label x={W - 14} y={50} kind="val" anchor="end">{`winding:  W = ${W2.toFixed(0)}%`}</Label>
-            <Label x={W - 14} y={80} kind="label" anchor="end">only the move along the field counts</Label>
+            <Label x={W - 14} y={202} kind="val" anchor="end">{`straight: W = ${W1.toFixed(0)}%`}</Label>
+            <Label x={W - 14} y={222} kind="val" anchor="end">{`winding:  W = ${W2.toFixed(0)}%`}</Label>
+            <Label x={W - 14} y={244} kind="label" anchor="end">only the move along the field counts</Label>
           </g>
         );
       }}
@@ -156,7 +156,7 @@ export function Equipotentials({ title, kind, height = 270 }: { title: string; k
               <Ball x={cx + r} y={cy} r={5} />
               <Arrow x1={cx + r} y1={cy - 16} x2={cx + r + 42 * (48 / r) ** 1.2} y2={cy - 16} width={2.5} label="E" />
               <Ball x={cx + 140 * Math.cos(a)} y={cy + 140 * Math.sin(a) * -1} r={4.5} ghost />
-              <Label x={cx + 150} y={cy - 134} kind="val" anchor="start">no work on a surface</Label>
+              <Label x={W - 12} y={40} kind="val" anchor="end">no work on a surface</Label>
               <Readout>{`V = ${(R0 / r).toFixed(2)} on the line`}</Readout>
             </g>
           );
@@ -203,7 +203,7 @@ export function Equipotentials({ title, kind, height = 270 }: { title: string; k
             <Chg x={x2} y={cy} q={-1} r={10} t={t} />
             <Arrow x1={320} y1={pr} x2={320 + (ex / m) * 46} y2={pr + (ey / m) * 46} width={3} label="E" />
             <Ball x={320} y={pr} r={5} />
-            <Label x={W - 14} y={cy - 108} kind="label" anchor="end">V = 0 line (thick)</Label>
+            <Label x={W - 14} y={height - 10} kind="label" anchor="end">V = 0 line (thick)</Label>
             <Readout>V = 0, but E is not</Readout>
           </g>
         );
@@ -331,11 +331,11 @@ export function SystemEnergy() {
             ))}
             {[0, 1, 2].map((i) => (
               <g key={i}>
-                <rect className="fig-cell" x={470} y={126 + i * 24} width={Math.max(1, w[i] * 40)} height={14} />
-                <Label x={462} y={138 + i * 24} kind="val" anchor="end">{`W${i + 1}`}</Label>
+                <rect className="fig-cell" x={72} y={26 + i * 24} width={Math.max(1, w[i] * 40)} height={14} />
+                <Label x={64} y={38 + i * 24} kind="val" anchor="end">{`W${i + 1}`}</Label>
               </g>
             ))}
-            <Label x={470} y={238} kind="val" anchor="start">{`total = ${(w[0] + w[1] + w[2]).toFixed(1)} (kq²/a)`}</Label>
+            <Label x={20} y={112} kind="val" anchor="start">{`total = ${(w[0] + w[1] + w[2]).toFixed(1)} (kq²/a)`}</Label>
           </g>
         );
       }}
@@ -618,7 +618,7 @@ export function ChargeSharing() {
         const flow = ease(phase(t, 2.2, 5));
         const V1 = lerp(100, 40, flow);
         const V2 = lerp(0, 40, flow);
-        const U = 0.5 * 4 * V1 * V1 * 1e-2 + 0.5 * 6 * V2 * V2 * 1e-2;
+        const U = (0.5 * 4 * V1 * V1 + 0.5 * 6 * V2 * V2) * 1e-6; // joules, C in μF
         const ba = (x: number, v: number, c: number, name: string) => (
           <g>
             <rect className="kit-block" x={x} y={50} width={60} height={110} />
@@ -636,9 +636,9 @@ export function ChargeSharing() {
             <Line x1={240} y1={105} x2={sw > 0 ? 360 : 296} y2={105} tone="soft" />
             {sw === 0 && <Line x1={296} y1={105} x2={310} y2={86} tone="soft" />}
             {flowDots}
-            <Label x={500} y={90} kind="val" anchor="start">{`stored: ${(U * 1000).toFixed(0)} mJ`}</Label>
-            <Label x={500} y={112} kind="val" anchor="start">{`was 20 mJ`}</Label>
-            <Label x={500} y={140} kind="label" anchor="start">{flow >= 1 ? 'lost: 12 mJ (spark, heat)' : 'charge is conserved'}</Label>
+            <Label x={470} y={90} kind="val" anchor="start">{`stored: ${(U * 1000).toFixed(1)} mJ`}</Label>
+            <Label x={470} y={112} kind="val" anchor="start">{`was 20 mJ`}</Label>
+            <Label x={470} y={140} kind="label" anchor="start">{flow >= 1 ? 'lost: 12 mJ (heat)' : 'charge conserved'}</Label>
             <Readout>{`Q total = 400 μC`}</Readout>
           </g>
         );

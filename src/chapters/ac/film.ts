@@ -98,11 +98,11 @@ export const buildFilm = () =>
             const y = 480 + k * 280;
             const x = 360;
             g.line(x, y - 110, x, y + 110, { alpha: 0.4, width: 2 });
-            g.line(x, y, x + 1200, y, { alpha: 0.4, width: 2 });
-            trace(g, x, y, 1200, 90, t, om, Math.sin);
-            trace(g, x, y, 1200, 62, t, om, (a) => Math.sin(a - (sgn as number) * (Math.PI / 2)), { alpha: 0.6, dash: [10, 10], width: 3 });
+            g.line(x, y, x + 1050, y, { alpha: 0.4, width: 2 });
+            trace(g, x, y, 1050, 90, t, om, Math.sin);
+            trace(g, x, y, 1050, 62, t, om, (a) => Math.sin(a - (sgn as number) * (Math.PI / 2)), { alpha: 0.6, dash: [10, 10], width: 3 });
             g.ball(x, y - 90 * Math.sin(om * t), 13);
-            g.text(name as string, x + 1260, y + 8, { size: 30, alpha: 0.7, align: 'left' });
+            g.text(name as string, x + 1090, y + 8, { size: 30, alpha: 0.7, align: 'left' });
           });
           g.text('voltage', 250, 480 + 10, { size: 26, alpha: 0.6 });
         },
@@ -127,7 +127,7 @@ export const buildFilm = () =>
           g.text('R', ox + R / 2, oy + 60, { size: 44, font: 'italic' });
           const a = ph(t, 3, 4.5);
           g.arrow(ox + R, oy, ox + R, oy - X * a, { alpha: 0.8, width: 4 });
-          g.text('X_L − X_C', ox + R + 30, oy - (X * a) / 2, { size: 38, font: 'italic', align: 'left', alpha: a });
+          g.text('XL − XC', ox + R + 30, oy - (X * a) / 2, { size: 38, font: 'italic', align: 'left', alpha: a });
           g.arrow(ox, oy, ox + R, oy - X * a, { width: 5, alpha: ph(t, 4, 5) });
           const phi = Math.atan2(X * a, R);
           g.arc(ox, oy, 110, 0, -phi, { alpha: 0.7, width: 3 });

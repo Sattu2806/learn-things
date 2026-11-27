@@ -141,8 +141,8 @@ export function Rubbing() {
             </g>
             <Label x={470} y={140} kind="val">{`rod: +${moved} e`}</Label>
             <Label x={470} y={160} kind="val">{`silk: −${moved} e`}</Label>
-            <Label x={470} y={188} kind="label">total charge: always 0</Label>
-            <Readout>{`${moved} electrons moved`}</Readout>
+            <Label x={470} y={188} kind="label">total charge: always zero</Label>
+            <Readout>{`${moved} electron${moved === 1 ? '' : 's'} moved`}</Readout>
           </g>
         );
       }}
@@ -190,7 +190,7 @@ export function Induction() {
     <Anim title="A charged rod comes near an uncharged metal sphere; free electrons shift toward it, leaving the far side positive, and drift back when the rod leaves" height={220} loop={8}>
       {(t) => {
         const near = 0.5 - 0.5 * Math.cos(TAU * (t / 8));
-        const rodX = lerp(60, 205, near);
+        const rodX = lerp(112, 215, near);
         const sx = 360;
         const dots: ReactNode[] = [];
         for (let i = 0; i < 10; i++) {
@@ -510,7 +510,7 @@ export function Flux({ height = 270 }: { height?: number }) {
         const top = cy - sy, bot = cy + sy;
         const lines: ReactNode[] = [];
         let count = 0;
-        for (let y = 20; y < height - 10; y += 15) {
+        for (let y = 34; y < height - 10; y += 15) {
           const hit = y >= top && y <= bot;
           if (hit) count++;
           lines.push(<Line key={y} x1={20} y1={y} x2={W - 20} y2={y} tone="soft" dashed={!hit} />);
@@ -585,10 +585,11 @@ export function GaussCount({ height = 270, outside }: { height?: number; outside
             <circle className="fig-bar" cx={cx} cy={cy} r={R} fill="rgba(0,0,0,0.0)" style={{ strokeWidth: 2.6 }} />
             <Chg x={px} y={py} q={1} r={9} />
             <Label x={cx} y={cy + R + 22} kind="label">closed surface</Label>
-            <Label x={500} y={cy - 30} kind="val">{`leaving (●): ${out}`}</Label>
-            <Label x={500} y={cy - 8} kind="val">{`entering (○): ${inn}`}</Label>
-            <Label x={500} y={cy + 24} kind="sym">{`net = ${out - inn}`}</Label>
-            <Label x={500} y={cy + 52} kind="label">{out - inn > 0 ? 'charge inside' : 'no charge inside'}</Label>
+            <rect className="fig-guide" x={452} y={cy - 62} width={176} height={128} rx={8} style={{ fill: 'var(--page)' }} />
+            <Label x={466} y={cy - 36} kind="val" anchor="start">{`leaving (●): ${out}`}</Label>
+            <Label x={466} y={cy - 14} kind="val" anchor="start">{`entering (○): ${inn}`}</Label>
+            <Label x={466} y={cy + 18} kind="sym" anchor="start">{`net = ${out - inn}`}</Label>
+            <Label x={466} y={cy + 46} kind="label" anchor="start">{out - inn > 0 ? 'charge inside' : 'no charge inside'}</Label>
           </g>
         );
       }}
@@ -676,7 +677,7 @@ export function SheetField({ height = 250 }: { height?: number }) {
         const cx = 320, cy = height / 2;
         const r = lerp(30, 260, 0.5 - 0.5 * Math.cos(TAU * (t / 8)));
         const items: ReactNode[] = [];
-        for (let y = 24; y < height - 10; y += 28) {
+        for (let y = 46; y < height - 10; y += 28) {
           for (const sg of [-1, 1]) {
             for (const d of [40, 130, 220]) {
               const a = 0.8 + 0.2 * Math.sin(TAU * (t / 3) - d / 40);
@@ -693,7 +694,7 @@ export function SheetField({ height = 250 }: { height?: number }) {
             <Arrow x1={cx + r} y1={cy + 24} x2={cx + r + 60} y2={cy + 24} width={3.4} label="E" />
             <Line x1={cx} y1={cy + 48} x2={cx + r} y2={cy + 48} tone="soft" />
             <Label x={cx + r / 2} y={cy + 66} kind="val">{`distance ${(r / 30).toFixed(1)}`}</Label>
-            <Readout>{'E = σ / 2ε₀  (the same everywhere)'}</Readout>
+            <Readout>{'E = σ/2ε₀ everywhere'}</Readout>
           </g>
         );
       }}
