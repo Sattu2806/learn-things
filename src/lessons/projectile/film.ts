@@ -161,7 +161,7 @@ export function buildFilm(cut: Cut = 'lesson'): Film {
       },
       { min: 4 },
     );
-  f.beat(yt ? 'Throw a ball, any ball, and watch the path it takes.' : 'Throw a ball, and it traces a curve.', (k) => {
+  f.beat(yt ? 'When you throw a ball, it flies along a curved path.' : 'Throw a ball, and it traces a curve.', (k) => {
     k.tween('ground', 1, { dur: 1 });
     k.tween('ball', 1, { dur: 0.5 });
     k.jump('trail', 1);
@@ -169,7 +169,7 @@ export function buildFilm(cut: Cut = 'lesson'): Film {
   });
   f.beat(
     yt
-      ? 'Faster, slower, steeper, flatter. The curve changes every time, and yet it is always the same kind of curve: a parabola. Not roughly. Exactly.'
+      ? 'Throw it harder or softer, higher or lower, and the curve changes. Yet every time it is the same kind of curve, called a parabola. Not roughly a parabola, but exactly one.'
       : 'Throw it faster, or at another angle, and the curve changes. But it is always the same kind of curve: a parabola.',
     (k) => {
       k.tween('family', 1, { at: 0.4, dur: 1.8 });
@@ -247,7 +247,7 @@ export function buildFilm(cut: Cut = 'lesson'): Film {
   // ------------------------------------------------------------ 3. Gravity on
   f.chapter('Switch it back on');
   f.beat(
-    yt ? 'Now for the clever part.' : '',
+    yt ? 'Now comes the key idea of this whole video.' : '',
     (k) => {
       titleCard(k, 3, 'Switch it back on');
       k.tween('comps', 0, { dur: 0.5 });
@@ -298,7 +298,7 @@ export function buildFilm(cut: Cut = 'lesson'): Film {
   // ------------------------------------------------------------ 4. Why t squared
   f.chapter('Why t squared?');
   f.beat(
-    yt ? 'But why squared? Why not just t?' : '',
+    yt ? 'But why does the drop grow with t squared, and not simply with t?' : '',
     (k) => {
       titleCard(k, 4, 'Why t squared?');
       for (const p of ['drop', 'ghost', 'line', 'trail', 'ball']) k.tween(p, 0, { dur: 0.6 });
@@ -353,7 +353,7 @@ export function buildFilm(cut: Cut = 'lesson'): Film {
   // ------------------------------------------------------------ 5. Where it lands
   f.chapter('Where it lands');
   f.beat(
-    yt ? 'This picture does more than explain the shape. It tells us exactly where the ball comes down.' : '',
+    yt ? 'This picture also tells us exactly when and where the ball will land.' : '',
     (k) => {
       titleCard(k, 5, 'Where it lands');
       k.set('eq', EQ.y, { at: 0.2, dur: 0.9 });
