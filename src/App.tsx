@@ -24,6 +24,9 @@ const PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
   fluids: lazy(() => import('./chapters/fluids/Chapter')),
   nuclei: lazy(() => import('./chapters/nuclei/Chapter')),
   semis: lazy(() => import('./chapters/semis/Chapter')),
+  magnetism: lazy(() => import('./chapters/magnetism/Chapter')),
+  matter: lazy(() => import('./chapters/matter/Chapter')),
+  emi: lazy(() => import('./chapters/emi/Chapter')),
   shorts: lazy(() => import('./shorts/ShortPage')),
   solids: lazy(() => import('./chapters/solids/Chapter')),
 };
