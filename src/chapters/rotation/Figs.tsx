@@ -261,8 +261,8 @@ export function InertiaSlide() {
             <Label x={420} y={60} kind="val" anchor="start">
               r = {f2(rm)} m
             </Label>
-            <Label x={420} y={84} kind="val" anchor="start">
-              I = 2 · 1 · r^2 = {f2(I)} kg·m^2
+            <Label x={380} y={84} kind="val" anchor="start">
+              I = 2·1·r^2 = {f2(I)} kg·m^2
             </Label>
             <Bar x={420} y={130} w={190} v={I} max={3.5} label="moment of inertia" />
             <Label x={420} y={190} kind="label" anchor="start">
@@ -448,7 +448,7 @@ export function StringDisc() {
             <Label x={420} y={60} kind="val" anchor="start">
               disc 2 kg, r = 0.5 m, I = 0.25
             </Label>
-            <Label x={420} y={84} kind="val" anchor="start">
+            <Label x={380} y={84} kind="val" anchor="start">
               weight 1 kg
             </Label>
             <Label x={420} y={130} kind="val" anchor="start">
@@ -625,7 +625,7 @@ export function Skater({ height = 270 }: { height?: number }) {
             <Label x={420} y={60} kind="val" anchor="start">
               I = {f2(Iof(t))} kg·m^2
             </Label>
-            <Label x={420} y={84} kind="val" anchor="start">
+            <Label x={380} y={84} kind="val" anchor="start">
               ω = {f2(omega(t))} rad/s
             </Label>
             <Bar x={420} y={125} w={190} v={Iof(t) * omega(t)} max={7} label={`L = I · ω = ${f1(Iof(t) * omega(t))}`} />

@@ -193,7 +193,7 @@ export function Barometer() {
               13 600 × 9.8 × 0.76
             </Label>
             <Label x={400} y={184} kind="val" anchor="start">
-              = {phase(t, 3.6, 4.4) > 0.5 ? '1.01 × 10⁵ Pa' : '…'}
+              = 1.01 × 10⁵ Pa
             </Label>
           </g>
         );

@@ -621,7 +621,7 @@ export function BulkCube() {
               B = p / ( −ΔV / V )
             </Label>
             <Label x={390} y={180} anchor="start" kind="label">
-              the squeeze is drawn far larger than real
+              squeeze drawn far larger than real
             </Label>
           </g>
         );
@@ -788,7 +788,7 @@ export function CraneCable() {
             <line className="fig-guide" x1={94} y1={56} x2={64} y2={78} />
             <Ball x={tx} y={56} r={3.5} glow={false} />
             <Wire x={tx} y1={56} y2={y - 14} w={2.5} />
-            <Block x={tx} y={y} w={44} h={28} label="2000 kg" />
+            <Block x={tx} y={y} w={76} h={28} label="2000 kg" />
             <line className="fig-ground" x1={40} x2={420} y1={252} y2={252} />
             <Label x={460} y={80} anchor="start" kind="label">
               cable stress
