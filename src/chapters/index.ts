@@ -14,6 +14,7 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'vectors', unit: 'Kinematics', title: 'Vectors, in 2D and 3D', ready: true },
   { id: 'projectile', unit: 'Kinematics', title: 'Projectile motion', ready: true },
   { id: 'circular', unit: 'Kinematics', title: 'Circular motion', ready: true },
+  { id: 'motion3d', unit: 'Kinematics', title: 'Motion in three dimensions', ready: true },
   { id: 'relative', unit: 'Kinematics', title: 'Relative velocity', ready: true },
   { id: 'newton', unit: 'Laws of motion', title: "Newton's laws of motion", ready: true },
   { id: 'newton', unit: 'Laws of motion', title: "Newton's laws of motion", ready: true },
@@ -45,6 +46,8 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'atoms', unit: 'Modern physics', title: 'Atoms', ready: true },
   { id: 'nuclei', unit: 'Modern physics', title: 'Nuclei', ready: true },
   { id: 'semis', unit: 'Electronics', title: 'Semiconductor electronics', ready: true },
+  { id: 'relativity', unit: 'Beyond the syllabus', title: 'Special relativity', ready: true },
+  { id: 'communication', unit: 'Beyond the syllabus', title: 'Communication systems', ready: true },
   { id: 'shorts', unit: 'Shorts', title: 'Shorts: visual proofs', ready: true },
 ];
 

@@ -36,6 +36,9 @@ const PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
   magnetism: lazy(() => import('./chapters/magnetism/Chapter')),
   matter: lazy(() => import('./chapters/matter/Chapter')),
   emi: lazy(() => import('./chapters/emi/Chapter')),
+  motion3d: lazy(() => import('./chapters/motion3d/Chapter')),
+  relativity: lazy(() => import('./chapters/relativity/Chapter')),
+  communication: lazy(() => import('./chapters/communication/Chapter')),
   shorts: lazy(() => import('./shorts/ShortPage')),
   solids: lazy(() => import('./chapters/solids/Chapter')),
 };
