@@ -1,0 +1,50 @@
+[
+ [
+  "Why does adding up the odd numbers always give a perfect square?",
+  4.225
+ ],
+ [
+  "One plus three plus five, and so on. Let us build it.",
+  4.125
+ ],
+ [
+  "Start with one square. That is one.",
+  3.0
+ ],
+ [
+  "Add three more, wrapped around it. Now it is a two by two square.",
+  4.55
+ ],
+ [
+  "Add five. Another L wraps around, and it is three by three.",
+  4.45
+ ],
+ [
+  "Add seven, and it is four by four.",
+  3.175
+ ],
+ [
+  "Add nine, and it is five by five.",
+  3.175
+ ],
+ [
+  "Every layer is an L. Why is it always odd?",
+  3.575
+ ],
+ [
+  "Look at the last layer. Two arms, plus one corner.",
+  3.75
+ ],
+ [
+  "That is two n minus one. Exactly the next odd number.",
+  4.325
+ ],
+ [
+  "So n layers always stack into an n by n square.",
+  3.95
+ ],
+ [
+  "The first n odd numbers add up to n squared.",
+  3.675
+ ]
+]

@@ -44,7 +44,7 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'atoms', unit: 'Modern physics', title: 'Atoms', ready: true },
   { id: 'nuclei', unit: 'Modern physics', title: 'Nuclei', ready: true },
   { id: 'semis', unit: 'Electronics', title: 'Semiconductor electronics', ready: true },
-  { id: 'shorts', unit: 'Shorts', title: 'Short: area of a circle', ready: true },
+  { id: 'shorts', unit: 'Shorts', title: 'Shorts: visual proofs', ready: true },
 ];
 
 /** Projectile motion keeps the plain URL (and #theory, #questions); others are #/<id>. */

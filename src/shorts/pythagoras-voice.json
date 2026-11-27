@@ -1,0 +1,42 @@
+[
+ [
+  "Why is a squared plus b squared equal to c squared?",
+  3.95
+ ],
+ [
+  "Take a right triangle. Its short sides are a and b. The long side is c.",
+  4.925
+ ],
+ [
+  "Make four copies.",
+  1.75
+ ],
+ [
+  "Place them inside a square of side a plus b.",
+  3.525
+ ],
+ [
+  "The long sides form a tilted square in the middle. Its side is c.",
+  4.825
+ ],
+ [
+  "So the big square is four triangles, plus c squared.",
+  3.925
+ ],
+ [
+  "Now slide the triangles into two corners.",
+  3.375
+ ],
+ [
+  "The same four triangles. But the space left over is now two squares, a squared and b squared.",
+  6.2
+ ],
+ [
+  "The big square has not changed. The triangles have not changed.",
+  4.425
+ ],
+ [
+  "So what is left must match. c squared equals a squared plus b squared.",
+  4.85
+ ]
+]
