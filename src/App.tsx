@@ -4,6 +4,9 @@ import LessonPage from './lessons/projectile/LessonPage';
 
 // Each chapter loads only when it is opened. Projectile motion is the full lesson page.
 const PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
+  units: lazy(() => import('./chapters/units/Chapter')),
+  experiments: lazy(() => import('./chapters/experiments/Chapter')),
+  mathtools: lazy(() => import('./chapters/mathtools/Chapter')),
   straight: lazy(() => import('./chapters/straight/Chapter')),
   vectors: lazy(() => import('./chapters/vectors/Chapter')),
   circular: lazy(() => import('./chapters/circular/CircularChapter')),

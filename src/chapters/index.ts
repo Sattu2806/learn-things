@@ -10,6 +10,9 @@ export interface ChapterInfo {
 }
 
 export const CHAPTERS: ChapterInfo[] = [
+  { id: 'units', unit: 'Foundations', title: 'Units and measurement', ready: true },
+  { id: 'experiments', unit: 'Foundations', title: 'Measurement and experimental skills', ready: true },
+  { id: 'mathtools', unit: 'Foundations', title: 'Mathematical tools for physics', ready: true },
   { id: 'straight', unit: 'Kinematics', title: 'Motion in a straight line', ready: true },
   { id: 'vectors', unit: 'Kinematics', title: 'Vectors, in 2D and 3D', ready: true },
   { id: 'projectile', unit: 'Kinematics', title: 'Projectile motion', ready: true },
