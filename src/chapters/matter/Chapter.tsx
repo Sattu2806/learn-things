@@ -456,7 +456,7 @@ export default function Chapter() {
         </Example>
 
         <Example n={8} title="Curie's law">
-          <p className="ex-q">A paramagnetic sample has susceptibility 2.4 × 10⁻⁵ at 300 K. What is it at 200 K? And for iron (T_c = 1043 K), what is the ratio of the susceptibility at 1100 K to that at 1200 K, given the Curie–Weiss law?</p>
+          <p className="ex-q">A paramagnetic sample has susceptibility 2.4 × 10⁻⁵ at 300 K. What is it at 200 K? And for iron (T<sub>c</sub> = 1043 K), what is the ratio of the susceptibility at 1100 K to that at 1200 K, given the Curie–Weiss law?</p>
           <Given items={['χ _1 = 2.4 × 10 ^−5', 'T _1 = 300 "K"', 'T _2 = 200 "K"', 'T _c = 1043 "K"']} />
           <ol className="steps">
             <Step title="Curie's law">

@@ -12,6 +12,19 @@ function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
   return out;
 }
 
+/** A real subscript inside SVG text. */
+const Sub = ({ children }: { children: string }) => <tspan baselineShift="sub" fontSize="0.7em">{children}</tspan>;
+
+/** A number in scientific notation with a real superscript exponent. */
+function Sci({ v }: { v: number }) {
+  const [m, e] = v.toExponential(1).split('e');
+  return (
+    <>
+      {m} × 10<tspan baselineShift="super" fontSize="0.7em">{e.replace('-', '−').replace('+', '')}</tspan>
+    </>
+  );
+}
+
 function Key({ x, y, name, tone = 'bright', dashed }: { x: number; y: number; name: ReactNode; tone?: 'bright' | 'soft'; dashed?: boolean }) {
   return (
     <g>
@@ -58,7 +71,7 @@ export function Charging({ height = 250, title = 'A capacitor charging: charge f
             <ellipse className="fig-guide" cx={150} cy={y0} rx={7} ry={32} fill="none" />
             <ellipse className="fig-guide" cx={310} cy={y0} rx={7} ry={32} fill="none" />
             <Label x={150} y={y0 - 44} kind="sym">I</Label>
-            <Label x={310} y={y0 - 70} kind="sym">I_d</Label>
+            <Label x={310} y={y0 - 70} kind="sym">I<Sub>d</Sub></Label>
             <Label x={150} y={y0 + 56} kind="label">wire: moving charge</Label>
             <Label x={310} y={y0 + 74} kind="label">gap: changing E</Label>
             <Readout x={W - 12} y={20}>{`I = ${cur.toFixed(2)} I₀`}</Readout>
@@ -199,7 +212,7 @@ export function EmWave({ title, height = 260, lambda = 190, speed = 1, phaseOffs
         return (
           <g>
             <Arrow x1={x0 - 10} y1={y0} x2={x1 + 10} y2={y0} tone="soft" />
-            <Label x={x1 - 4} y={y0 + 24} kind="label" anchor="end">direction of travel</Label>
+            <Label x={x1} y={height - 12} kind="label" anchor="end">direction of travel →</Label>
             {xs.map((x) => {
               const s = Math.sin(ph(x));
               return (
@@ -308,7 +321,7 @@ export function Poynting({ height = 260 }: { height?: number }) {
             ))}
             <Label x={x0} y={y0 - 54} kind="label" anchor="start">E and B (in step)</Label>
             <Label x={x0} y={base - 20} kind="label" anchor="start">energy flow, proportional to E · B</Label>
-            <Key x={x1 - 190} y={height - 10} name="u_E = u_B" tone="soft" dashed />
+            <Key x={x1 - 190} y={height - 10} name={<>u<Sub>E</Sub> = u<Sub>B</Sub></>} tone="soft" dashed />
             <Trail points={curve(200, x1 - x0, (u) => [x0 + u, y0 + 48 - 30 * s(x0 + u) ** 2] as Pt)} tone="soft" dashed />
           </g>
         );
@@ -467,8 +480,8 @@ export function Spectrum({ height = 250, markers = true }: { height?: number; ma
             <Trail points={curve(120, 100, (u) => [wx - 50 + u, y - 50 - ampl * Math.sin(TAU * cyc * (u / 100))] as Pt)} />
             <Line x1={wx} y1={y - 28} x2={wx} y2={y} tone="soft" dashed />
             <Ball x={wx} y={y} r={5} />
-            <Label x={x0} y={22} kind="val" anchor="start">{`λ = ${(10 ** sweep).toExponential(1).replace('e', ' × 10^')} m`}</Label>
-            <Label x={x1} y={22} kind="val" anchor="end">{`f = ${(10 ** f).toExponential(1).replace('e', ' × 10^')} Hz`}</Label>
+            <Label x={x0} y={22} kind="val" anchor="start">λ = <Sci v={10 ** sweep} /> m</Label>
+            <Label x={x1} y={22} kind="val" anchor="end">f = <Sci v={10 ** f} /> Hz</Label>
             <Label x={x0} y={height - 10} kind="label" anchor="start">short wavelength, high frequency</Label>
             <Label x={x1} y={height - 10} kind="label" anchor="end">long wavelength, low frequency</Label>
           </g>

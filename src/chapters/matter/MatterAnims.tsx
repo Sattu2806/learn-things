@@ -5,6 +5,9 @@ import { Anim, Arrow, Axes, Ball, Label, Line, Readout, Trail, ease, phase, W } 
 const TAU = 2 * Math.PI;
 type Pt = [number, number];
 
+/** A real subscript inside SVG text. */
+const Sub = ({ children }: { children: string }) => <tspan baselineShift="sub" fontSize="0.7em">{children}</tspan>;
+
 function curve(n: number, span: number, f: (s: number) => Pt): Pt[] {
   const out: Pt[] = [];
   for (let i = 0; i <= n; i++) out.push(f((i / n) * span));
@@ -160,7 +163,7 @@ export function AxialEquatorial() {
     <Anim title="A small magnet seen from two points at the same distance, one on its axis and one on its equator; the field on the axis is twice as strong, and both drop off as one over distance cubed as the points move away" height={270} loop={8}>
       {(t) => {
         const cx = 190, cy = 140;
-        const r = 70 + 40 * (0.5 - 0.5 * Math.cos((TAU * t) / 8)) * 2;
+        const r = 70 + 30 * (0.5 - 0.5 * Math.cos((TAU * t) / 8));
         const Bi = 100 / (r / 70) ** 3;
         return (
           <g>
@@ -173,9 +176,9 @@ export function AxialEquatorial() {
             <Ball x={cx} y={cy - r - 11} r={5} />
             <Arrow x1={cx + 14} y1={cy - r - 11} x2={cx + 14 + Math.min(150, Bi)} y2={cy - r - 11} label="" />
             <Label x={cx - 18} y={cy - r - 8} kind="label" anchor="end">equator</Label>
-            <Label x={470} y={90} kind="sym">B axial = μ₀ 2 m / 4 π r³</Label>
-            <Label x={470} y={130} kind="sym">B equator = μ₀ m / 4 π r³</Label>
-            <Label x={470} y={180} kind="label">axial is exactly twice equatorial</Label>
+            <Label x={626} y={190} kind="sym" anchor="end">B axial = μ₀ 2 m / 4 π r³</Label>
+            <Label x={626} y={220} kind="sym" anchor="end">B equatorial = μ₀ m / 4 π r³</Label>
+            <Label x={626} y={250} kind="label" anchor="end">axial is exactly twice equatorial</Label>
             <Readout x={W - 14} y={20}>{`r = ${(r / 70).toFixed(2)} r₀: field ${(100 * Bi / 100).toFixed(0)}%`}</Readout>
           </g>
         );
@@ -254,7 +257,8 @@ export function EarthDip() {
             <Line x1={cx - R - 20} y1={cy} x2={cx + R + 20} y2={cy} tone="soft" dashed />
             <rect className="kit-block" x={cx - 5} y={cy - 38} width={10} height={38} />
             <rect className="kit-block is-filled" x={cx - 5} y={cy} width={10} height={38} />
-            <Label x={cx + 16} y={cy - 22} kind="label" anchor="start">S pole of the magnet</Label>
+            <Label x={cx - 14} y={cy - 28} kind="label" anchor="end">S pole</Label>
+            <Label x={cx - 14} y={cy - 8} kind="label" anchor="end">of magnet</Label>
             {lats.map((l) => needle(l, phase(sweep * 1.4, l - 0.1, l)))}
             <Ball x={bx} y={by} r={4} ghost />
             <Label x={cx + R + 50} y={70} kind="label" anchor="start">latitude</Label>
@@ -274,18 +278,19 @@ export function DipTriangle() {
     <Anim title="The Earth's field at a place is split into a horizontal part and a vertical part; the angle of dip is the angle of the total field below the horizontal, and the triangle changes shape as the dip changes" height={250} loop={8}>
       {(t) => {
         const dip = 0.15 + 1.2 * (0.5 - 0.5 * Math.cos((TAU * t) / 8));
-        const ox = 120, oy = 80, len = 220;
+        const ox = 120, oy = 56, len = 170;
         const hx = ox + len * Math.cos(dip), hy = oy + len * Math.sin(dip);
         return (
           <g>
-            <Arrow x1={ox} y1={oy} x2={ox + len * Math.cos(dip)} y2={oy} tone="soft" label="B_H" labelAt="mid" />
-            <Arrow x1={hx} y1={oy} x2={hx} y2={hy} tone="soft" label="B_V" />
-            <Arrow x1={ox} y1={oy} x2={hx} y2={hy} label="B_E" labelAt="mid" />
+            <Arrow x1={ox} y1={oy} x2={ox + len * Math.cos(dip)} y2={oy} tone="soft" label="" labelAt="mid" />
+            <Arrow x1={hx} y1={oy} x2={hx} y2={hy} tone="soft" label={<>B<Sub>V</Sub></>} />
+            <Arrow x1={ox} y1={oy} x2={hx} y2={hy} label={<>B<Sub>E</Sub></>} labelAt="mid" />
             <path className="fig-guide" d={`M${ox + 44} ${oy}A44 44 0 0 1 ${ox + 44 * Math.cos(dip)} ${oy + 44 * Math.sin(dip)}`} fill="none" />
-            <Label x={ox + 64} y={oy + 20} kind="sym">δ</Label>
-            <Label x={450} y={70} kind="sym">B_H = B_E cos δ</Label>
-            <Label x={450} y={104} kind="sym">B_V = B_E sin δ</Label>
-            <Label x={450} y={138} kind="sym">tan δ = B_V / B_H</Label>
+            <Label x={ox + (len * Math.cos(dip)) / 2} y={oy - 12} kind="sym">B<Sub>H</Sub></Label>
+            <Label x={ox + 66 * Math.cos(dip / 2) + 6} y={oy + 66 * Math.sin(dip / 2) + 8} kind="sym">δ</Label>
+            <Label x={450} y={70} kind="sym">B<Sub>H</Sub> = B<Sub>E</Sub> cos δ</Label>
+            <Label x={450} y={104} kind="sym">B<Sub>V</Sub> = B<Sub>E</Sub> sin δ</Label>
+            <Label x={450} y={138} kind="sym">tan δ = B<Sub>V</Sub> / B<Sub>H</Sub></Label>
             <Readout x={W - 14} y={20}>{`δ = ${((dip * 180) / Math.PI).toFixed(0)}°`}</Readout>
             <Label x={450} y={190} kind="label">horizontal at the equator, vertical at the pole</Label>
           </g>
@@ -428,10 +433,10 @@ export function Domains() {
         const f = ease(phase(t, 1, 6));
         return (
           <g>
-            <rect className="fig-guide" x={130} y={30} width={300} height={190} fill="none" />
+            <rect className="fig-guide" x={120} y={22} width={320} height={196} fill="none" />
             {Array.from({ length: 5 * 4 }, (_, i) => {
               const c = i % 5, r = Math.floor(i / 5);
-              const x = 160 + c * 60, y = 62 + r * 50;
+              const x = 160 + c * 60, y = 56 + r * 46;
               const dom = (c < 2 ? 0 : c < 4 ? 1 : 2) + (r < 2 ? 0 : 3);
               const base = [2.4, -0.9, 3.7, -2.2, 1.6, 4.4][dom];
               const target = 0.05;
@@ -440,9 +445,9 @@ export function Domains() {
               return <Mini key={i} x={x} y={y} angle={base + d * f + wob * (1 - f)} len={17} />;
             })}
             <Arrow x1={470} y1={125} x2={470 + 100 * f} y2={125} label="B" />
-            <Label x={500} y={70} kind="label">domains swing round</Label>
-            <Label x={500} y={190} kind="label">{f > 0.95 ? 'saturated' : 'growing field'}</Label>
-            <Label x={280} y={242} kind="label">each domain: about 10¹⁵ atoms pointing together</Label>
+            <Label x={535} y={70} kind="label">domains swing round</Label>
+            <Label x={535} y={190} kind="label">{f > 0.95 ? 'saturated' : 'growing field'}</Label>
+            <Label x={280} y={244} kind="label">each domain: about 10¹⁵ atoms pointing together</Label>
           </g>
         );
       }}
@@ -472,9 +477,9 @@ export function CurieTemp() {
             <Trail points={curve(60, Math.min(1.5, T), (s) => [gx + s * (gw / 1.6), gy - gh * (s < 1 ? Math.sqrt(1 - s) : 0)] as Pt)} />
             <Ball x={gx + T * (gw / 1.6)} y={gy - gh * m} r={5} />
             <Line x1={gx + gw / 1.6} y1={gy + 6} x2={gx + gw / 1.6} y2={gy - gh} tone="soft" dashed />
-            <Label x={gx + gw / 1.6} y={gy + 24} kind="sym">T_c</Label>
+            <Label x={gx + gw / 1.6} y={gy + 24} kind="sym">T<Sub>c</Sub></Label>
             <Readout x={W - 14} y={20}>{T < 1 ? 'ferromagnetic' : 'paramagnetic'}</Readout>
-            <Label x={155} y={244} kind="label">{`T = ${T.toFixed(2)} T_c`}</Label>
+            <Label x={155} y={244} kind="label">{`T = ${T.toFixed(2)} T`}<Sub>c</Sub></Label>
           </g>
         );
       }}
@@ -518,15 +523,15 @@ export function Hysteresis() {
             <Ball x={P(h, b)[0]} y={P(h, b)[1]} r={5.5} />
             <g style={{ opacity: a1 }}>
               <Ball x={P(0, br)[0]} y={P(0, br)[1]} r={4} ghost />
-              <Label x={P(0, br)[0] + 10} y={P(0, br)[1] - 8} kind="sym" anchor="start">retentivity B_r</Label>
+              <Label x={P(0, br)[0] + 10} y={P(0, br)[1] - 8} kind="sym" anchor="start">retentivity B<Sub>r</Sub></Label>
             </g>
             <g style={{ opacity: a2 }}>
               <Ball x={P(-HC, 0)[0]} y={P(-HC, 0)[1]} r={4} ghost />
-              <Label x={P(-HC, 0)[0] - 4} y={P(-HC, 0)[1] + 22} kind="sym" anchor="end">coercivity H_c</Label>
+              <Label x={P(-HC, 0)[0] - 4} y={P(-HC, 0)[1] + 22} kind="sym" anchor="end">coercivity H<Sub>c</Sub></Label>
             </g>
             <Label x={P(1, 1)[0] + 30} y={P(1, 1)[1] + 4} kind="label" anchor="start">saturation</Label>
-            <Label x={90} y={60} kind="label" anchor="start">{u < 1 ? 'first magnetisation' : u < 2 ? 'H reduced, then reversed' : 'H reversed again'}</Label>
-            <Label x={90} y={84} kind="label" anchor="start">area = energy lost as heat each cycle</Label>
+            <Label x={30} y={50} kind="label" anchor="start">{u < 1 ? 'first magnetisation' : u < 2 ? 'H reduced, then reversed' : 'H reversed again'}</Label>
+            <Label x={30} y={74} kind="label" anchor="start">area = heat lost per cycle</Label>
           </g>
         );
       }}
@@ -587,10 +592,10 @@ export function Atom() {
             <Label x={ex + 14} y={ey - 8} kind="sym">e</Label>
             <Arrow x1={ex} y1={ey} x2={ex + 22 * Math.sin(a)} y2={ey + 22 * Math.cos(a)} tone="soft" />
             <Label x={cx} y={cy + r + 34} kind="label">electron orbit</Label>
-            <Arrow x1={400} y1={190} x2={400} y2={190 - 90 * (0.7 + 0.3 * Math.sin(TAU * t / 4))} label="m" />
-            <Label x={480} y={90} kind="sym" anchor="start">I = e / T</Label>
-            <Label x={480} y={124} kind="sym" anchor="start">m = I A = e v r / 2</Label>
-            <Label x={480} y={158} kind="sym" anchor="start">μ_B = 9.27 × 10⁻²⁴ A m²</Label>
+            <Arrow x1={310} y1={190} x2={310} y2={190 - 90 * (0.7 + 0.3 * Math.sin(TAU * t / 4))} label="m" />
+            <Label x={360} y={90} kind="sym" anchor="start">I = e / T</Label>
+            <Label x={360} y={124} kind="sym" anchor="start">m = I A = e v r / 2</Label>
+            <Label x={360} y={158} kind="sym" anchor="start">μ<Sub>B</Sub> = 9.27 × 10⁻²⁴ A m²</Label>
           </g>
         );
       }}

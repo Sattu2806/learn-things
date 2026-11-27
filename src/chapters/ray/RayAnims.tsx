@@ -331,13 +331,13 @@ export function ApparentDepth({ n = 4 / 3, height = 270 }: { n?: number; height?
 }
 
 export function Fibre({ height = 270 }: { height?: number }) {
-  const nc = 1.5, ncl = 1.4;
+  const nc = 1.5, ncl = 1.4, XE = 580;
   return (
     <Anim title="In an optical fibre a ray that meets the wall at more than the critical angle is reflected completely and travels on; a steeper ray leaks out into the cladding" height={height} loop={8}>
       {(t) => {
-        const rows: { y: number; a: number; name: string }[] = [
-          { y: 80, a: 50 * DEG, name: 'meets the wall at 40°: below the critical angle, it leaks out' },
-          { y: 200, a: 15 * DEG, name: 'meets the wall at 75°: above the critical angle, trapped' },
+        const rows: { y: number; a: number; below: boolean; name: string }[] = [
+          { y: 62, a: 50 * DEG, below: false, name: 'meets the wall at 40°: below the critical angle, it leaks out' },
+          { y: 188, a: 15 * DEG, below: true, name: 'meets the wall at 75°: above the critical angle, trapped' },
         ];
         return (
           <g>
@@ -349,7 +349,7 @@ export function Fibre({ height = 270 }: { height?: number }) {
                 path.push([x1, r.y + hw]);
                 const sr = (nc / ncl) * Math.sin(Math.PI / 2 - r.a);
                 const rr = Math.asin(Math.min(1, sr));
-                path.push([x1 + 150 * Math.sin(rr), r.y + hw + 150 * Math.cos(rr)]);
+                path.push([x1 + 90 * Math.sin(rr), r.y + hw + 90 * Math.cos(rr)]);
               } else {
                 let x = 40, y = r.y, dir = 1;
                 const step = (2 * hw) / Math.tan(r.a);
@@ -357,21 +357,21 @@ export function Fibre({ height = 270 }: { height?: number }) {
                 y += hw;
                 path.push([x, y]);
                 dir = -1;
-                while (x + step < 600) {
+                while (x + step < XE) {
                   x += step;
                   y += dir * 2 * hw;
                   path.push([x, y]);
                   dir *= -1;
                 }
-                path.push([600, y + dir * ((600 - x) * Math.tan(r.a))]);
+                path.push([XE, y + dir * ((XE - x) * Math.tan(r.a))]);
               }
               return (
                 <g key={r.name}>
-                  <Line x1={40} y1={r.y - hw} x2={600} y2={r.y - hw} tone="bright" />
-                  <Line x1={40} y1={r.y + hw} x2={600} y2={r.y + hw} tone="bright" />
-                  <Label x={612} y={r.y + 4} kind="label" anchor="end">core</Label>
+                  <Line x1={40} y1={r.y - hw} x2={XE} y2={r.y - hw} tone="bright" />
+                  <Line x1={40} y1={r.y + hw} x2={XE} y2={r.y + hw} tone="bright" />
+                  <Label x={XE + 12} y={r.y + 6} kind="label" anchor="start">core</Label>
                   <Flow path={path} t={t} n={4} speed={0.2} />
-                  <Label x={40} y={r.y - hw - 12} kind="label" anchor="start">{r.name}</Label>
+                  <Label x={40} y={r.below ? r.y + hw + 24 : r.y - hw - 12} kind="label" anchor="start">{r.name}</Label>
                 </g>
               );
             })}
@@ -568,7 +568,7 @@ export function Prism({ n = 1.5, A = 60, height = 270 }: { n?: number; A?: numbe
         const br: V2 = [150 * Math.sin(half), 0];
         const gx = 380, gy = 215, gw = 230, gh = 120;
         const dmax = Math.max(...g.map((p) => p[1]));
-        const gp = (ii: number, dd: number): Pt => [gx + ((ii - lo) / (hi - lo)) * gw, gy - ((dd - (dmin - 4)) / (dmax - dmin + 8)) * gh];
+        const gp = (ii: number, dd: number): Pt => [gx + ((ii - lo) / (hi - lo)) * gw, gy - ((dd - (dmin - 14)) / (dmax - dmin + 18)) * gh];
         const dev = r ? r.dev / DEG : NaN;
         return (
           <g>
@@ -589,7 +589,7 @@ export function Prism({ n = 1.5, A = 60, height = 270 }: { n?: number; A?: numbe
             <Line x1={gx} y1={gp(lo, dmin)[1]} x2={gx + gw} y2={gp(lo, dmin)[1]} tone="soft" dashed />
             {r && <Ball x={gp(i, dev)[0]} y={gp(i, dev)[1]} r={5} />}
             <Readout x={W - 12} y={22}>{r ? `i = ${i.toFixed(0)}°  δ = ${dev.toFixed(1)}°` : ''}</Readout>
-            <Label x={gx + gw} y={gp(lo, dmin)[1] - 8} kind="label" anchor="end">{`minimum ${dmin.toFixed(1)}°`}</Label>
+            <Label x={gx + gw - 6} y={gp(lo, dmin)[1] + 22} kind="label" anchor="end">{`minimum ${dmin.toFixed(1)}°`}</Label>
           </g>
         );
       }}
@@ -720,8 +720,8 @@ export function Microscope({ height = 300 }: { height?: number }) {
             <Flow path={[P(I1[0], I1[1]), P(xe, yB), P(xe + dirB[0] * 160, yB + dirB[1] * 160)]} t={t} n={3} />
             <Trail points={[P(xe, yA), P(I2[0], I2[1])]} tone="soft" dashed />
             <Trail points={[P(xe, yB), P(I2[0], I2[1])]} tone="soft" dashed />
-            <Label x={xo - uo} y={y0 + 22} kind="label">object</Label>
-            <Label x={I1[0]} y={y0 - I1[1] - 8} kind="label">first image</Label>
+            <Label x={xo - uo} y={y0 - h - 14} kind="label">object</Label>
+            <Label x={I1[0] + 6} y={y0 - I1[1] + 28} kind="label" anchor="end">first image</Label>
             <Label x={I2[0] - 10} y={y0 - I2[1] - 8} kind="label">final image</Label>
             <circle cx={xe + 150} cy={y0} r={7 + 2 * pulse} fill="none" stroke="#fff" strokeOpacity={0.6} />
             <Label x={xe + 150} y={y0 + 30} kind="label">eye</Label>
@@ -797,7 +797,8 @@ export function Cassegrain({ height = 260 }: { height?: number }) {
             })}
             <Ball x={fin} y={y0} r={5} />
             <Label x={xp} y={y0 + 118} kind="label">large concave mirror</Label>
-            <Label x={xs} y={y0 - 28} kind="label">small convex mirror</Label>
+            <Label x={xs - 12} y={y0 - 12} kind="label" anchor="end">small convex</Label>
+            <Label x={xs - 12} y={y0 + 26} kind="label" anchor="end">mirror</Label>
             <Label x={fin} y={y0 + 24} kind="label">image</Label>
           </g>
         );

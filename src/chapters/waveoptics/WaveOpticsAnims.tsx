@@ -192,8 +192,8 @@ export function Reflect({ i = 35, height = 250 }: { i?: number; height?: number 
             <Label x={xc - 32} y={y0 - 62} kind="sym">i</Label>
             <Label x={xc + 38} y={y0 - 86} kind="sym">r</Label>
             <Ball x={dotPos[0]} y={dotPos[1]} r={4.5} />
-            <Label x={90} y={30} kind="label" anchor="start">incident fronts (bright)</Label>
-            <Label x={90} y={48} kind="label" anchor="start">reflected fronts (faint)</Label>
+            <Label x={60} y={y0 + 32} kind="label" anchor="start">incident fronts (bright)</Label>
+            <Label x={580} y={y0 + 32} kind="label" anchor="end">reflected fronts (faint)</Label>
             <Readout2 t={t}>i = r</Readout2>
           </g>
         );
@@ -625,8 +625,8 @@ export function SlitPattern() {
             <Line x1={110} y1={125 + slitH} x2={110} y2={235} tone="bright" />
             <Line x1={110} y1={125 - slitH} x2={110} y2={125 + slitH} tone="soft" dashed />
             <Arrow x1={110 - 56} y1={125} x2={110 - 12} y2={125} tone="soft" />
-            <Label x={90} y={30} kind="sym">slit width a</Label>
-            <Label x={90} y={46} kind="val">{`a = ${a.toFixed(1)} a₀`}</Label>
+            <Label x={56} y={30} kind="label">slit width a</Label>
+            <Label x={56} y={50} kind="val">{`a = ${a.toFixed(1)} a₀`}</Label>
             <Arrow x1={gx - 150} y1={base + 12} x2={gx + 150} y2={base + 12} tone="soft" label="y" />
             <Trail points={curve(300, 300, (s) => [gx - 150 + s, base - H * sinc2((Math.PI * (s - 150)) / Wd)])} />
             {[-2, -1, 1, 2].map((m) => (
@@ -754,9 +754,8 @@ export function Brewster() {
         const rp = Math.abs(Math.tan(i - r) / Math.tan(i + r));
         const rs = Math.abs(Math.sin(i - r) / Math.sin(i + r));
         const cx = 190, y0 = 135, L = 105;
-        const hx = (a: number, s: number): Pt => [cx + s * L * Math.sin(a), y0 - s * L * Math.cos(a)];
-        const a0 = hx(i, -1);
-        const a1 = hx(i, 1);
+        const a0: Pt = [cx - L * Math.sin(i), y0 - L * Math.cos(i)];
+        const a1: Pt = [cx + L * Math.sin(i), y0 - L * Math.cos(i)];
         const tr: Pt = [cx + L * Math.sin(r), y0 + L * Math.cos(r)];
         const bx = 440;
         const right = clamp(1 - Math.abs(i - iB) / (6 * DEG));
@@ -765,7 +764,7 @@ export function Brewster() {
           <g>
             <rect x={0} y={y0} width={W} height={270 - y0} fill="#fff" opacity={0.07} />
             <Line x1={20} y1={y0} x2={350} y2={y0} tone="bright" />
-            <Line x1={cx} y1={y0 - 115} x2={cx} y2={y0 + 110} tone="soft" dashed />
+            <Line x1={cx} y1={y0 - 110} x2={cx} y2={y0 + 110} tone="soft" dashed />
             <Arrow x1={a0[0]} y1={a0[1]} x2={cx} y2={y0} width={2.6} />
             <Line x1={cx} y1={y0} x2={a1[0]} y2={a1[1]} tone="bright" />
             <Line x1={cx} y1={y0} x2={tr[0]} y2={tr[1]} tone="soft" />
@@ -788,7 +787,7 @@ export function Brewster() {
               </g>
             ))}
             <Label x={bx + 170} y={250} kind="label" anchor="end">bars scaled up three times</Label>
-            {right > 0.8 && <Label x={cx} y={20} kind="sym">Brewster angle: tan i = n</Label>}
+            {right > 0.8 && <Label x={30} y={252} kind="sym" anchor="start">Brewster angle: tan i = n</Label>}
           </g>
         );
       }}

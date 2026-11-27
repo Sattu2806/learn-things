@@ -131,10 +131,10 @@ export function Flux() {
             })}
             <Line x1={cx - dx} y1={cy + dy} x2={cx + dx} y2={cy - dy} tone="bright" />
             <Arrow x1={cx} y1={cy} x2={cx + 36 * Math.cos(th)} y2={cy - 36 * Math.sin(th)} tone="soft" label="n" />
-            <Line x1={cx + 90} y1={cy - ext} x2={cx + 90} y2={cy + ext} tone="soft" />
-            <Label x={cx + 100} y={cy + 4} kind="label" anchor="start">A cos θ</Label>
-            <Label x={480} y={90} kind="sym">Φ = B A cos θ</Label>
-            <Label x={480} y={130} kind="label">lines through the loop</Label>
+            <Line x1={cx + 172} y1={cy - ext} x2={cx + 172} y2={cy + ext} tone="soft" />
+            <Label x={cx + 184} y={cy + 6} kind="label" anchor="start">A cos θ</Label>
+            <Label x={500} y={62} kind="sym">Φ = B A cos θ</Label>
+            <Label x={500} y={216} kind="label">lines through the loop</Label>
             <Readout x={W - 14} y={20}>{`θ = ${(((th * 180) / Math.PI) % 360).toFixed(0)}°, Φ = ${(Math.cos(th) * 100).toFixed(0)}%`}</Readout>
           </g>
         );
@@ -149,7 +149,7 @@ export function FaradayGraphs() {
       {(t) => {
         const Phi = (u: number) => (u < 1 ? 0 : u < 3 ? 0.4 * (u - 1) : u < 4.5 ? 0.8 : u < 5.5 ? 0.8 * (1 - (u - 4.5)) : 0);
         const eps = (u: number) => (u < 1 ? 0 : u < 3 ? -0.4 : u < 4.5 ? 0 : u < 5.5 ? 0.8 : 0);
-        const x0 = 80, wx = 430, k = wx / 7;
+        const x0 = 80, wx = 400, k = wx / 7;
         const y1 = 125, y2 = 250, sc = 80;
         const tt = Math.min(t, 7);
         return (
@@ -164,8 +164,7 @@ export function FaradayGraphs() {
             <Ball x={x0 + tt * k} y={y1 - sc * Phi(tt)} r={5} />
             <Ball x={x0 + tt * k} y={y2 - sc * 0.5 * eps(tt)} r={5} />
             <Label x={x0 + wx + 24} y={y1 - 70} kind="sym" anchor="start">ε = −dΦ/dt</Label>
-            <Label x={x0 + wx + 24} y={y1 - 44} kind="label" anchor="start">slope of Φ</Label>
-            <Label x={x0 + wx + 24} y={y1 - 22} kind="label" anchor="start">with a minus sign</Label>
+            <Label x={x0 + wx + 24} y={y1 - 40} kind="label" anchor="start">−(slope of Φ)</Label>
           </g>
         );
       }}
@@ -192,12 +191,12 @@ export function Lenz() {
               return <Ball key={i} x={cx + rx * Math.cos(a)} y={cy - ry * Math.sin(a)} r={3} glow={false} />;
             })}
             <Arrow x1={cx + 40 * 0.6} y1={cy} x2={cx + 40 * 0.6 - 56 * s} y2={cy} label="" />
-            <Label x={cx + 86} y={cy - 10} kind="label" anchor="start">induced field</Label>
-            <Label x={cx + 86} y={cy + 12} kind="label" anchor="start">{Math.abs(s) < 0.05 ? 'none: nothing changing' : s > 0 ? 'points back at the magnet' : 'points along the magnet'}</Label>
+            <Label x={W - 14} y={cy + 54} kind="label" anchor="end">induced field</Label>
+            <Label x={W - 14} y={cy + 76} kind="label" anchor="end">{Math.abs(s) < 0.05 ? 'none: nothing changing' : s > 0 ? 'points back at the magnet' : 'points along the magnet'}</Label>
             <Label x={cx - 14} y={cy - ry - 14} kind="sym">{Math.abs(s) < 0.05 ? '' : s > 0 ? 'N (repels)' : 'S (attracts)'}</Label>
             <Arrow x1={pos(t) + 54} y1={200} x2={pos(t) + 54 + vel * 0.3} y2={200} tone="soft" label="v" />
             <Arrow x1={pos(t)} y1={176} x2={pos(t) - s * 40} y2={176} label="" />
-            <Label x={pos(t) - 24 - s * 40} y={190} kind="label">force on magnet opposes motion</Label>
+            <Label x={20} y={234} kind="label" anchor="start">force on magnet opposes motion</Label>
           </g>
         );
       }}
