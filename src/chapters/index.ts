@@ -17,7 +17,6 @@ export const CHAPTERS: ChapterInfo[] = [
   { id: 'motion3d', unit: 'Kinematics', title: 'Motion in three dimensions', ready: true },
   { id: 'relative', unit: 'Kinematics', title: 'Relative velocity', ready: true },
   { id: 'newton', unit: 'Laws of motion', title: "Newton's laws of motion", ready: true },
-  { id: 'newton', unit: 'Laws of motion', title: "Newton's laws of motion", ready: true },
   { id: 'friction', unit: 'Laws of motion', title: 'Friction', ready: true },
   { id: 'circdyn', unit: 'Laws of motion', title: 'Forces in circular motion', ready: true },
   { id: 'energy', unit: 'Work, energy and power', title: 'Work, energy and power', ready: true },
